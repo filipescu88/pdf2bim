@@ -1143,7 +1143,7 @@
       ],
       "end_xy": [
         6.56,
-        4.7
+        5.25
       ],
       "alignment": "right",
       "priority": 1,
@@ -1165,7 +1165,7 @@
       "level_id": "poddasze",
       "wall_type": "interior_partition",
       "start_xy": [
-        6.66,
+        7.6,
         4.6
       ],
       "end_xy": [
@@ -1408,7 +1408,7 @@
       {
         "id": "door_attic_pok24",
         "wall_id": "w_a_pok25_pok24_div",
-        "offset_along_wall": 2.6,
+        "offset_along_wall": 2.15,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 2.95,
@@ -1420,13 +1420,13 @@
       },
       {
         "id": "door_attic_laz22",
-        "wall_id": "w_a_komunikacja_north",
-        "offset_along_wall": 0.6,
+        "wall_id": "w_a_pok25_pok24_div",
+        "offset_along_wall": 3.25,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 2.95,
         "hinge_side": "left",
-        "swing_dir": "in",
+        "swing_dir": "out",
         "open_angle_deg": 90.0,
         "frame_material_id": "mat_frame_dark",
         "leaf_material_id": "mat_door_wood"

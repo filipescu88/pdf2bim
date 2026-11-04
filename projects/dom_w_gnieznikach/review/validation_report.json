@@ -20,11 +20,11 @@
     {
       "room_id": "parter_hol",
       "name": "1.2 Hol",
-      "floor_area_m2": 4.3,
-      "usable_area_pn_iso_m2": 4.3,
+      "floor_area_m2": 4.44,
+      "usable_area_pn_iso_m2": 4.44,
       "pdf_usable_area_m2": 4.49,
       "pdf_floor_area_m2": null,
-      "rel_error_pct": 4.23,
+      "rel_error_pct": 1.11,
       "passed": true
     },
     {
@@ -40,11 +40,11 @@
     {
       "room_id": "parter_salon_jadalnia",
       "name": "1.4 Salon + Jadalnia",
-      "floor_area_m2": 27.67,
-      "usable_area_pn_iso_m2": 27.67,
+      "floor_area_m2": 28.04,
+      "usable_area_pn_iso_m2": 28.04,
       "pdf_usable_area_m2": 28.26,
       "pdf_floor_area_m2": null,
-      "rel_error_pct": 2.09,
+      "rel_error_pct": 0.78,
       "passed": true
     },
     {
@@ -60,11 +60,11 @@
     {
       "room_id": "parter_lazienka",
       "name": "1.6 Łazienka",
-      "floor_area_m2": 3.5,
-      "usable_area_pn_iso_m2": 3.5,
+      "floor_area_m2": 3.4,
+      "usable_area_pn_iso_m2": 3.4,
       "pdf_usable_area_m2": 3.39,
       "pdf_floor_area_m2": null,
-      "rel_error_pct": 3.24,
+      "rel_error_pct": 0.29,
       "passed": true
     },
     {
@@ -80,11 +80,11 @@
     {
       "room_id": "poddasze_hol",
       "name": "2.1 Hol",
-      "floor_area_m2": 9.3,
-      "usable_area_pn_iso_m2": 9.3,
+      "floor_area_m2": 8.98,
+      "usable_area_pn_iso_m2": 8.98,
       "pdf_usable_area_m2": 8.98,
       "pdf_floor_area_m2": 8.98,
-      "rel_error_pct": 3.56,
+      "rel_error_pct": 0.0,
       "passed": true
     },
     {
@@ -100,41 +100,41 @@
     {
       "room_id": "poddasze_pokoj_ne",
       "name": "2.3 Pokój NE",
-      "floor_area_m2": 14.48,
-      "usable_area_pn_iso_m2": 12.19,
+      "floor_area_m2": 13.95,
+      "usable_area_pn_iso_m2": 11.7,
       "pdf_usable_area_m2": 11.68,
       "pdf_floor_area_m2": 13.83,
-      "rel_error_pct": 4.37,
+      "rel_error_pct": 0.17,
       "passed": true
     },
     {
       "room_id": "poddasze_pokoj_se",
       "name": "2.4 Pokój SE",
-      "floor_area_m2": 12.21,
-      "usable_area_pn_iso_m2": 10.83,
+      "floor_area_m2": 11.91,
+      "usable_area_pn_iso_m2": 10.53,
       "pdf_usable_area_m2": 10.58,
       "pdf_floor_area_m2": 11.92,
-      "rel_error_pct": 2.36,
+      "rel_error_pct": 0.47,
       "passed": true
     },
     {
       "room_id": "poddasze_lazienka",
       "name": "2.5 Łazienka",
-      "floor_area_m2": 6.1,
-      "usable_area_pn_iso_m2": 4.92,
+      "floor_area_m2": 5.9,
+      "usable_area_pn_iso_m2": 4.76,
       "pdf_usable_area_m2": 4.77,
       "pdf_floor_area_m2": 5.9,
-      "rel_error_pct": 3.14,
+      "rel_error_pct": 0.21,
       "passed": true
     },
     {
       "room_id": "poddasze_pokoj_sw",
       "name": "2.6 Pokój SW",
-      "floor_area_m2": 9.3,
-      "usable_area_pn_iso_m2": 7.5,
+      "floor_area_m2": 9.05,
+      "usable_area_pn_iso_m2": 7.3,
       "pdf_usable_area_m2": 7.31,
       "pdf_floor_area_m2": 9.05,
-      "rel_error_pct": 2.6,
+      "rel_error_pct": 0.14,
       "passed": true
     }
   ],

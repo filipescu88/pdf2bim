@@ -107,8 +107,8 @@ def build_amor_woe1092_gt() -> SceneGraphV2:
             {"id": "w_a_komunikacja_south", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (0.26, 3.85), "end_xy": (6.55, 3.85), "alignment": "left", "priority": 1, "z_bottom": 2.95, "z_top": 5.05, "layers": sw3_layers},
             {"id": "w_a_komunikacja_north", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (4.65, 5.27), "end_xy": (6.55, 5.27), "alignment": "left", "priority": 1, "z_bottom": 2.95, "z_top": 5.05, "layers": sw3_layers},
             {"id": "w_a_gard_pok25_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (2.00, 0.90), "end_xy": (2.00, 3.85), "alignment": "right", "priority": 1, "z_bottom": 2.95, "z_top": 5.05, "clip_to_roof": True, "layers": sw3_layers},
-            {"id": "w_a_pok25_pok24_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (6.56, 0.90), "end_xy": (6.56, 4.70), "alignment": "right", "priority": 1, "z_bottom": 2.95, "z_top": 5.05, "clip_to_roof": True, "layers": sw3_layers},
-            {"id": "w_a_laz_pralnia_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (6.66, 4.60), "end_xy": (10.18, 4.60), "alignment": "left", "priority": 1, "z_bottom": 2.95, "z_top": 5.05, "clip_to_roof": True, "layers": sw3_layers},
+            {"id": "w_a_pok25_pok24_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (6.56, 0.90), "end_xy": (6.56, 5.25), "alignment": "right", "priority": 1, "z_bottom": 2.95, "z_top": 5.05, "clip_to_roof": True, "layers": sw3_layers},
+            {"id": "w_a_laz_pralnia_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (7.60, 4.60), "end_xy": (10.18, 4.60), "alignment": "left", "priority": 1, "z_bottom": 2.95, "z_top": 5.05, "clip_to_roof": True, "layers": sw3_layers},
         ],
         "openings": {
             "windows": [
@@ -131,8 +131,8 @@ def build_amor_woe1092_gt() -> SceneGraphV2:
                 {"id": "door_dw_lazienka", "wall_id": "w_p_lazienka_west", "offset_along_wall": 0.30, "width": 0.80, "height": 2.10, "sill_z": 0.0, "hinge_side": "left", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_wood"},
                 {"id": "door_dw2_kotlownia", "wall_id": "w_p_kotlownia_south", "offset_along_wall": 0.20, "width": 0.90, "height": 2.10, "sill_z": 0.0, "hinge_side": "left", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_wood"},
                 {"id": "door_attic_pok25", "wall_id": "w_a_komunikacja_south", "offset_along_wall": 3.60, "width": 0.90, "height": 2.10, "sill_z": 2.95, "hinge_side": "left", "swing_dir": "out", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_wood"},
-                {"id": "door_attic_pok24", "wall_id": "w_a_pok25_pok24_div", "offset_along_wall": 2.60, "width": 0.90, "height": 2.10, "sill_z": 2.95, "hinge_side": "left", "swing_dir": "out", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_wood"},
-                {"id": "door_attic_laz22", "wall_id": "w_a_komunikacja_north", "offset_along_wall": 0.60, "width": 0.90, "height": 2.10, "sill_z": 2.95, "hinge_side": "left", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_wood"},
+                {"id": "door_attic_pok24", "wall_id": "w_a_pok25_pok24_div", "offset_along_wall": 2.15, "width": 0.90, "height": 2.10, "sill_z": 2.95, "hinge_side": "left", "swing_dir": "out", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_wood"},
+                {"id": "door_attic_laz22", "wall_id": "w_a_pok25_pok24_div", "offset_along_wall": 3.25, "width": 0.90, "height": 2.10, "sill_z": 2.95, "hinge_side": "left", "swing_dir": "out", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_wood"},
             ],
             "roof_windows": [
                 {"id": "rw_amor_north_1", "roof_plane_id": "rp_main_north", "center_xy": (3.20, 6.20), "width": 0.94, "length_along_slope": 1.40, "frame_material_id": "mat_frame_dark", "glass_material_id": "mat_glass"},

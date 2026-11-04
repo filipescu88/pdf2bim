@@ -79,13 +79,13 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
             {"id": "poddasze", "name": "Poddasze", "floor_index": 1, "z_floor": 3.08, "z_ceiling": 5.55, "knee_wall_height_m": 1.40},
         ],
         "walls": [
-            # Parter exterior walls (CCW around perimeter so "left" alignment points inward)
-            {"id": "w_p_south_main", "level_id": "parter", "wall_type": "exterior", "start_xy": (2.48, 0.00), "end_xy": (10.30, 0.00), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 2.74, "layers": ext_wood_layers},
-            {"id": "w_p_south_recess_v", "level_id": "parter", "wall_type": "exterior", "start_xy": (2.48, 0.00), "end_xy": (2.48, 1.38), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": ext_layers},
-            {"id": "w_p_south_entrance", "level_id": "parter", "wall_type": "exterior", "start_xy": (0.00, 1.38), "end_xy": (2.48, 1.38), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 2.74, "layers": ext_layers},
-            {"id": "w_p_east", "level_id": "parter", "wall_type": "exterior", "start_xy": (10.30, 0.00), "end_xy": (10.30, 8.40), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 2.74, "layers": ext_wood_layers},
-            {"id": "w_p_north", "level_id": "parter", "wall_type": "exterior", "start_xy": (10.30, 8.40), "end_xy": (0.00, 8.40), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 2.74, "layers": ext_layers},
-            {"id": "w_p_west", "level_id": "parter", "wall_type": "exterior", "start_xy": (0.00, 8.40), "end_xy": (0.00, 1.38), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 2.74, "layers": ext_layers},
+            # Parter exterior walls (CCW around perimeter so "left" alignment points inward; z_top=3.08 covers slab edge seamlessly)
+            {"id": "w_p_south_main", "level_id": "parter", "wall_type": "exterior", "start_xy": (2.48, 0.00), "end_xy": (10.30, 0.00), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
+            {"id": "w_p_south_recess_v", "level_id": "parter", "wall_type": "exterior", "start_xy": (2.48, 0.00), "end_xy": (2.48, 1.38), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
+            {"id": "w_p_south_entrance", "level_id": "parter", "wall_type": "exterior", "start_xy": (0.00, 1.38), "end_xy": (2.48, 1.38), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
+            {"id": "w_p_east", "level_id": "parter", "wall_type": "exterior", "start_xy": (10.30, 0.00), "end_xy": (10.30, 8.40), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
+            {"id": "w_p_north", "level_id": "parter", "wall_type": "exterior", "start_xy": (10.30, 8.40), "end_xy": (0.00, 8.40), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
+            {"id": "w_p_west", "level_id": "parter", "wall_type": "exterior", "start_xy": (0.00, 8.40), "end_xy": (0.00, 1.38), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
             # Parter interior walls
             {"id": "w_p_kotlownia_east", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.36, 1.82), "end_xy": (2.36, 7.96), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": load_layers},
             {"id": "w_p_wiatrolap_north", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (0.44, 4.15), "end_xy": (2.36, 4.15), "alignment": "left", "priority": 1, "z_bottom": 0.0, "z_top": 2.74, "layers": part_layers},
@@ -95,8 +95,8 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
             {"id": "w_p_lazienka_east", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (5.74, 0.44), "end_xy": (5.74, 1.80), "alignment": "right", "priority": 1, "z_bottom": 0.0, "z_top": 2.74, "layers": part_layers},
             {"id": "w_p_schody_north", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.48, 3.97), "end_xy": (5.86, 3.97), "alignment": "left", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": load_layers},
             # Poddasze knee & gable walls
-            {"id": "w_a_knee_south", "level_id": "poddasze", "wall_type": "knee_wall", "start_xy": (0.00, 0.00), "end_xy": (10.30, 0.00), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": 4.48, "layers": ext_layers},
-            {"id": "w_a_knee_north", "level_id": "poddasze", "wall_type": "knee_wall", "start_xy": (10.30, 8.40), "end_xy": (0.00, 8.40), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": 4.48, "layers": ext_layers},
+            {"id": "w_a_knee_south", "level_id": "poddasze", "wall_type": "knee_wall", "start_xy": (0.00, 0.00), "end_xy": (10.30, 0.00), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": 4.48, "clip_to_roof": True, "layers": ext_layers},
+            {"id": "w_a_knee_north", "level_id": "poddasze", "wall_type": "knee_wall", "start_xy": (10.30, 8.40), "end_xy": (0.00, 8.40), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": 4.48, "clip_to_roof": True, "layers": ext_layers},
             {"id": "w_a_gable_east", "level_id": "poddasze", "wall_type": "gable_wall", "start_xy": (10.30, 0.00), "end_xy": (10.30, 8.40), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": ext_layers},
             {"id": "w_a_gable_west", "level_id": "poddasze", "wall_type": "gable_wall", "start_xy": (0.00, 8.40), "end_xy": (0.00, 0.00), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": ext_layers},
             # Poddasze interior partitions (complete room & stairwell enclosure)
@@ -142,25 +142,25 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
         "rooms": [
             # Parter (7 disjoint rooms matching Archon PDF labels)
             {"id": "parter_wiatrolap", "level_id": "parter", "code": "1.1", "name": "Wiatrołap", "polygon_xy": [(0.44, 1.82), (2.36, 1.82), (2.36, 4.12), (0.44, 4.12)], "pdf_usable_area_m2": 4.37, "pdf_floor_area_m2": 4.42, "floor_material_id": "mat_floor_gres"},
-            {"id": "parter_hol", "level_id": "parter", "code": "1.2", "name": "Hol", "polygon_xy": [(2.48, 1.80), (5.74, 1.80), (5.74, 3.12), (2.48, 3.12)], "pdf_usable_area_m2": 4.49, "floor_material_id": "mat_floor_gres"},
+            {"id": "parter_hol", "level_id": "parter", "code": "1.2", "name": "Hol", "polygon_xy": [(2.48, 1.80), (5.84, 1.80), (5.84, 3.12), (2.48, 3.12)], "pdf_usable_area_m2": 4.49, "floor_material_id": "mat_floor_gres"},
             {"id": "parter_schody", "level_id": "parter", "code": "1.3", "name": "Schody", "polygon_xy": [(2.48, 3.12), (5.84, 3.12), (5.84, 4.09), (2.48, 4.09)], "pdf_usable_area_m2": 3.26, "floor_material_id": "mat_floor_oak"},
-            {"id": "parter_salon_jadalnia", "level_id": "parter", "code": "1.4", "name": "Salon + Jadalnia", "polygon_xy": [(2.48, 4.21), (9.86, 4.21), (9.86, 7.96), (2.48, 7.96)], "pdf_usable_area_m2": 28.26, "floor_material_id": "mat_floor_oak"},
+            {"id": "parter_salon_jadalnia", "level_id": "parter", "code": "1.4", "name": "Salon + Jadalnia", "polygon_xy": [(2.48, 4.16), (9.86, 4.16), (9.86, 7.96), (2.48, 7.96)], "pdf_usable_area_m2": 28.26, "floor_material_id": "mat_floor_oak"},
             {"id": "parter_kuchnia", "level_id": "parter", "code": "1.5", "name": "Kuchnia", "polygon_xy": [(5.86, 0.44), (9.86, 0.44), (9.86, 3.92), (5.86, 3.92)], "pdf_usable_area_m2": 13.90, "floor_material_id": "mat_floor_gres"},
-            {"id": "parter_lazienka", "level_id": "parter", "code": "1.6", "name": "Łazienka", "polygon_xy": [(2.92, 0.44), (5.74, 0.44), (5.74, 1.68), (2.92, 1.68)], "pdf_usable_area_m2": 3.39, "floor_material_id": "mat_floor_gres"},
+            {"id": "parter_lazienka", "level_id": "parter", "code": "1.6", "name": "Łazienka", "polygon_xy": [(3.00, 0.44), (5.74, 0.44), (5.74, 1.68), (3.00, 1.68)], "pdf_usable_area_m2": 3.39, "floor_material_id": "mat_floor_gres"},
             {"id": "parter_kotlownia", "level_id": "parter", "code": "1.7", "name": "Kotłownia", "polygon_xy": [(0.44, 4.27), (2.22, 4.27), (2.22, 7.96), (0.44, 7.96)], "pdf_usable_area_m2": 6.51, "floor_material_id": "mat_floor_gres"},
             # Poddasze (6 disjoint rooms matching Archon PDF labels: U-shaped Hol wrapping stairwell)
-            {"id": "poddasze_hol", "level_id": "poddasze", "code": "2.1", "name": "Hol", "polygon_xy": [(0.44, 3.02), (1.54, 3.02), (1.54, 4.10), (5.28, 4.10), (5.28, 3.02), (6.82, 3.02), (6.82, 5.11), (0.44, 5.11)], "pdf_usable_area_m2": 8.98, "pdf_floor_area_m2": 8.98, "floor_material_id": "mat_floor_oak"},
+            {"id": "poddasze_hol", "level_id": "poddasze", "code": "2.1", "name": "Hol", "polygon_xy": [(0.44, 3.31), (1.54, 3.31), (1.54, 4.10), (5.28, 4.10), (5.28, 3.02), (6.82, 3.02), (6.82, 5.11), (0.44, 5.11)], "pdf_usable_area_m2": 8.98, "pdf_floor_area_m2": 8.98, "floor_material_id": "mat_floor_oak"},
             {"id": "poddasze_pokoj_nw", "level_id": "poddasze", "code": "2.2", "name": "Pokój NW", "polygon_xy": [(0.44, 5.23), (4.96, 5.23), (4.96, 7.96), (0.44, 7.96)], "pdf_usable_area_m2": 10.18, "pdf_floor_area_m2": 12.34, "floor_material_id": "mat_floor_oak"},
-            {"id": "poddasze_pokoj_ne", "level_id": "poddasze", "code": "2.3", "name": "Pokój NE", "polygon_xy": [(5.08, 5.23), (6.94, 5.23), (6.94, 4.74), (9.86, 4.74), (9.86, 7.96), (5.08, 7.96)], "pdf_usable_area_m2": 11.68, "pdf_floor_area_m2": 13.83, "floor_material_id": "mat_floor_oak"},
-            {"id": "poddasze_pokoj_se", "level_id": "poddasze", "code": "2.4", "name": "Pokój SE", "polygon_xy": [(6.94, 0.44), (9.86, 0.44), (9.86, 4.62), (6.94, 4.62)], "pdf_usable_area_m2": 10.58, "pdf_floor_area_m2": 11.92, "floor_material_id": "mat_floor_oak"},
-            {"id": "poddasze_lazienka", "level_id": "poddasze", "code": "2.5", "name": "Łazienka", "polygon_xy": [(4.34, 0.44), (6.82, 0.44), (6.82, 2.90), (4.34, 2.90)], "pdf_usable_area_m2": 4.77, "pdf_floor_area_m2": 5.90, "floor_material_id": "mat_floor_gres"},
-            {"id": "poddasze_pokoj_sw", "level_id": "poddasze", "code": "2.6", "name": "Pokój SW", "polygon_xy": [(0.44, 0.44), (4.22, 0.44), (4.22, 2.90), (0.44, 2.90)], "pdf_usable_area_m2": 7.31, "pdf_floor_area_m2": 9.05, "floor_material_id": "mat_floor_oak"},
+            {"id": "poddasze_pokoj_ne", "level_id": "poddasze", "code": "2.3", "name": "Pokój NE", "polygon_xy": [(5.08, 5.23), (6.94, 5.23), (6.94, 4.92), (9.86, 4.92), (9.86, 7.96), (5.08, 7.96)], "pdf_usable_area_m2": 11.68, "pdf_floor_area_m2": 13.83, "floor_material_id": "mat_floor_oak"},
+            {"id": "poddasze_pokoj_se", "level_id": "poddasze", "code": "2.4", "name": "Pokój SE", "polygon_xy": [(6.94, 0.44), (9.86, 0.44), (9.86, 4.52), (6.94, 4.52)], "pdf_usable_area_m2": 10.58, "pdf_floor_area_m2": 11.92, "floor_material_id": "mat_floor_oak"},
+            {"id": "poddasze_lazienka", "level_id": "poddasze", "code": "2.5", "name": "Łazienka", "polygon_xy": [(4.42, 0.44), (6.82, 0.44), (6.82, 2.90), (4.42, 2.90)], "pdf_usable_area_m2": 4.77, "pdf_floor_area_m2": 5.90, "floor_material_id": "mat_floor_gres"},
+            {"id": "poddasze_pokoj_sw", "level_id": "poddasze", "code": "2.6", "name": "Pokój SW", "polygon_xy": [(0.44, 0.44), (4.12, 0.44), (4.12, 2.90), (0.44, 2.90)], "pdf_usable_area_m2": 7.31, "pdf_floor_area_m2": 9.05, "floor_material_id": "mat_floor_oak"},
         ],
         "slabs": [
             {
                 "id": "slab_parter_ceiling",
                 "level_id": "parter",
-                "polygon_xy": [(0.00, 0.00), (10.30, 0.00), (10.30, 8.40), (0.00, 8.40)],
+                "polygon_xy": [(0.04, 0.04), (10.26, 0.04), (10.26, 8.36), (0.04, 8.36)],
                 "z_bottom": 2.74,
                 "z_top": 3.02,
                 "material_id": "mat_slab_concrete",
@@ -231,6 +231,32 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
             {"id": "mep_lazienka_parter_woda", "room_id": "parter_lazienka", "socket_type": "water_cold_hot", "position_xyz": (4.40, 0.50, 0.55), "material_id": "mat_mep"},
             {"id": "mep_kotlownia_gaz", "room_id": "parter_kotlownia", "socket_type": "gas", "position_xyz": (0.50, 7.50, 1.40), "material_id": "mat_mep"},
             {"id": "mep_lazienka_podd_woda", "room_id": "poddasze_lazienka", "socket_type": "water_cold_hot", "position_xyz": (6.45, 1.80, 3.63), "material_id": "mat_mep"},
+        ],
+        "custom_elements": [
+            # Entrance porch corner column, lintel beams & oak wood soffit ceiling
+            {"id": "porch_column_sw", "level_id": "parter", "bbox_xy": (0.00, 0.00, 0.28, 0.28), "z_bottom": -0.02, "z_top": 2.31, "material_id": "mat_wall_plaster", "collidable": True},
+            {"id": "porch_lintel_front", "level_id": "parter", "bbox_xy": (0.00, 0.00, 2.48, 0.35), "z_bottom": 2.31, "z_top": 3.08, "material_id": "mat_wall_plaster", "collidable": False},
+            {"id": "porch_lintel_west", "level_id": "parter", "bbox_xy": (0.00, 0.35, 0.35, 1.38), "z_bottom": 2.31, "z_top": 3.08, "material_id": "mat_wall_plaster", "collidable": False},
+            {"id": "porch_ceiling_wood", "level_id": "parter", "bbox_xy": (0.02, 0.02, 2.46, 1.36), "z_bottom": 2.28, "z_top": 2.31, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "porch_wall_wood_right", "level_id": "parter", "bbox_xy": (2.45, 0.02, 2.478, 1.36), "z_bottom": 0.12, "z_top": 2.28, "material_id": "mat_facade_wood", "collidable": False},
+            # Perimeter plinth band (z = -0.36 .. +0.118 m, dark anthracite/grey)
+            {"id": "plinth_band_south", "level_id": "parter", "bbox_xy": (2.48, -0.018, 10.318, 0.00), "z_bottom": -0.36, "z_top": 0.118, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "plinth_band_east", "level_id": "parter", "bbox_xy": (10.30, 0.00, 10.318, 8.40), "z_bottom": -0.36, "z_top": 0.118, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "plinth_band_north", "level_id": "parter", "bbox_xy": (-0.018, 8.40, 10.318, 8.418), "z_bottom": -0.36, "z_top": 0.118, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "plinth_band_west", "level_id": "parter", "bbox_xy": (-0.018, 1.38, 0.00, 8.40), "z_bottom": -0.36, "z_top": 0.118, "material_id": "mat_frame_dark", "collidable": False},
+            # Anthracite inter-window band between Bathroom and Kitchen windows on South facade
+            {"id": "facade_band_anthracite_south", "level_id": "parter", "bbox_xy": (5.38, -0.022, 6.38, -0.002), "z_bottom": 0.85, "z_top": 2.30, "material_id": "mat_frame_dark", "collidable": False},
+            # Oak wood facade cladding panels (starts at z=0.12 m above plinth — Invariant 3)
+            {"id": "facade_wood_south_kitchen", "level_id": "parter", "bbox_xy": (8.68, -0.022, 10.30, -0.002), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_east_kitchen", "level_id": "parter", "bbox_xy": (10.302, 0.00, 10.322, 4.21), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_east_north_corner", "level_id": "parter", "bbox_xy": (10.302, 6.96, 10.322, 8.40), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_north_right", "level_id": "parter", "bbox_xy": (9.62, 8.402, 10.30, 8.422), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_north_center", "level_id": "parter", "bbox_xy": (4.70, 8.402, 6.62, 8.422), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_north_left", "level_id": "parter", "bbox_xy": (0.00, 8.402, 3.60, 8.422), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_west_porch", "level_id": "parter", "bbox_xy": (-0.022, 1.38, -0.002, 4.83), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            # Eave gutters (anthracite)
+            {"id": "gutter_south_eave", "level_id": "poddasze", "bbox_xy": (-0.65, -0.72, 10.95, -0.64), "z_bottom": 3.56, "z_top": 3.66, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "gutter_north_eave", "level_id": "poddasze", "bbox_xy": (-0.65, 9.04, 10.95, 9.12), "z_bottom": 3.56, "z_top": 3.66, "material_id": "mat_frame_dark", "collidable": False},
         ],
     }
 

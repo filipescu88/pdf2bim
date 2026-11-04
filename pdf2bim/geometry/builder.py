@@ -133,7 +133,11 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
 
             for layer_idx, off_lo, off_hi in layer_offsets:
                 layer = w.layers[layer_idx]
-                quad_xy = _quad_on_wall(w, ua, ub, off_lo, off_hi)
+                ua_eff = ua + (0.025 if (len(w.layers) > 1 and layer.role != "finish_ext" and ua < 1e-4) else 0.0)
+                ub_eff = ub - (0.025 if (len(w.layers) > 1 and layer.role != "finish_ext" and ub > L - 1e-4) else 0.0)
+                if ub_eff - ua_eff < 1e-3:
+                    continue
+                quad_xy = _quad_on_wall(w, ua_eff, ub_eff, off_lo, off_hi)
                 zb_layer = w.z_bottom + layer.z_bottom_offset
                 zt_layer = w.z_top + layer.z_top_offset
 
@@ -752,6 +756,28 @@ def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                         "socket_type": mep.socket_type,
                         "category": "mep_socket",
                     },
+                )
+            )
+
+    # Custom architectural elements (porch soffits, lintels, facade wood panels, etc.)
+    for ce in sg.custom_elements:
+        cx0, cy0, cx1, cy1 = ce.bbox_xy
+        ce_quad = [(cx0, cy0), (cx1, cy0), (cx1, cy1), (cx0, cy1)]
+        ce_mesh = extrude_quad_prism(ce_quad, ce.z_bottom, ce.z_top)
+        if ce_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Detal_{ce.id}",
+                    element_id=ce.id,
+                    category="custom_element",
+                    level_id=ce.level_id,
+                    material_id=ce.material_id,
+                    ue_mesh_name=f"SM_Custom_{ce.id}",
+                    ue_material_name=_ue_mat_name(sg, ce.material_id),
+                    mesh=ce_mesh,
+                    collidable=ce.collidable,
+                    base_quad_xy=ce_quad,
+                    extras={"element_id": ce.id, "category": "custom_element", "level_id": ce.level_id},
                 )
             )
 

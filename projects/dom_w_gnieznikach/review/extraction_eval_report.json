@@ -4,11 +4,11 @@
   "passed": true,
   "structural_walls_within_5cm_ratio": 1.0,
   "max_structural_wall_deviation_cm": 1.2,
-  "mean_structural_wall_deviation_cm": 0.21,
-  "mean_room_iou": 0.9668,
-  "min_room_iou": 0.8507,
-  "detected_openings_count": 22,
-  "gt_openings_count": 22,
+  "mean_structural_wall_deviation_cm": 0.11,
+  "mean_room_iou": 0.9543,
+  "min_room_iou": 0.7764,
+  "detected_openings_count": 24,
+  "gt_openings_count": 24,
   "wall_matches": [
     {
       "gt_wall_id": "w_p_south_main",
@@ -83,6 +83,24 @@
       "within_5cm": true
     },
     {
+      "gt_wall_id": "w_p_stair_enclosure_south",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 2.96,
+      "extracted_coord_m": 2.96,
+      "deviation_cm": 0.0,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_stair_enclosure_west",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 1.52,
+      "extracted_coord_m": 1.52,
+      "deviation_cm": 0.0,
+      "within_5cm": true
+    },
+    {
       "gt_wall_id": "w_p_lazienka_north",
       "level_id": "parter",
       "wall_type": "interior_partition",
@@ -95,18 +113,18 @@
       "gt_wall_id": "w_p_lazienka_east",
       "level_id": "parter",
       "wall_type": "interior_partition",
-      "expected_coord_m": 5.66,
+      "expected_coord_m": 5.74,
       "extracted_coord_m": 5.86,
-      "deviation_cm": 19.99,
+      "deviation_cm": 11.99,
       "within_5cm": false
     },
     {
       "gt_wall_id": "w_p_schody_north",
       "level_id": "parter",
       "wall_type": "interior_loadbearing",
-      "expected_coord_m": 4.0,
-      "extracted_coord_m": 4.012,
-      "deviation_cm": 1.2,
+      "expected_coord_m": 3.97,
+      "extracted_coord_m": 3.97,
+      "deviation_cm": 0.0,
       "within_5cm": true
     },
     {
@@ -164,11 +182,29 @@
       "within_5cm": true
     },
     {
+      "gt_wall_id": "w_a_pok2_pok3_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 4.62,
+      "extracted_coord_m": 4.632,
+      "deviation_cm": 1.2,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_hol_east",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 6.82,
+      "extracted_coord_m": 6.82,
+      "deviation_cm": 0.02,
+      "within_5cm": true
+    },
+    {
       "gt_wall_id": "w_a_hol_south",
       "level_id": "poddasze",
       "wall_type": "interior_partition",
-      "expected_coord_m": 2.92,
-      "extracted_coord_m": 2.932,
+      "expected_coord_m": 2.9,
+      "extracted_coord_m": 2.912,
       "deviation_cm": 1.2,
       "within_5cm": true
     },
@@ -176,18 +212,9 @@
       "gt_wall_id": "w_a_sw_laz_div",
       "level_id": "poddasze",
       "wall_type": "interior_partition",
-      "expected_coord_m": 4.09,
+      "expected_coord_m": 4.22,
       "extracted_coord_m": 4.22,
-      "deviation_cm": 13.0,
-      "within_5cm": false
-    },
-    {
-      "gt_wall_id": "w_a_laz_se_div",
-      "level_id": "poddasze",
-      "wall_type": "interior_partition",
-      "expected_coord_m": 6.58,
-      "extracted_coord_m": 6.592,
-      "deviation_cm": 1.2,
+      "deviation_cm": 0.0,
       "within_5cm": true
     }
   ],
@@ -197,104 +224,104 @@
       "level_id": "parter",
       "room_name": "Wiatrołap",
       "gt_area_m2": 4.42,
-      "extracted_area_m2": 4.44,
-      "iou": 0.9935
+      "extracted_area_m2": 3.46,
+      "iou": 0.7764
     },
     {
       "gt_room_id": "parter_hol",
       "level_id": "parter",
       "room_name": "Hol",
-      "gt_area_m2": 4.5,
-      "extracted_area_m2": 4.39,
-      "iou": 0.9411
+      "gt_area_m2": 4.3,
+      "extracted_area_m2": 4.19,
+      "iou": 0.9398
     },
     {
       "gt_room_id": "parter_schody",
       "level_id": "parter",
       "room_name": "Schody",
       "gt_area_m2": 3.26,
-      "extracted_area_m2": 2.89,
-      "iou": 0.8507
+      "extracted_area_m2": 2.82,
+      "iou": 0.8293
     },
     {
       "gt_room_id": "parter_salon_jadalnia",
       "level_id": "parter",
       "room_name": "Salon + Jadalnia",
-      "gt_area_m2": 28.34,
-      "extracted_area_m2": 27.9,
-      "iou": 0.9802
+      "gt_area_m2": 27.67,
+      "extracted_area_m2": 27.29,
+      "iou": 0.9816
     },
     {
       "gt_room_id": "parter_kuchnia",
       "level_id": "parter",
       "room_name": "Kuchnia",
       "gt_area_m2": 13.92,
-      "extracted_area_m2": 14.01,
-      "iou": 0.9933
+      "extracted_area_m2": 13.87,
+      "iou": 0.9804
     },
     {
       "gt_room_id": "parter_lazienka",
       "level_id": "parter",
       "room_name": "Łazienka",
-      "gt_area_m2": 3.4,
-      "extracted_area_m2": 3.44,
-      "iou": 0.9804
+      "gt_area_m2": 3.5,
+      "extracted_area_m2": 3.54,
+      "iou": 0.9807
     },
     {
       "gt_room_id": "parter_kotlownia",
       "level_id": "parter",
       "room_name": "Kotłownia",
-      "gt_area_m2": 6.51,
+      "gt_area_m2": 6.57,
       "extracted_area_m2": 6.6,
-      "iou": 0.9875
+      "iou": 0.9884
     },
     {
       "gt_room_id": "poddasze_hol",
       "level_id": "poddasze",
       "room_name": "Hol",
-      "gt_area_m2": 8.99,
-      "extracted_area_m2": 8.53,
-      "iou": 0.923
+      "gt_area_m2": 9.3,
+      "extracted_area_m2": 9.43,
+      "iou": 0.9792
     },
     {
       "gt_room_id": "poddasze_pokoj_nw",
       "level_id": "poddasze",
       "room_name": "Pokój NW",
       "gt_area_m2": 12.34,
-      "extracted_area_m2": 12.31,
-      "iou": 0.9933
+      "extracted_area_m2": 12.33,
+      "iou": 0.9922
     },
     {
       "gt_room_id": "poddasze_pokoj_ne",
       "level_id": "poddasze",
       "room_name": "Pokój NE",
-      "gt_area_m2": 13.84,
-      "extracted_area_m2": 13.83,
-      "iou": 0.993
+      "gt_area_m2": 14.48,
+      "extracted_area_m2": 14.14,
+      "iou": 0.9707
     },
     {
       "gt_room_id": "poddasze_pokoj_se",
       "level_id": "poddasze",
       "room_name": "Pokój SE",
-      "gt_area_m2": 11.91,
-      "extracted_area_m2": 12.02,
-      "iou": 0.9912
+      "gt_area_m2": 12.21,
+      "extracted_area_m2": 12.24,
+      "iou": 0.997
     },
     {
       "gt_room_id": "poddasze_lazienka",
       "level_id": "poddasze",
       "room_name": "Łazienka",
-      "gt_area_m2": 5.9,
-      "extracted_area_m2": 5.62,
-      "iou": 0.9484
+      "gt_area_m2": 6.1,
+      "extracted_area_m2": 6.13,
+      "iou": 0.995
     },
     {
       "gt_room_id": "poddasze_pokoj_sw",
       "level_id": "poddasze",
       "room_name": "Pokój SW",
-      "gt_area_m2": 9.05,
-      "extracted_area_m2": 9.12,
-      "iou": 0.9924
+      "gt_area_m2": 9.3,
+      "extracted_area_m2": 9.34,
+      "iou": 0.9951
     }
   ]
 }

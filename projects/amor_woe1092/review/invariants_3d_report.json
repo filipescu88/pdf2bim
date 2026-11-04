@@ -1,7 +1,7 @@
 {
   "project_slug": "amor_woe1092",
   "passed": true,
-  "total_nodes": 257,
+  "total_nodes": 267,
   "checks": [
     {
       "invariant_id": 1,
@@ -42,7 +42,7 @@
       "invariant_id": 6,
       "name": "Attic walls clipped analytically to roof inner plane and soffit boxes bounded by building walls",
       "passed": true,
-      "checked_count": 39,
+      "checked_count": 40,
       "violations": []
     },
     {

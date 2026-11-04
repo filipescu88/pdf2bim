@@ -3,7 +3,7 @@
   "passed": true,
   "max_exterior_wall_deviation_cm": 1.08,
   "mean_wall_deviation_cm": 0.77,
-  "min_contour_overlap_ratio": 0.881,
+  "min_contour_overlap_ratio": 0.888,
   "levels": [
     {
       "level_id": "parter",
@@ -161,7 +161,7 @@
       "scale_y_pt_per_m": 18.4895,
       "max_exterior_wall_deviation_cm": 1.08,
       "mean_wall_deviation_cm": 0.71,
-      "wall_contour_overlap_ratio": 0.881,
+      "wall_contour_overlap_ratio": 0.893,
       "passed": true,
       "wall_metrics": [
         {
@@ -234,7 +234,7 @@
           "expected_coord_m": 6.56,
           "detected_pdf_coord_m": 6.569,
           "deviation_cm": 0.9,
-          "contour_overlap": 0.893
+          "contour_overlap": 0.871
         },
         {
           "wall_id": "w_a_laz_pralnia_div",
@@ -243,7 +243,7 @@
           "expected_coord_m": 4.6,
           "detected_pdf_coord_m": 4.611,
           "deviation_cm": 1.08,
-          "contour_overlap": 0.688
+          "contour_overlap": 0.823
         }
       ]
     }
