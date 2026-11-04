@@ -1,0 +1,1711 @@
+{
+  "$defs": {
+    "ChimneySpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "bbox_xy": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Xy",
+          "type": "array"
+        },
+        "z_bottom": {
+          "title": "Z Bottom",
+          "type": "number"
+        },
+        "z_top": {
+          "title": "Z Top",
+          "type": "number"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "bbox_xy",
+        "z_bottom",
+        "z_top",
+        "material_id"
+      ],
+      "title": "ChimneySpec",
+      "type": "object"
+    },
+    "CoordinateSystemSpec": {
+      "properties": {
+        "x_axis": {
+          "const": "plan_right",
+          "default": "plan_right",
+          "title": "X Axis",
+          "type": "string"
+        },
+        "y_axis": {
+          "const": "plan_up",
+          "default": "plan_up",
+          "title": "Y Axis",
+          "type": "string"
+        },
+        "z_axis": {
+          "const": "up",
+          "default": "up",
+          "title": "Z Axis",
+          "type": "string"
+        },
+        "origin_definition": {
+          "const": "bottom_left_aabb_structural_masonry_parter_z0_finished_floor",
+          "default": "bottom_left_aabb_structural_masonry_parter_z0_finished_floor",
+          "title": "Origin Definition",
+          "type": "string"
+        },
+        "structural_bbox_xy": {
+          "description": "(0.0, 0.0, width_x, depth_y) of parter structural masonry",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Structural Bbox Xy",
+          "type": "array"
+        }
+      },
+      "required": [
+        "structural_bbox_xy"
+      ],
+      "title": "CoordinateSystemSpec",
+      "type": "object"
+    },
+    "CustomBoxSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "level_id": {
+          "title": "Level Id",
+          "type": "string"
+        },
+        "bbox_xy": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Xy",
+          "type": "array"
+        },
+        "z_bottom": {
+          "title": "Z Bottom",
+          "type": "number"
+        },
+        "z_top": {
+          "title": "Z Top",
+          "type": "number"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        },
+        "collidable": {
+          "default": true,
+          "title": "Collidable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "level_id",
+        "bbox_xy",
+        "z_bottom",
+        "z_top",
+        "material_id"
+      ],
+      "title": "CustomBoxSpec",
+      "type": "object"
+    },
+    "DoorSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "wall_id": {
+          "title": "Wall Id",
+          "type": "string"
+        },
+        "offset_along_wall": {
+          "minimum": 0.0,
+          "title": "Offset Along Wall",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0.0,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0.0,
+          "title": "Height",
+          "type": "number"
+        },
+        "sill_z": {
+          "default": 0.0,
+          "title": "Sill Z",
+          "type": "number"
+        },
+        "hinge_side": {
+          "default": "left",
+          "enum": [
+            "left",
+            "right"
+          ],
+          "title": "Hinge Side",
+          "type": "string"
+        },
+        "swing_dir": {
+          "default": "in",
+          "enum": [
+            "in",
+            "out"
+          ],
+          "title": "Swing Dir",
+          "type": "string"
+        },
+        "open_angle_deg": {
+          "default": 90.0,
+          "exclusiveMinimum": 0.0,
+          "maximum": 180.0,
+          "title": "Open Angle Deg",
+          "type": "number"
+        },
+        "frame_material_id": {
+          "title": "Frame Material Id",
+          "type": "string"
+        },
+        "leaf_material_id": {
+          "title": "Leaf Material Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "wall_id",
+        "offset_along_wall",
+        "width",
+        "height",
+        "frame_material_id",
+        "leaf_material_id"
+      ],
+      "title": "DoorSpec",
+      "type": "object"
+    },
+    "FurnitureItemSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "room_id": {
+          "title": "Room Id",
+          "type": "string"
+        },
+        "asset": {
+          "title": "Asset",
+          "type": "string"
+        },
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "bbox_xy": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Xy",
+          "type": "array"
+        },
+        "z_range": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Z Range",
+          "type": "array"
+        },
+        "back_side": {
+          "default": "N",
+          "enum": [
+            "N",
+            "S",
+            "E",
+            "W"
+          ],
+          "title": "Back Side",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "room_id",
+        "asset",
+        "category",
+        "bbox_xy",
+        "z_range"
+      ],
+      "title": "FurnitureItemSpec",
+      "type": "object"
+    },
+    "LevelSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "floor_index": {
+          "title": "Floor Index",
+          "type": "integer"
+        },
+        "z_floor": {
+          "title": "Z Floor",
+          "type": "number"
+        },
+        "z_ceiling": {
+          "title": "Z Ceiling",
+          "type": "number"
+        },
+        "slab_thickness": {
+          "default": 0.0,
+          "title": "Slab Thickness",
+          "type": "number"
+        },
+        "knee_wall_height_m": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Knee Wall Height M"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "floor_index",
+        "z_floor",
+        "z_ceiling"
+      ],
+      "title": "LevelSpec",
+      "type": "object"
+    },
+    "MaterialSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "ue_name": {
+          "description": "Unreal Engine material name starting with M_",
+          "pattern": "^M_[A-Za-z0-9_]+$",
+          "title": "Ue Name",
+          "type": "string"
+        },
+        "base_color_rgb": {
+          "default": [
+            0.85,
+            0.85,
+            0.85
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Base Color Rgb",
+          "type": "array"
+        },
+        "roughness": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Roughness",
+          "type": "number"
+        },
+        "metallic": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Metallic",
+          "type": "number"
+        },
+        "opacity": {
+          "default": 1.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Opacity",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "ue_name"
+      ],
+      "title": "MaterialSpec",
+      "type": "object"
+    },
+    "MepSocketSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "room_id": {
+          "title": "Room Id",
+          "type": "string"
+        },
+        "socket_type": {
+          "enum": [
+            "water_cold_hot",
+            "sewage_drain",
+            "power_400v",
+            "power_230v",
+            "gas",
+            "ventilation_flue"
+          ],
+          "title": "Socket Type",
+          "type": "string"
+        },
+        "position_xyz": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Position Xyz",
+          "type": "array"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "room_id",
+        "socket_type",
+        "position_xyz",
+        "material_id"
+      ],
+      "title": "MepSocketSpec",
+      "type": "object"
+    },
+    "NeighborBuildingSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "footprint_xy": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Footprint Xy",
+          "type": "array"
+        },
+        "eave_height_m": {
+          "title": "Eave Height M",
+          "type": "number"
+        },
+        "ridge_height_m": {
+          "title": "Ridge Height M",
+          "type": "number"
+        },
+        "roof_type": {
+          "default": "gable",
+          "enum": [
+            "gable",
+            "hip",
+            "flat"
+          ],
+          "title": "Roof Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "footprint_xy",
+        "eave_height_m",
+        "ridge_height_m"
+      ],
+      "title": "NeighborBuildingSpec",
+      "type": "object"
+    },
+    "OpeningsGroupSpec": {
+      "properties": {
+        "windows": {
+          "items": {
+            "$ref": "#/$defs/WindowSpec"
+          },
+          "title": "Windows",
+          "type": "array"
+        },
+        "doors": {
+          "items": {
+            "$ref": "#/$defs/DoorSpec"
+          },
+          "title": "Doors",
+          "type": "array"
+        },
+        "roof_windows": {
+          "items": {
+            "$ref": "#/$defs/RoofWindowSpec"
+          },
+          "title": "Roof Windows",
+          "type": "array"
+        }
+      },
+      "title": "OpeningsGroupSpec",
+      "type": "object"
+    },
+    "PipelineSettingsSpec": {
+      "properties": {
+        "include_furniture": {
+          "default": false,
+          "title": "Include Furniture",
+          "type": "boolean"
+        },
+        "target_engine": {
+          "default": "unreal_engine",
+          "enum": [
+            "unreal_engine",
+            "webxr"
+          ],
+          "title": "Target Engine",
+          "type": "string"
+        },
+        "is_ground_truth_reference": {
+          "default": true,
+          "title": "Is Ground Truth Reference",
+          "type": "boolean"
+        }
+      },
+      "title": "PipelineSettingsSpec",
+      "type": "object"
+    },
+    "RailingSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "polyline_xy": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 2,
+          "title": "Polyline Xy",
+          "type": "array"
+        },
+        "z_base": {
+          "title": "Z Base",
+          "type": "number"
+        },
+        "height": {
+          "default": 1.05,
+          "title": "Height",
+          "type": "number"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "polyline_xy",
+        "z_base",
+        "material_id"
+      ],
+      "title": "RailingSpec",
+      "type": "object"
+    },
+    "RoofPlaneSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "polygon_xy": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 3,
+          "title": "Polygon Xy",
+          "type": "array"
+        },
+        "ridge_line_xy": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            }
+          ],
+          "title": "Ridge Line Xy",
+          "type": "array"
+        },
+        "slope_deg": {
+          "maximum": 85.0,
+          "minimum": 0.0,
+          "title": "Slope Deg",
+          "type": "number"
+        },
+        "z_at_ridge": {
+          "title": "Z At Ridge",
+          "type": "number"
+        },
+        "downslope_dir_xy": {
+          "description": "Unit vector in XY pointing down the slope perpendicular to ridge",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Downslope Dir Xy",
+          "type": "array"
+        },
+        "thickness": {
+          "default": 0.28,
+          "title": "Thickness",
+          "type": "number"
+        },
+        "tile_material_id": {
+          "title": "Tile Material Id",
+          "type": "string"
+        },
+        "soffit_material_id": {
+          "title": "Soffit Material Id",
+          "type": "string"
+        },
+        "soffit_x_bounds": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Soffit X Bounds"
+        }
+      },
+      "required": [
+        "id",
+        "polygon_xy",
+        "ridge_line_xy",
+        "slope_deg",
+        "z_at_ridge",
+        "downslope_dir_xy",
+        "tile_material_id",
+        "soffit_material_id"
+      ],
+      "title": "RoofPlaneSpec",
+      "type": "object"
+    },
+    "RoofSpec": {
+      "properties": {
+        "roof_type": {
+          "enum": [
+            "gable",
+            "hip",
+            "multi_pitched",
+            "shed",
+            "flat"
+          ],
+          "title": "Roof Type",
+          "type": "string"
+        },
+        "knee_wall_height_m": {
+          "default": 1.4,
+          "title": "Knee Wall Height M",
+          "type": "number"
+        },
+        "overhang_m": {
+          "default": 0.65,
+          "title": "Overhang M",
+          "type": "number"
+        },
+        "planes": {
+          "items": {
+            "$ref": "#/$defs/RoofPlaneSpec"
+          },
+          "minItems": 1,
+          "title": "Planes",
+          "type": "array"
+        },
+        "chimneys": {
+          "items": {
+            "$ref": "#/$defs/ChimneySpec"
+          },
+          "title": "Chimneys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "roof_type",
+        "planes"
+      ],
+      "title": "RoofSpec",
+      "type": "object"
+    },
+    "RoofWindowSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "roof_plane_id": {
+          "title": "Roof Plane Id",
+          "type": "string"
+        },
+        "center_xy": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Center Xy",
+          "type": "array"
+        },
+        "width": {
+          "exclusiveMinimum": 0.0,
+          "title": "Width",
+          "type": "number"
+        },
+        "length_along_slope": {
+          "exclusiveMinimum": 0.0,
+          "title": "Length Along Slope",
+          "type": "number"
+        },
+        "frame_material_id": {
+          "title": "Frame Material Id",
+          "type": "string"
+        },
+        "glass_material_id": {
+          "title": "Glass Material Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "roof_plane_id",
+        "center_xy",
+        "width",
+        "length_along_slope",
+        "frame_material_id",
+        "glass_material_id"
+      ],
+      "title": "RoofWindowSpec",
+      "type": "object"
+    },
+    "RoomSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "level_id": {
+          "title": "Level Id",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "polygon_xy": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 3,
+          "title": "Polygon Xy",
+          "type": "array"
+        },
+        "pdf_usable_area_m2": {
+          "description": "Usable area in m2 from PDF table (PN-ISO 9836)",
+          "exclusiveMinimum": 0.0,
+          "title": "Pdf Usable Area M2",
+          "type": "number"
+        },
+        "pdf_floor_area_m2": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total floor area in m2 if listed in PDF",
+          "title": "Pdf Floor Area M2"
+        },
+        "floor_material_id": {
+          "title": "Floor Material Id",
+          "type": "string"
+        },
+        "floor_thickness": {
+          "default": 0.02,
+          "title": "Floor Thickness",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "level_id",
+        "code",
+        "name",
+        "polygon_xy",
+        "pdf_usable_area_m2",
+        "floor_material_id"
+      ],
+      "title": "RoomSpec",
+      "type": "object"
+    },
+    "SiteSpec": {
+      "properties": {
+        "plot_id": {
+          "title": "Plot Id",
+          "type": "string"
+        },
+        "transform": {
+          "$ref": "#/$defs/SiteTransformSpec"
+        },
+        "boundary_polygon_xy": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Boundary Polygon Xy",
+          "type": "array"
+        },
+        "elevation_points_xyz": {
+          "items": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Elevation Points Xyz",
+          "type": "array"
+        },
+        "wz_constraints": {
+          "$ref": "#/$defs/WZConstraintsSpec"
+        },
+        "neighbors": {
+          "items": {
+            "$ref": "#/$defs/NeighborBuildingSpec"
+          },
+          "title": "Neighbors",
+          "type": "array"
+        },
+        "terraces": {
+          "items": {
+            "$ref": "#/$defs/TerraceSpec"
+          },
+          "title": "Terraces",
+          "type": "array"
+        }
+      },
+      "required": [
+        "plot_id"
+      ],
+      "title": "SiteSpec",
+      "type": "object"
+    },
+    "SiteTransformSpec": {
+      "properties": {
+        "origin_easting": {
+          "default": 0.0,
+          "title": "Origin Easting",
+          "type": "number"
+        },
+        "origin_northing": {
+          "default": 0.0,
+          "title": "Origin Northing",
+          "type": "number"
+        },
+        "origin_elevation_masl": {
+          "default": 0.0,
+          "title": "Origin Elevation Masl",
+          "type": "number"
+        },
+        "rotation_to_north_deg": {
+          "default": 0.0,
+          "description": "Angle in degrees from +Y (plan_up) to geographic North",
+          "title": "Rotation To North Deg",
+          "type": "number"
+        }
+      },
+      "title": "SiteTransformSpec",
+      "type": "object"
+    },
+    "SlabSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "level_id": {
+          "title": "Level Id",
+          "type": "string"
+        },
+        "polygon_xy": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 3,
+          "title": "Polygon Xy",
+          "type": "array"
+        },
+        "z_bottom": {
+          "title": "Z Bottom",
+          "type": "number"
+        },
+        "z_top": {
+          "title": "Z Top",
+          "type": "number"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        },
+        "voids_xy": {
+          "items": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "title": "Voids Xy",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "level_id",
+        "polygon_xy",
+        "z_bottom",
+        "z_top",
+        "material_id"
+      ],
+      "title": "SlabSpec",
+      "type": "object"
+    },
+    "StairFlightSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "bbox_xy": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Xy",
+          "type": "array"
+        },
+        "z_start": {
+          "title": "Z Start",
+          "type": "number"
+        },
+        "z_end": {
+          "title": "Z End",
+          "type": "number"
+        },
+        "steps_count": {
+          "minimum": 1,
+          "title": "Steps Count",
+          "type": "integer"
+        },
+        "riser_h": {
+          "exclusiveMinimum": 0.0,
+          "title": "Riser H",
+          "type": "number"
+        },
+        "tread_d": {
+          "exclusiveMinimum": 0.0,
+          "title": "Tread D",
+          "type": "number"
+        },
+        "direction": {
+          "enum": [
+            "+X",
+            "-X",
+            "+Y",
+            "-Y"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "waist_slab_thickness": {
+          "default": 0.16,
+          "title": "Waist Slab Thickness",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "bbox_xy",
+        "z_start",
+        "z_end",
+        "steps_count",
+        "riser_h",
+        "tread_d",
+        "direction"
+      ],
+      "title": "StairFlightSpec",
+      "type": "object"
+    },
+    "StairLandingSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "bbox_xy": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Xy",
+          "type": "array"
+        },
+        "z_top": {
+          "title": "Z Top",
+          "type": "number"
+        },
+        "thickness": {
+          "default": 0.16,
+          "title": "Thickness",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "bbox_xy",
+        "z_top"
+      ],
+      "title": "StairLandingSpec",
+      "type": "object"
+    },
+    "StairSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "from_level_id": {
+          "title": "From Level Id",
+          "type": "string"
+        },
+        "to_level_id": {
+          "title": "To Level Id",
+          "type": "string"
+        },
+        "stair_type": {
+          "enum": [
+            "straight",
+            "dog_leg_landing",
+            "l_shaped"
+          ],
+          "title": "Stair Type",
+          "type": "string"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        },
+        "flights": {
+          "items": {
+            "$ref": "#/$defs/StairFlightSpec"
+          },
+          "minItems": 1,
+          "title": "Flights",
+          "type": "array"
+        },
+        "landings": {
+          "items": {
+            "$ref": "#/$defs/StairLandingSpec"
+          },
+          "title": "Landings",
+          "type": "array"
+        },
+        "railings": {
+          "items": {
+            "$ref": "#/$defs/RailingSpec"
+          },
+          "title": "Railings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "from_level_id",
+        "to_level_id",
+        "stair_type",
+        "material_id",
+        "flights"
+      ],
+      "title": "StairSpec",
+      "type": "object"
+    },
+    "TerraceSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "polygon_xy": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Polygon Xy",
+          "type": "array"
+        },
+        "z_bottom": {
+          "default": -0.36,
+          "title": "Z Bottom",
+          "type": "number"
+        },
+        "z_top": {
+          "default": -0.02,
+          "title": "Z Top",
+          "type": "number"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "polygon_xy",
+        "material_id"
+      ],
+      "title": "TerraceSpec",
+      "type": "object"
+    },
+    "WZConstraintsSpec": {
+      "properties": {
+        "building_line_y_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Building Line Y Min"
+        },
+        "max_ridge_height_m": {
+          "default": 9.5,
+          "title": "Max Ridge Height M",
+          "type": "number"
+        },
+        "roof_slope_deg_range": {
+          "default": [
+            20.0,
+            45.0
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Roof Slope Deg Range",
+          "type": "array"
+        },
+        "min_biologically_active_ratio": {
+          "default": 0.5,
+          "title": "Min Biologically Active Ratio",
+          "type": "number"
+        }
+      },
+      "title": "WZConstraintsSpec",
+      "type": "object"
+    },
+    "WallLayerSpec": {
+      "properties": {
+        "role": {
+          "enum": [
+            "core",
+            "insulation",
+            "finish_ext",
+            "finish_int"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "thickness": {
+          "exclusiveMinimum": 0.0,
+          "title": "Thickness",
+          "type": "number"
+        },
+        "material_id": {
+          "title": "Material Id",
+          "type": "string"
+        },
+        "z_bottom_offset": {
+          "default": 0.0,
+          "description": "Vertical offset at bottom (e.g. >0 for facade cladding above plinth)",
+          "title": "Z Bottom Offset",
+          "type": "number"
+        },
+        "z_top_offset": {
+          "default": 0.0,
+          "title": "Z Top Offset",
+          "type": "number"
+        }
+      },
+      "required": [
+        "role",
+        "thickness",
+        "material_id"
+      ],
+      "title": "WallLayerSpec",
+      "type": "object"
+    },
+    "WallSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "level_id": {
+          "title": "Level Id",
+          "type": "string"
+        },
+        "wall_type": {
+          "enum": [
+            "exterior",
+            "interior_loadbearing",
+            "interior_partition",
+            "knee_wall",
+            "gable_wall"
+          ],
+          "title": "Wall Type",
+          "type": "string"
+        },
+        "start_xy": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Start Xy",
+          "type": "array"
+        },
+        "end_xy": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "End Xy",
+          "type": "array"
+        },
+        "alignment": {
+          "default": "center",
+          "enum": [
+            "center",
+            "left",
+            "right"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "priority": {
+          "default": 1,
+          "description": "Higher priority extends through L/T corners; lower butts against it",
+          "title": "Priority",
+          "type": "integer"
+        },
+        "z_bottom": {
+          "title": "Z Bottom",
+          "type": "number"
+        },
+        "z_top": {
+          "title": "Z Top",
+          "type": "number"
+        },
+        "clip_to_roof": {
+          "default": false,
+          "title": "Clip To Roof",
+          "type": "boolean"
+        },
+        "layers": {
+          "items": {
+            "$ref": "#/$defs/WallLayerSpec"
+          },
+          "minItems": 1,
+          "title": "Layers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "level_id",
+        "wall_type",
+        "start_xy",
+        "end_xy",
+        "z_bottom",
+        "z_top",
+        "layers"
+      ],
+      "title": "WallSpec",
+      "type": "object"
+    },
+    "WindowSpec": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "wall_id": {
+          "title": "Wall Id",
+          "type": "string"
+        },
+        "offset_along_wall": {
+          "description": "Distance from wall.start_xy to opening start",
+          "minimum": 0.0,
+          "title": "Offset Along Wall",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0.0,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0.0,
+          "title": "Height",
+          "type": "number"
+        },
+        "sill_z": {
+          "title": "Sill Z",
+          "type": "number"
+        },
+        "is_french_balcony": {
+          "default": false,
+          "title": "Is French Balcony",
+          "type": "boolean"
+        },
+        "frame_material_id": {
+          "title": "Frame Material Id",
+          "type": "string"
+        },
+        "glass_material_id": {
+          "title": "Glass Material Id",
+          "type": "string"
+        },
+        "sill_material_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sill Material Id"
+        }
+      },
+      "required": [
+        "id",
+        "wall_id",
+        "offset_along_wall",
+        "width",
+        "height",
+        "sill_z",
+        "frame_material_id",
+        "glass_material_id"
+      ],
+      "title": "WindowSpec",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "const": "2.0.0",
+      "default": "2.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "project_slug": {
+      "title": "Project Slug",
+      "type": "string"
+    },
+    "project_name": {
+      "title": "Project Name",
+      "type": "string"
+    },
+    "units": {
+      "const": "m",
+      "default": "m",
+      "title": "Units",
+      "type": "string"
+    },
+    "settings": {
+      "$ref": "#/$defs/PipelineSettingsSpec"
+    },
+    "coordinate_system": {
+      "$ref": "#/$defs/CoordinateSystemSpec"
+    },
+    "materials": {
+      "additionalProperties": {
+        "$ref": "#/$defs/MaterialSpec"
+      },
+      "title": "Materials",
+      "type": "object"
+    },
+    "site": {
+      "$ref": "#/$defs/SiteSpec"
+    },
+    "levels": {
+      "items": {
+        "$ref": "#/$defs/LevelSpec"
+      },
+      "minItems": 1,
+      "title": "Levels",
+      "type": "array"
+    },
+    "walls": {
+      "items": {
+        "$ref": "#/$defs/WallSpec"
+      },
+      "title": "Walls",
+      "type": "array"
+    },
+    "openings": {
+      "$ref": "#/$defs/OpeningsGroupSpec"
+    },
+    "rooms": {
+      "items": {
+        "$ref": "#/$defs/RoomSpec"
+      },
+      "title": "Rooms",
+      "type": "array"
+    },
+    "slabs": {
+      "items": {
+        "$ref": "#/$defs/SlabSpec"
+      },
+      "title": "Slabs",
+      "type": "array"
+    },
+    "stairs": {
+      "items": {
+        "$ref": "#/$defs/StairSpec"
+      },
+      "title": "Stairs",
+      "type": "array"
+    },
+    "roof": {
+      "$ref": "#/$defs/RoofSpec"
+    },
+    "mep_sockets": {
+      "items": {
+        "$ref": "#/$defs/MepSocketSpec"
+      },
+      "title": "Mep Sockets",
+      "type": "array"
+    },
+    "custom_elements": {
+      "items": {
+        "$ref": "#/$defs/CustomBoxSpec"
+      },
+      "title": "Custom Elements",
+      "type": "array"
+    },
+    "furniture": {
+      "items": {
+        "$ref": "#/$defs/FurnitureItemSpec"
+      },
+      "title": "Furniture",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_slug",
+    "project_name",
+    "coordinate_system",
+    "materials",
+    "site",
+    "levels",
+    "roof"
+  ],
+  "title": "SceneGraphV2",
+  "type": "object"
+}
