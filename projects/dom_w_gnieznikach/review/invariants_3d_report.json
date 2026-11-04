@@ -1,13 +1,13 @@
 {
   "project_slug": "dom_w_gnieznikach",
   "passed": true,
-  "total_nodes": 203,
+  "total_nodes": 232,
   "checks": [
     {
       "invariant_id": 1,
       "name": "Rectangular 4-vertex bases for all wall segments (no concave triangulation artifacts)",
       "passed": true,
-      "checked_count": 122,
+      "checked_count": 134,
       "violations": []
     },
     {
@@ -35,14 +35,14 @@
       "invariant_id": 5,
       "name": "Window, door, and skylight openings cut cleanly through all wall layers and roof planes",
       "passed": true,
-      "checked_count": 22,
+      "checked_count": 24,
       "violations": []
     },
     {
       "invariant_id": 6,
       "name": "Attic walls clipped analytically to roof inner plane and soffit boxes bounded by building walls",
       "passed": true,
-      "checked_count": 37,
+      "checked_count": 43,
       "violations": []
     },
     {

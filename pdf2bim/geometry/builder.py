@@ -185,9 +185,11 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
             u0 = op.offset_along_wall
             u1 = op.offset_along_wall + op.width
             if isinstance(op, WindowSpec):
-                # Glass pane (2 cm thick at center of wall)
-                g_quad = _quad_on_wall(w, u0 + 0.04, u1 - 0.04, mid_lat - 0.01, mid_lat + 0.01)
-                g_mesh = extrude_quad_prism(g_quad, op.sill_z + 0.04, op.lintel_z - 0.04)
+                fw = 0.065  # 6.5 cm frame profile width
+                fd = 0.045  # 9 cm total frame depth around mid_lat
+                # 1. Glass pane (2 cm thick at center of wall)
+                g_quad = _quad_on_wall(w, u0 + fw, u1 - fw, mid_lat - 0.01, mid_lat + 0.01)
+                g_mesh = extrude_quad_prism(g_quad, op.sill_z + fw, op.lintel_z - fw)
                 if g_mesh is not None:
                     nodes.append(
                         CompiledMeshNode(
@@ -204,10 +206,65 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                             extras={"element_id": op.id, "wall_id": w.id, "category": "window_glass", "level_id": w.level_id},
                         )
                     )
-                # Bottom sill frame bar (4 cm high)
-                f_quad = _quad_on_wall(w, u0, u1, mid_lat - 0.04, mid_lat + 0.04)
-                f_mesh = extrude_quad_prism(f_quad, op.sill_z, op.sill_z + 0.04)
-                if f_mesh is not None:
+
+                # 2. Complete 4-sided window frame + vertical mullions + external/internal sills
+                frame_parts: list[trimesh.Trimesh] = []
+                f_quad_full = _quad_on_wall(w, u0, u1, mid_lat - fd, mid_lat + fd)
+                for m_part in (
+                    extrude_quad_prism(f_quad_full, op.sill_z, op.sill_z + fw),  # Bottom sill bar
+                    extrude_quad_prism(f_quad_full, op.lintel_z - fw, op.lintel_z),  # Top head bar
+                    extrude_quad_prism(_quad_on_wall(w, u0, u0 + fw, mid_lat - fd, mid_lat + fd), op.sill_z + fw, op.lintel_z - fw),  # Left jamb
+                    extrude_quad_prism(_quad_on_wall(w, u1 - fw, u1, mid_lat - fd, mid_lat + fd), op.sill_z + fw, op.lintel_z - fw),  # Right jamb
+                ):
+                    if m_part is not None:
+                        frame_parts.append(m_part)
+
+                # Add vertical mullion(s) for multi-casement windows
+                n_panes = 3 if op.width >= 2.50 else (2 if op.width >= 1.35 else 1)
+                for p_idx in range(1, n_panes):
+                    um = u0 + (op.width * p_idx) / n_panes
+                    m_quad = _quad_on_wall(w, um - 0.028, um + 0.028, mid_lat - 0.035, mid_lat + 0.035)
+                    m_bar = extrude_quad_prism(m_quad, op.sill_z + fw, op.lintel_z - fw)
+                    if m_bar is not None:
+                        frame_parts.append(m_bar)
+
+                # Add external & internal window sill when window has a parapet (sill_z > level floor + 20 cm)
+                if op.sill_z - w.z_bottom >= 0.20:
+                    sill_quad = _quad_on_wall(w, u0 - 0.03, u1 + 0.03, total_lo - 0.04, total_hi + 0.03)
+                    sill_mesh = extrude_quad_prism(sill_quad, op.sill_z - 0.03, op.sill_z)
+                    if sill_mesh is not None:
+                        frame_parts.append(sill_mesh)
+
+                # If French balcony (portfenetr), add exterior mounting rails & glass balustrade
+                if op.is_french_balcony:
+                    rail_top_q = _quad_on_wall(w, u0 - 0.06, u1 + 0.06, total_lo - 0.065, total_lo - 0.01)
+                    for r_part in (
+                        extrude_quad_prism(rail_top_q, op.sill_z, op.sill_z + 0.05),
+                        extrude_quad_prism(rail_top_q, op.sill_z + 0.96, op.sill_z + 1.00),
+                    ):
+                        if r_part is not None:
+                            frame_parts.append(r_part)
+                    bal_g_quad = _quad_on_wall(w, u0 - 0.05, u1 + 0.05, total_lo - 0.05, total_lo - 0.03)
+                    bal_g_mesh = extrude_quad_prism(bal_g_quad, op.sill_z + 0.05, op.sill_z + 0.96)
+                    if bal_g_mesh is not None:
+                        nodes.append(
+                            CompiledMeshNode(
+                                node_id=f"{op.id}_balustrade_glass",
+                                element_id=op.id,
+                                category="window_glass",
+                                level_id=w.level_id,
+                                material_id=op.glass_material_id,
+                                ue_mesh_name=f"SM_FrenchBalconyGlass_{op.id}",
+                                ue_material_name=_ue_mat_name(sg, op.glass_material_id),
+                                mesh=bal_g_mesh,
+                                collidable=False,
+                                base_quad_xy=bal_g_quad,
+                                extras={"element_id": op.id, "wall_id": w.id, "category": "window_glass", "level_id": w.level_id},
+                            )
+                        )
+
+                if frame_parts:
+                    f_mesh = trimesh.util.concatenate(frame_parts)
                     nodes.append(
                         CompiledMeshNode(
                             node_id=f"{op.id}_frame",
@@ -219,7 +276,7 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                             ue_material_name=_ue_mat_name(sg, op.frame_material_id),
                             mesh=f_mesh,
                             collidable=False,
-                            base_quad_xy=f_quad,
+                            base_quad_xy=f_quad_full,
                             extras={"element_id": op.id, "wall_id": w.id, "category": "window_frame", "level_id": w.level_id},
                         )
                     )
@@ -549,6 +606,67 @@ def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                         },
                     )
                 )
+
+    # Sloped Roof Windows (4-sided skylight frame + sloped glass pane)
+    rp_map = {rp.id: rp for rp in sg.roof.planes}
+    for rw in sg.openings.roof_windows:
+        rp = rp_map.get(rw.roof_plane_id)
+        if rp is None:
+            continue
+        cx, cy = rw.center_xy
+        hw = 0.5 * rw.width
+        hl = 0.5 * rw.length_along_slope
+        rfw = 0.065
+        outer_quad = [(cx - hw, cy - hl), (cx + hw, cy - hl), (cx + hw, cy + hl), (cx - hw, cy + hl)]
+        inner_quad = [
+            (cx - hw + rfw, cy - hl + rfw),
+            (cx + hw - rfw, cy - hl + rfw),
+            (cx + hw - rfw, cy + hl - rfw),
+            (cx - hw + rfw, cy + hl - rfw),
+        ]
+        inner_box = box(cx - hw + rfw, cy - hl + rfw, cx + hw - rfw, cy + hl - rfw)
+
+        frame_plane = rp.model_copy(
+            update={"polygon_xy": outer_quad, "z_at_ridge": rp.z_at_ridge + 0.03, "thickness": rp.thickness + 0.04}
+        )
+        rw_frame_mesh = extrude_sloped_roof_plane(frame_plane, cutout_polygons_xy=[inner_box])
+        if rw_frame_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"{rw.id}_frame",
+                    element_id=rw.id,
+                    category="window_frame",
+                    level_id="poddasze",
+                    material_id=rw.frame_material_id,
+                    ue_mesh_name=f"SM_RoofWindowFrame_{rw.id}",
+                    ue_material_name=_ue_mat_name(sg, rw.frame_material_id),
+                    mesh=rw_frame_mesh,
+                    collidable=False,
+                    base_quad_xy=outer_quad,
+                    extras={"element_id": rw.id, "roof_plane_id": rp.id, "category": "window_frame", "level_id": "poddasze"},
+                )
+            )
+
+        glass_plane = rp.model_copy(
+            update={"polygon_xy": inner_quad, "z_at_ridge": rp.z_at_ridge - 0.03, "thickness": 0.03}
+        )
+        rw_glass_mesh = extrude_sloped_roof_plane(glass_plane, cutout_polygons_xy=[])
+        if rw_glass_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"{rw.id}_glass",
+                    element_id=rw.id,
+                    category="window_glass",
+                    level_id="poddasze",
+                    material_id=rw.glass_material_id,
+                    ue_mesh_name=f"SM_RoofWindowGlass_{rw.id}",
+                    ue_material_name=_ue_mat_name(sg, rw.glass_material_id),
+                    mesh=rw_glass_mesh,
+                    collidable=False,
+                    base_quad_xy=inner_quad,
+                    extras={"element_id": rw.id, "roof_plane_id": rp.id, "category": "window_glass", "level_id": "poddasze"},
+                )
+            )
 
     # Chimneys
     for ch in sg.roof.chimneys:

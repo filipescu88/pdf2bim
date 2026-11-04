@@ -35,6 +35,8 @@ def build_unreal_optimized_scene(sg: SceneGraphV2, scene3d: CompiledScene3D) -> 
     for node in scene3d.nodes:
         if not sg.include_furniture and node.category == "furniture":
             continue
+        if node.category in ("neighbor_building", "parcel_ground"):
+            continue
         if node.category in ("wall_segment", "wall_exterior_cladding"):
             w_type = str(node.extras.get("wall_type", "wall"))
             key = (node.level_id, w_type, node.material_id)
