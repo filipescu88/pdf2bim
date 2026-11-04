@@ -332,6 +332,10 @@ class SceneGraphV2(BaseModel):
     custom_elements: list[CustomBoxSpec] = Field(default_factory=list)
     furniture: list[FurnitureItemSpec] = Field(default_factory=list)
 
+    @property
+    def include_furniture(self) -> bool:
+        return self.settings.include_furniture
+
     @model_validator(mode="after")
     def validate_id_references(self) -> "SceneGraphV2":
         mat_ids = set(self.materials.keys())

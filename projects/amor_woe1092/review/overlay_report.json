@@ -1,9 +1,9 @@
 {
   "project_slug": "amor_woe1092",
   "passed": true,
-  "max_exterior_wall_deviation_cm": 1.01,
-  "mean_wall_deviation_cm": 0.73,
-  "min_contour_overlap_ratio": 0.846,
+  "max_exterior_wall_deviation_cm": 1.08,
+  "mean_wall_deviation_cm": 0.77,
+  "min_contour_overlap_ratio": 0.881,
   "levels": [
     {
       "level_id": "parter",
@@ -12,8 +12,8 @@
       "scale_x_pt_per_m": 19.8994,
       "scale_y_pt_per_m": 19.916,
       "max_exterior_wall_deviation_cm": 1.01,
-      "mean_wall_deviation_cm": 0.72,
-      "wall_contour_overlap_ratio": 0.846,
+      "mean_wall_deviation_cm": 0.83,
+      "wall_contour_overlap_ratio": 0.888,
       "passed": true,
       "wall_metrics": [
         {
@@ -21,9 +21,9 @@
           "wall_type": "exterior",
           "orientation": "H",
           "expected_coord_m": 0.0,
-          "detected_pdf_coord_m": 0.006,
-          "deviation_cm": 0.6,
-          "contour_overlap": 0.793
+          "detected_pdf_coord_m": 0.01,
+          "deviation_cm": 1.0,
+          "contour_overlap": 0.819
         },
         {
           "wall_id": "w_p_recess_left",
@@ -32,16 +32,16 @@
           "expected_coord_m": 3.72,
           "detected_pdf_coord_m": 3.73,
           "deviation_cm": 1.01,
-          "contour_overlap": 0.635
+          "contour_overlap": 0.821
         },
         {
           "wall_id": "w_p_south_center",
           "wall_type": "exterior",
           "orientation": "H",
           "expected_coord_m": 0.6,
-          "detected_pdf_coord_m": 0.609,
-          "deviation_cm": 0.95,
-          "contour_overlap": 0.937
+          "detected_pdf_coord_m": 0.604,
+          "deviation_cm": 0.41,
+          "contour_overlap": 0.944
         },
         {
           "wall_id": "w_p_recess_right",
@@ -50,25 +50,25 @@
           "expected_coord_m": 6.72,
           "detected_pdf_coord_m": 6.73,
           "deviation_cm": 1.01,
-          "contour_overlap": 0.712
+          "contour_overlap": 0.791
         },
         {
           "wall_id": "w_p_south_right",
           "wall_type": "exterior",
           "orientation": "H",
           "expected_coord_m": 0.0,
-          "detected_pdf_coord_m": 0.01,
-          "deviation_cm": 1.0,
-          "contour_overlap": 0.896
+          "detected_pdf_coord_m": 0.007,
+          "deviation_cm": 0.68,
+          "contour_overlap": 0.927
         },
         {
           "wall_id": "w_p_east",
           "wall_type": "exterior",
           "orientation": "V",
           "expected_coord_m": 10.44,
-          "detected_pdf_coord_m": 10.441,
-          "deviation_cm": 0.15,
-          "contour_overlap": 0.884
+          "detected_pdf_coord_m": 10.45,
+          "deviation_cm": 1.01,
+          "contour_overlap": 0.916
         },
         {
           "wall_id": "w_p_north",
@@ -77,34 +77,34 @@
           "expected_coord_m": 8.04,
           "detected_pdf_coord_m": 8.05,
           "deviation_cm": 1.0,
-          "contour_overlap": 0.807
+          "contour_overlap": 0.77
         },
         {
           "wall_id": "w_p_west",
           "wall_type": "exterior",
           "orientation": "V",
           "expected_coord_m": 0.0,
-          "detected_pdf_coord_m": 0.01,
-          "deviation_cm": 1.01,
-          "contour_overlap": 0.912
+          "detected_pdf_coord_m": 0.009,
+          "deviation_cm": 0.92,
+          "contour_overlap": 0.913
         },
         {
           "wall_id": "w_p_sw1_east_core",
           "wall_type": "interior_loadbearing",
           "orientation": "V",
           "expected_coord_m": 6.6,
-          "detected_pdf_coord_m": 6.604,
-          "deviation_cm": 0.41,
-          "contour_overlap": 0.825
+          "detected_pdf_coord_m": 6.605,
+          "deviation_cm": 0.52,
+          "contour_overlap": 0.853
         },
         {
           "wall_id": "w_p_spizarnia_west",
           "wall_type": "interior_partition",
           "orientation": "V",
           "expected_coord_m": 3.6,
-          "detected_pdf_coord_m": 3.602,
-          "deviation_cm": 0.16,
-          "contour_overlap": 0.702
+          "detected_pdf_coord_m": 3.609,
+          "deviation_cm": 0.88,
+          "contour_overlap": 0.803
         },
         {
           "wall_id": "w_p_spizarnia_east",
@@ -122,34 +122,34 @@
           "expected_coord_m": 2.73,
           "detected_pdf_coord_m": 2.74,
           "deviation_cm": 1.0,
-          "contour_overlap": 0.843
+          "contour_overlap": 0.93
         },
         {
           "wall_id": "w_p_pokoj18_north",
           "wall_type": "interior_partition",
           "orientation": "H",
           "expected_coord_m": 3.5,
-          "detected_pdf_coord_m": 3.51,
-          "deviation_cm": 0.99,
-          "contour_overlap": 0.907
+          "detected_pdf_coord_m": 3.509,
+          "deviation_cm": 0.88,
+          "contour_overlap": 0.92
         },
         {
           "wall_id": "w_p_lazienka_west",
           "wall_type": "interior_partition",
           "orientation": "V",
           "expected_coord_m": 8.04,
-          "detected_pdf_coord_m": 8.044,
-          "deviation_cm": 0.38,
-          "contour_overlap": 0.988
+          "detected_pdf_coord_m": 8.05,
+          "deviation_cm": 1.01,
+          "contour_overlap": 1.0
         },
         {
           "wall_id": "w_p_kotlownia_south",
           "wall_type": "interior_partition",
           "orientation": "H",
           "expected_coord_m": 5.25,
-          "detected_pdf_coord_m": 5.251,
-          "deviation_cm": 0.11,
-          "contour_overlap": 0.849
+          "detected_pdf_coord_m": 5.25,
+          "deviation_cm": 0.04,
+          "contour_overlap": 0.912
         }
       ]
     },
@@ -159,9 +159,9 @@
       "overlay_image_path": "review/overlay_poddasze.png",
       "scale_x_pt_per_m": 22.1264,
       "scale_y_pt_per_m": 18.4895,
-      "max_exterior_wall_deviation_cm": 0.9,
-      "mean_wall_deviation_cm": 0.75,
-      "wall_contour_overlap_ratio": 0.855,
+      "max_exterior_wall_deviation_cm": 1.08,
+      "mean_wall_deviation_cm": 0.71,
+      "wall_contour_overlap_ratio": 0.881,
       "passed": true,
       "wall_metrics": [
         {
@@ -169,8 +169,8 @@
           "wall_type": "knee_wall",
           "orientation": "H",
           "expected_coord_m": 0.6,
-          "detected_pdf_coord_m": 0.605,
-          "deviation_cm": 0.46,
+          "detected_pdf_coord_m": 0.611,
+          "deviation_cm": 1.08,
           "contour_overlap": 0.977
         },
         {
@@ -178,27 +178,27 @@
           "wall_type": "knee_wall",
           "orientation": "H",
           "expected_coord_m": 8.04,
-          "detected_pdf_coord_m": 8.044,
-          "deviation_cm": 0.37,
-          "contour_overlap": 0.926
+          "detected_pdf_coord_m": 8.042,
+          "deviation_cm": 0.2,
+          "contour_overlap": 0.934
         },
         {
           "wall_id": "w_a_gable_east",
           "wall_type": "gable_wall",
           "orientation": "V",
           "expected_coord_m": 10.44,
-          "detected_pdf_coord_m": 10.445,
-          "deviation_cm": 0.52,
-          "contour_overlap": 0.813
+          "detected_pdf_coord_m": 10.449,
+          "deviation_cm": 0.9,
+          "contour_overlap": 0.853
         },
         {
           "wall_id": "w_a_gable_west",
           "wall_type": "gable_wall",
           "orientation": "V",
           "expected_coord_m": 0.0,
-          "detected_pdf_coord_m": 0.009,
-          "deviation_cm": 0.9,
-          "contour_overlap": 0.925
+          "detected_pdf_coord_m": 0.001,
+          "deviation_cm": 0.13,
+          "contour_overlap": 0.892
         },
         {
           "wall_id": "w_a_komunikacja_south",
@@ -207,24 +207,24 @@
           "expected_coord_m": 3.85,
           "detected_pdf_coord_m": 3.861,
           "deviation_cm": 1.08,
-          "contour_overlap": 0.905
+          "contour_overlap": 0.934
         },
         {
           "wall_id": "w_a_komunikacja_north",
           "wall_type": "interior_partition",
           "orientation": "H",
           "expected_coord_m": 5.27,
-          "detected_pdf_coord_m": 5.276,
-          "deviation_cm": 0.56,
-          "contour_overlap": 0.619
+          "detected_pdf_coord_m": 5.275,
+          "deviation_cm": 0.49,
+          "contour_overlap": 0.753
         },
         {
           "wall_id": "w_a_gard_pok25_div",
           "wall_type": "interior_partition",
           "orientation": "V",
           "expected_coord_m": 2.0,
-          "detected_pdf_coord_m": 2.009,
-          "deviation_cm": 0.9,
+          "detected_pdf_coord_m": 2.005,
+          "deviation_cm": 0.49,
           "contour_overlap": 1.0
         },
         {
@@ -234,7 +234,7 @@
           "expected_coord_m": 6.56,
           "detected_pdf_coord_m": 6.569,
           "deviation_cm": 0.9,
-          "contour_overlap": 0.818
+          "contour_overlap": 0.893
         },
         {
           "wall_id": "w_a_laz_pralnia_div",
@@ -243,7 +243,7 @@
           "expected_coord_m": 4.6,
           "detected_pdf_coord_m": 4.611,
           "deviation_cm": 1.08,
-          "contour_overlap": 0.714
+          "contour_overlap": 0.688
         }
       ]
     }
