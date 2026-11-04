@@ -257,6 +257,10 @@ class RoofPlaneSpec(BaseModel):
         drop = dist * math.tan(math.radians(self.slope_deg))
         return round(self.z_at_ridge - drop - self.thickness, 4)
 
+    def z_outer_at(self, x: float, y: float) -> float:
+        """Compute outer (top tile) Z of the roof plane at plan point (x, y)."""
+        return round(self.z_inner_at(x, y) + self.thickness, 4)
+
 
 class ChimneySpec(BaseModel):
     id: str

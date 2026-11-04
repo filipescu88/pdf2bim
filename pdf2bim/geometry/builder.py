@@ -1,0 +1,613 @@
+"""Pure-Python 3D BIM geometry compiler from SceneGraphV2 (Step 2).
+
+Compiles walls (multi-layer split around openings), windows, doors (with hinge pivots),
+disjoint room floors, slabs with stair voids, stairs (full risers + landings),
+multi-pitched roof planes (with skylight cutouts and soffits bounded by soffit_x_bounds),
+site/terraces/neighbors, and MEP sockets.
+"""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass, field
+from typing import Any
+
+import trimesh
+from shapely.geometry import Polygon, box
+
+from pdf2bim.geometry.mesh_utils import (
+    CompiledMeshNode,
+    extrude_polygon_2d,
+    extrude_quad_prism,
+    extrude_sloped_roof_plane,
+)
+from pdf2bim.schema import DoorSpec, SceneGraphV2, WallSpec, WindowSpec
+
+
+@dataclass
+class CompiledScene3D:
+    """Container for all compiled 3D mesh nodes of a SceneGraphV2."""
+
+    project_slug: str
+    nodes: list[CompiledMeshNode] = field(default_factory=list)
+
+    def by_category(self, category: str) -> list[CompiledMeshNode]:
+        return [n for n in self.nodes if n.category == category]
+
+
+def _wall_layer_offsets(w: WallSpec) -> list[tuple[int, float, float]]:
+    """Return list of (layer_idx, off_a, off_b) lateral offsets along left normal for each layer."""
+    th = w.total_thickness
+    if w.alignment == "center":
+        start_off = 0.5 * th
+        direction = -1.0
+    elif w.alignment == "left":
+        start_off = 0.0
+        direction = 1.0
+    elif w.alignment == "right":
+        start_off = 0.0
+        direction = -1.0
+    elif w.alignment == "core_left":
+        # Reference axis is outer face of structural core; insulation/finish_ext go outward (-), core/finish_int go inward (+)
+        start_off = -w.ext_insulation_thickness
+        direction = 1.0
+    else:  # "core_right"
+        start_off = w.ext_insulation_thickness
+        direction = -1.0
+
+    res: list[tuple[int, float, float]] = []
+    curr = start_off
+    for idx, layer in enumerate(w.layers):
+        nxt = curr + direction * layer.thickness
+        off_lo, off_hi = min(curr, nxt), max(curr, nxt)
+        res.append((idx, off_lo, off_hi))
+        curr = nxt
+    return res
+
+
+def _quad_on_wall(
+    w: WallSpec,
+    u0: float,
+    u1: float,
+    off_lo: float,
+    off_hi: float,
+) -> list[tuple[float, float]]:
+    """Compute 4-vertex rectangular base quad in XY for segment [u0, u1] and lateral offsets [off_lo, off_hi]."""
+    x0, y0 = w.start_xy
+    dx = w.end_xy[0] - x0
+    dy = w.end_xy[1] - y0
+    L = max(1e-6, math.hypot(dx, dy))
+    tx, ty = dx / L, dy / L
+    nx, ny = -ty, tx
+    return [
+        (x0 + tx * u0 + nx * off_lo, y0 + ty * u0 + ny * off_lo),
+        (x0 + tx * u1 + nx * off_lo, y0 + ty * u1 + ny * off_lo),
+        (x0 + tx * u1 + nx * off_hi, y0 + ty * u1 + ny * off_hi),
+        (x0 + tx * u0 + nx * off_hi, y0 + ty * u0 + ny * off_hi),
+    ]
+
+
+def _ue_mat_name(sg: SceneGraphV2, mat_id: str) -> str:
+    mat = sg.materials.get(mat_id)
+    return mat.ue_name if mat is not None else f"M_{mat_id}"
+
+
+def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
+    """Compile multi-layer walls split around openings, plus window/door frames, glass, and door leaves."""
+    nodes: list[CompiledMeshNode] = []
+
+    wall_openings: dict[str, list[WindowSpec | DoorSpec]] = {w.id: [] for w in sg.walls}
+    for win in sg.openings.windows:
+        if win.wall_id in wall_openings:
+            wall_openings[win.wall_id].append(win)
+    for door in sg.openings.doors:
+        if door.wall_id in wall_openings:
+            wall_openings[door.wall_id].append(door)
+
+    for w in sg.walls:
+        L = w.length
+        ops = sorted(wall_openings.get(w.id, []), key=lambda o: o.offset_along_wall)
+        layer_offsets = _wall_layer_offsets(w)
+        roof_clip = sg.roof if w.clip_to_roof else None
+
+        # Partition [0, L] into intervals
+        breakpoints = [0.0]
+        for op in ops:
+            u0 = max(0.0, op.offset_along_wall)
+            u1 = min(L, op.offset_along_wall + op.width)
+            breakpoints.extend([u0, u1])
+        breakpoints.append(L)
+        breakpoints = sorted(set(round(b, 5) for b in breakpoints))
+
+        seg_counter = 0
+        for i in range(len(breakpoints) - 1):
+            ua, ub = breakpoints[i], breakpoints[i + 1]
+            if ub - ua < 1e-3:
+                continue
+            mid_u = 0.5 * (ua + ub)
+            active_op: WindowSpec | DoorSpec | None = None
+            for op in ops:
+                if op.offset_along_wall - 1e-4 <= mid_u <= op.offset_along_wall + op.width + 1e-4:
+                    active_op = op
+                    break
+
+            for layer_idx, off_lo, off_hi in layer_offsets:
+                layer = w.layers[layer_idx]
+                quad_xy = _quad_on_wall(w, ua, ub, off_lo, off_hi)
+                zb_layer = w.z_bottom + layer.z_bottom_offset
+                zt_layer = w.z_top + layer.z_top_offset
+
+                z_spans: list[tuple[str, float, float]] = []
+                if active_op is None:
+                    z_spans.append(("full", zb_layer, zt_layer))
+                else:
+                    if active_op.sill_z > zb_layer + 1e-3:
+                        z_spans.append(("sill", zb_layer, min(zt_layer, active_op.sill_z)))
+                    if zt_layer > active_op.lintel_z + 1e-3:
+                        z_spans.append(("lintel", max(zb_layer, active_op.lintel_z), zt_layer))
+
+                for span_tag, zb, zt in z_spans:
+                    mesh = extrude_quad_prism(quad_xy, zb, zt, roof_to_clip=roof_clip)
+                    if mesh is None:
+                        continue
+                    seg_counter += 1
+                    cat = "wall_exterior_cladding" if layer.role == "finish_ext" and layer.z_bottom_offset > 0 else "wall_segment"
+                    node_id = f"{w.id}_L{layer_idx}_{span_tag}_{seg_counter}"
+                    nodes.append(
+                        CompiledMeshNode(
+                            node_id=node_id,
+                            element_id=w.id,
+                            category=cat,
+                            level_id=w.level_id,
+                            material_id=layer.material_id,
+                            ue_mesh_name=f"SM_Wall_{w.level_id}_{w.id}_L{layer_idx}_{seg_counter}",
+                            ue_material_name=_ue_mat_name(sg, layer.material_id),
+                            mesh=mesh,
+                            collidable=(layer.role == "core"),
+                            base_quad_xy=quad_xy,
+                            extras={
+                                "element_id": w.id,
+                                "category": cat,
+                                "wall_type": w.wall_type,
+                                "layer_role": layer.role,
+                                "level_id": w.level_id,
+                                "collidable": (layer.role == "core"),
+                            },
+                        )
+                    )
+
+        # Build window & door meshes for openings on this wall
+        total_lo = min(o[1] for o in layer_offsets)
+        total_hi = max(o[2] for o in layer_offsets)
+        mid_lat = 0.5 * (total_lo + total_hi)
+
+        for op in ops:
+            u0 = op.offset_along_wall
+            u1 = op.offset_along_wall + op.width
+            if isinstance(op, WindowSpec):
+                # Glass pane (2 cm thick at center of wall)
+                g_quad = _quad_on_wall(w, u0 + 0.04, u1 - 0.04, mid_lat - 0.01, mid_lat + 0.01)
+                g_mesh = extrude_quad_prism(g_quad, op.sill_z + 0.04, op.lintel_z - 0.04)
+                if g_mesh is not None:
+                    nodes.append(
+                        CompiledMeshNode(
+                            node_id=f"{op.id}_glass",
+                            element_id=op.id,
+                            category="window_glass",
+                            level_id=w.level_id,
+                            material_id=op.glass_material_id,
+                            ue_mesh_name=f"SM_WindowGlass_{op.id}",
+                            ue_material_name=_ue_mat_name(sg, op.glass_material_id),
+                            mesh=g_mesh,
+                            collidable=False,
+                            base_quad_xy=g_quad,
+                            extras={"element_id": op.id, "wall_id": w.id, "category": "window_glass", "level_id": w.level_id},
+                        )
+                    )
+                # Bottom sill frame bar (4 cm high)
+                f_quad = _quad_on_wall(w, u0, u1, mid_lat - 0.04, mid_lat + 0.04)
+                f_mesh = extrude_quad_prism(f_quad, op.sill_z, op.sill_z + 0.04)
+                if f_mesh is not None:
+                    nodes.append(
+                        CompiledMeshNode(
+                            node_id=f"{op.id}_frame",
+                            element_id=op.id,
+                            category="window_frame",
+                            level_id=w.level_id,
+                            material_id=op.frame_material_id,
+                            ue_mesh_name=f"SM_WindowFrame_{op.id}",
+                            ue_material_name=_ue_mat_name(sg, op.frame_material_id),
+                            mesh=f_mesh,
+                            collidable=False,
+                            base_quad_xy=f_quad,
+                            extras={"element_id": op.id, "wall_id": w.id, "category": "window_frame", "level_id": w.level_id},
+                        )
+                    )
+            elif isinstance(op, DoorSpec):
+                # Compute exact hinge pivot in XY on the wall reference axis + mid_lat
+                x0, y0 = w.start_xy
+                dx, dy = w.end_xy[0] - x0, w.end_xy[1] - y0
+                tx, ty = dx / L, dy / L
+                nx, ny = -ty, tx
+                u_hinge = u0 if op.hinge_side == "left" else u1
+                hx = round(x0 + tx * u_hinge + nx * mid_lat, 4)
+                hy = round(y0 + ty * u_hinge + ny * mid_lat, 4)
+
+                leaf_quad = _quad_on_wall(w, u0 + 0.02, u1 - 0.02, mid_lat - 0.02, mid_lat + 0.02)
+                leaf_mesh = extrude_quad_prism(leaf_quad, op.sill_z, op.lintel_z - 0.02)
+                if leaf_mesh is not None:
+                    nodes.append(
+                        CompiledMeshNode(
+                            node_id=f"SkrzydloDrzwi_{op.id}",
+                            element_id=op.id,
+                            category="door_leaf",
+                            level_id=w.level_id,
+                            material_id=op.leaf_material_id,
+                            ue_mesh_name=f"SM_DoorLeaf_{op.id}",
+                            ue_material_name=_ue_mat_name(sg, op.leaf_material_id),
+                            mesh=leaf_mesh,
+                            collidable=True,
+                            base_quad_xy=leaf_quad,
+                            extras={
+                                "element_id": op.id,
+                                "wall_id": w.id,
+                                "category": "door_leaf",
+                                "level_id": w.level_id,
+                                "collidable": True,
+                                "hinge_xy": [hx, hy],
+                                "hinge_side": op.hinge_side,
+                                "swing_dir": op.swing_dir,
+                                "open_angle_deg": op.open_angle_deg,
+                            },
+                        )
+                    )
+
+    return nodes
+
+
+def build_floors_slabs_and_site(sg: SceneGraphV2) -> list[CompiledMeshNode]:
+    """Compile disjoint room floors, structural slabs with stair voids, plinth, terraces, and site."""
+    nodes: list[CompiledMeshNode] = []
+    levels_map = {lvl.id: lvl for lvl in sg.levels}
+
+    # 1. Room floors (2 cm finish layer: z_floor .. z_floor + 0.02 m)
+    for room in sg.rooms:
+        lvl = levels_map[room.level_id]
+        poly = Polygon(room.polygon_xy)
+        mesh = extrude_polygon_2d(poly, lvl.z_floor, lvl.z_floor + 0.02)
+        if mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Posadzka_{room.id}",
+                    element_id=room.id,
+                    category="room_floor",
+                    level_id=room.level_id,
+                    material_id=room.floor_material_id,
+                    ue_mesh_name=f"SM_Floor_{room.id}",
+                    ue_material_name=_ue_mat_name(sg, room.floor_material_id),
+                    mesh=mesh,
+                    collidable=True,
+                    extras={
+                        "element_id": room.id,
+                        "room_id": room.id,
+                        "room_code": room.code,
+                        "room_name": room.name,
+                        "category": "room_floor",
+                        "level_id": room.level_id,
+                    },
+                )
+            )
+
+    # 2. Structural slabs (with stair voids subtracted; clamped below upper floor to prevent Z-fighting)
+    upper_z_floors = sorted(lvl.z_floor for lvl in sg.levels if lvl.z_floor > 0.1)
+    for slab in sg.slabs:
+        outer_poly = Polygon(slab.polygon_xy)
+        holes = [Polygon(h) for h in slab.voids_xy]
+        for h in holes:
+            outer_poly = outer_poly.difference(h)
+        zt = slab.z_top
+        for uz in upper_z_floors:
+            if abs(zt - uz) < 0.01:
+                zt = uz - 0.002  # 2 mm clearance below attic room floor finish
+        mesh = extrude_polygon_2d(outer_poly, slab.z_bottom, zt)
+        if mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Strop_{slab.id}",
+                    element_id=slab.id,
+                    category="slab",
+                    level_id=slab.level_id,
+                    material_id=slab.material_id,
+                    ue_mesh_name=f"SM_Slab_{slab.id}",
+                    ue_material_name=_ue_mat_name(sg, slab.material_id),
+                    mesh=mesh,
+                    collidable=True,
+                    extras={"element_id": slab.id, "category": "slab", "level_id": slab.level_id},
+                )
+            )
+
+    # 3. Plinth (cokół budynku z = -0.30 .. 0.00 m along structural bounding box)
+    bx0, by0, bx1, by1 = sg.coordinate_system.structural_bbox_xy
+    plinth_poly = box(bx0, by0, bx1, by1).difference(box(bx0 + 0.24, by0 + 0.24, bx1 - 0.24, by1 - 0.24))
+    first_mat = next(iter(sg.materials.keys()))
+    plinth_mesh = extrude_polygon_2d(plinth_poly, -0.30, 0.00)
+    if plinth_mesh is not None:
+        nodes.append(
+            CompiledMeshNode(
+                node_id="Cokol_Budynku",
+                element_id="plinth_main",
+                category="plinth",
+                level_id="parter",
+                material_id=first_mat,
+                ue_mesh_name="SM_Plinth_Main",
+                ue_material_name=_ue_mat_name(sg, first_mat),
+                mesh=plinth_mesh,
+                collidable=True,
+                extras={"element_id": "plinth_main", "category": "plinth", "level_id": "parter"},
+            )
+        )
+
+    # 4. Terraces
+    for terr in sg.site.terraces:
+        t_poly = Polygon(terr.polygon_xy)
+        t_mesh = extrude_polygon_2d(t_poly, terr.z_bottom, terr.z_top)
+        if t_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Taras_{terr.id}",
+                    element_id=terr.id,
+                    category="terrace",
+                    level_id="parter",
+                    material_id=terr.material_id,
+                    ue_mesh_name=f"SM_Terrace_{terr.id}",
+                    ue_material_name=_ue_mat_name(sg, terr.material_id),
+                    mesh=t_mesh,
+                    collidable=True,
+                    extras={"element_id": terr.id, "category": "terrace", "level_id": "parter"},
+                )
+            )
+
+    # 5. Neighboring buildings from DXF
+    for nb in sg.site.neighbors:
+        nb_poly = Polygon(nb.footprint_xy)
+        nb_mesh = extrude_polygon_2d(nb_poly, -0.30, nb.eave_height_m)
+        if nb_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Sasiad_{nb.id}",
+                    element_id=nb.id,
+                    category="neighbor_building",
+                    level_id="site",
+                    material_id=first_mat,
+                    ue_mesh_name=f"SM_Neighbor_{nb.id}",
+                    ue_material_name=_ue_mat_name(sg, first_mat),
+                    mesh=nb_mesh,
+                    collidable=False,
+                    extras={"element_id": nb.id, "category": "neighbor_building", "level_id": "site"},
+                )
+            )
+
+    return nodes
+
+
+def build_stairs(sg: SceneGraphV2) -> list[CompiledMeshNode]:
+    """Compile stair flights (with full-depth treads and risers — Invariant 4) and landings."""
+    nodes: list[CompiledMeshNode] = []
+
+    for stair in sg.stairs:
+        for fl in stair.flights:
+            x0, y0, x1, y1 = fl.bbox_xy
+            n_steps = fl.steps_count
+            for s_idx in range(n_steps):
+                zb = fl.z_start + s_idx * fl.riser_h
+                zt = zb + fl.riser_h
+                # Compute step rectangle of full depth tread_d (no side triangular gaps!)
+                if fl.direction == "+X":
+                    sx0 = x0 + s_idx * fl.tread_d
+                    sx1 = min(x1, sx0 + fl.tread_d)
+                    quad = [(sx0, y0), (sx1, y0), (sx1, y1), (sx0, y1)]
+                elif fl.direction == "-X":
+                    sx1 = x1 - s_idx * fl.tread_d
+                    sx0 = max(x0, sx1 - fl.tread_d)
+                    quad = [(sx0, y0), (sx1, y0), (sx1, y1), (sx0, y1)]
+                elif fl.direction == "+Y":
+                    sy0 = y0 + s_idx * fl.tread_d
+                    sy1 = min(y1, sy0 + fl.tread_d)
+                    quad = [(x0, sy0), (x1, sy0), (x1, sy1), (x0, sy1)]
+                else:  # "-Y"
+                    sy1 = y1 - s_idx * fl.tread_d
+                    sy0 = max(y0, sy1 - fl.tread_d)
+                    quad = [(x0, sy0), (x1, sy0), (x1, sy1), (x0, sy1)]
+
+                # Solid step block from max(fl.z_start, zt - 0.22 - fl.riser_h) to zt (eliminates side gaps)
+                step_zb = max(fl.z_start, zb - 0.16)
+                step_mesh = extrude_quad_prism(quad, step_zb, zt)
+                if step_mesh is not None:
+                    step_id = f"{fl.id}_step_{s_idx + 1:02d}"
+                    nodes.append(
+                        CompiledMeshNode(
+                            node_id=step_id,
+                            element_id=stair.id,
+                            category="stair_step",
+                            level_id=stair.from_level_id,
+                            material_id=stair.material_id,
+                            ue_mesh_name=f"SM_StairStep_{step_id}",
+                            ue_material_name=_ue_mat_name(sg, stair.material_id),
+                            mesh=step_mesh,
+                            collidable=True,
+                            base_quad_xy=quad,
+                            extras={
+                                "element_id": stair.id,
+                                "flight_id": fl.id,
+                                "step_index": s_idx + 1,
+                                "tread_depth": round(
+                                    abs(quad[1][0] - quad[0][0]) if fl.direction in ("+X", "-X") else abs(quad[2][1] - quad[1][1]),
+                                    4,
+                                ),
+                                "z_top": round(zt, 4),
+                                "category": "stair_step",
+                                "level_id": stair.from_level_id,
+                            },
+                        )
+                    )
+
+        for land in stair.landings:
+            lx0, ly0, lx1, ly1 = land.bbox_xy
+            l_quad = [(lx0, ly0), (lx1, ly0), (lx1, ly1), (lx0, ly1)]
+            l_mesh = extrude_quad_prism(l_quad, land.z_top - land.thickness, land.z_top)
+            if l_mesh is not None:
+                nodes.append(
+                    CompiledMeshNode(
+                        node_id=f"Spocznik_{land.id}",
+                        element_id=stair.id,
+                        category="stair_landing",
+                        level_id=stair.from_level_id,
+                        material_id=stair.material_id,
+                        ue_mesh_name=f"SM_StairLanding_{land.id}",
+                        ue_material_name=_ue_mat_name(sg, stair.material_id),
+                        mesh=l_mesh,
+                        collidable=True,
+                        base_quad_xy=l_quad,
+                        extras={
+                            "element_id": stair.id,
+                            "landing_id": land.id,
+                            "z_top": land.z_top,
+                            "category": "stair_landing",
+                            "level_id": stair.from_level_id,
+                        },
+                    )
+                )
+
+    return nodes
+
+
+def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
+    """Compile sloped roof planes with skylight cutouts, soffit boxes, chimneys, and MEP sockets."""
+    nodes: list[CompiledMeshNode] = []
+
+    rws_by_plane: dict[str, list[Polygon]] = {rp.id: [] for rp in sg.roof.planes}
+    for rw in sg.openings.roof_windows:
+        cx, cy = rw.center_xy
+        hw = 0.5 * rw.width
+        hl = 0.5 * rw.length_along_slope
+        hole_poly = box(cx - hw, cy - hl, cx + hw, cy + hl)
+        if rw.roof_plane_id in rws_by_plane:
+            rws_by_plane[rw.roof_plane_id].append(hole_poly)
+
+    for rp in sg.roof.planes:
+        cutouts = rws_by_plane.get(rp.id, [])
+        r_mesh = extrude_sloped_roof_plane(rp, cutout_polygons_xy=cutouts)
+        if r_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Dach_{rp.id}",
+                    element_id=rp.id,
+                    category="roof_plane",
+                    level_id="poddasze",
+                    material_id=rp.tile_material_id,
+                    ue_mesh_name=f"SM_RoofPlane_{rp.id}",
+                    ue_material_name=_ue_mat_name(sg, rp.tile_material_id),
+                    mesh=r_mesh,
+                    collidable=False,
+                    extras={
+                        "element_id": rp.id,
+                        "category": "roof_plane",
+                        "level_id": "poddasze",
+                        "cutouts_count": len(cutouts),
+                    },
+                )
+            )
+
+        # Horizontal soffit box at eave bounded strictly by rp.soffit_x_bounds (Invariant 6 / VR issue #1)
+        if rp.soffit_x_bounds is not None:
+            sx0, sx1 = rp.soffit_x_bounds
+            poly_ys = [p[1] for p in rp.polygon_xy]
+            eave_y = min(poly_ys) if rp.downslope_dir_xy[1] < 0 else max(poly_ys)
+            wall_y = eave_y + (sg.roof.overhang_m if rp.downslope_dir_xy[1] < 0 else -sg.roof.overhang_m)
+            y_lo, y_hi = min(eave_y, wall_y), max(eave_y, wall_y)
+            z_eave = rp.z_inner_at(0.5 * (sx0 + sx1), eave_y)
+            soffit_quad = [(sx0, y_lo), (sx1, y_lo), (sx1, y_hi), (sx0, y_hi)]
+            s_mesh = extrude_quad_prism(soffit_quad, z_eave - 0.04, z_eave)
+            if s_mesh is not None:
+                nodes.append(
+                    CompiledMeshNode(
+                        node_id=f"Podbitka_Skrzynka_{rp.id}",
+                        element_id=f"soffit_{rp.id}",
+                        category="roof_soffit",
+                        level_id="poddasze",
+                        material_id=rp.soffit_material_id,
+                        ue_mesh_name=f"SM_RoofSoffit_{rp.id}",
+                        ue_material_name=_ue_mat_name(sg, rp.soffit_material_id),
+                        mesh=s_mesh,
+                        collidable=False,
+                        base_quad_xy=soffit_quad,
+                        extras={
+                            "element_id": f"soffit_{rp.id}",
+                            "roof_plane_id": rp.id,
+                            "category": "roof_soffit",
+                            "soffit_x_bounds": [sx0, sx1],
+                        },
+                    )
+                )
+
+    # Chimneys
+    for ch in sg.roof.chimneys:
+        cx0, cy0, cx1, cy1 = ch.bbox_xy
+        c_quad = [(cx0, cy0), (cx1, cy0), (cx1, cy1), (cx0, cy1)]
+        c_mesh = extrude_quad_prism(c_quad, ch.z_bottom, ch.z_top)
+        if c_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Komin_{ch.id}",
+                    element_id=ch.id,
+                    category="chimney",
+                    level_id="parter",
+                    material_id=ch.material_id,
+                    ue_mesh_name=f"SM_Chimney_{ch.id}",
+                    ue_material_name=_ue_mat_name(sg, ch.material_id),
+                    mesh=c_mesh,
+                    collidable=True,
+                    base_quad_xy=c_quad,
+                    extras={"element_id": ch.id, "category": "chimney", "level_id": "parter"},
+                )
+            )
+
+    # MEP Sockets (always compiled regardless of include_furniture)
+    for mep in sg.mep_sockets:
+        mx, my, mz = mep.position_xyz
+        r = 0.06
+        m_quad = [(mx - r, my - r), (mx + r, my - r), (mx + r, my + r), (mx - r, my + r)]
+        m_mesh = extrude_quad_prism(m_quad, mz, mz + 0.12)
+        if m_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"MEP_{mep.id}",
+                    element_id=mep.id,
+                    category="mep_socket",
+                    level_id="parter" if mz < 2.8 else "poddasze",
+                    material_id=mep.material_id,
+                    ue_mesh_name=f"SM_MEP_{mep.id}",
+                    ue_material_name=_ue_mat_name(sg, mep.material_id),
+                    mesh=m_mesh,
+                    collidable=False,
+                    base_quad_xy=m_quad,
+                    extras={
+                        "element_id": mep.id,
+                        "room_id": mep.room_id,
+                        "socket_type": mep.socket_type,
+                        "category": "mep_socket",
+                    },
+                )
+            )
+
+    return nodes
+
+
+def compile_scene_graph_3d(sg: SceneGraphV2) -> CompiledScene3D:
+    """Compile an entire SceneGraphV2 into a deterministic 3D BIM scene."""
+    all_nodes: list[CompiledMeshNode] = []
+    all_nodes.extend(build_walls_and_openings(sg))
+    all_nodes.extend(build_floors_slabs_and_site(sg))
+    all_nodes.extend(build_stairs(sg))
+    all_nodes.extend(build_roof_and_mep(sg))
+    return CompiledScene3D(project_slug=sg.project_slug, nodes=all_nodes)

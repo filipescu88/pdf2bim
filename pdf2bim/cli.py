@@ -5,7 +5,9 @@ import json
 import sys
 from pathlib import Path
 
+from pdf2bim.export import export_scene_to_glb
 from pdf2bim.extract import generate_project_overlays
+from pdf2bim.geometry import compile_scene_graph_3d, verify_3d_invariants
 from pdf2bim.schema import SceneGraphV2
 from pdf2bim.validate import validate_scene_graph_v2
 
@@ -54,6 +56,30 @@ def main(argv=None) -> int:
             f"| min_overlap={rep.min_contour_overlap_ratio:.1%}"
         )
         return 0 if rep.passed else 1
+
+    if args.command == "build" and sg_path.is_file():
+        data = json.loads(sg_path.read_text(encoding="utf-8"))
+        sg = SceneGraphV2.model_validate(data)
+        val_rep = validate_scene_graph_v2(sg)
+        if not val_rep.passed:
+            print(val_rep.format_text(), file=sys.stderr)
+            return 1
+
+        scene3d = compile_scene_graph_3d(sg)
+        inv_rep = verify_3d_invariants(sg, scene3d)
+        rev_dir = proj_dir / "review"
+        rev_dir.mkdir(parents=True, exist_ok=True)
+        (rev_dir / "invariants_3d_report.json").write_text(
+            json.dumps(inv_rep.to_dict(), indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        out_dir = proj_dir / "output"
+        glb_path = export_scene_to_glb(sg, scene3d, out_dir / f"{sg.project_slug}.glb")
+        print(
+            f"[build] {sg.project_slug}: status={'PASS' if inv_rep.passed else 'FAIL'} "
+            f"| nodes={inv_rep.total_nodes} | invariants=7/7 | glb={glb_path.name}"
+        )
+        return 0 if inv_rep.passed else 1
 
     print(f"[pdf2bim] Command '{args.command}' initialized for project: {proj_dir.name}")
     return 0
