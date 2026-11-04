@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from pdf2bim.export import export_scene_to_glb
-from pdf2bim.extract import generate_project_overlays
+from pdf2bim.extract import extract_and_evaluate_project, generate_project_overlays
 from pdf2bim.geometry import compile_scene_graph_3d, verify_3d_invariants
 from pdf2bim.schema import SceneGraphV2
 from pdf2bim.validate import validate_scene_graph_v2
@@ -80,6 +80,16 @@ def main(argv=None) -> int:
             f"| nodes={inv_rep.total_nodes} | invariants=7/7 | glb={glb_path.name}"
         )
         return 0 if inv_rep.passed else 1
+
+    if args.command == "extract" and sg_path.is_file():
+        _, rep = extract_and_evaluate_project(proj_dir)
+        print(
+            f"[extract] {rep.project_slug} ({rep.extraction_mode}): status={'PASS' if rep.passed else 'FAIL'} "
+            f"| walls_<=5cm={rep.structural_walls_within_5cm_ratio:.1%} "
+            f"| max_dev={rep.max_structural_wall_deviation_cm:.2f}cm "
+            f"| mean_room_IoU={rep.mean_room_iou:.3f}"
+        )
+        return 0 if rep.passed else 1
 
     print(f"[pdf2bim] Command '{args.command}' initialized for project: {proj_dir.name}")
     return 0

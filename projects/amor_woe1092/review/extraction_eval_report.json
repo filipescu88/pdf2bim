@@ -1,0 +1,352 @@
+{
+  "project_slug": "amor_woe1092",
+  "extraction_mode": "raster_opencv",
+  "passed": true,
+  "structural_walls_within_5cm_ratio": 1.0,
+  "max_structural_wall_deviation_cm": 1.2,
+  "mean_structural_wall_deviation_cm": 0.55,
+  "mean_room_iou": 0.9052,
+  "min_room_iou": 0.7872,
+  "detected_openings_count": 24,
+  "gt_openings_count": 24,
+  "wall_matches": [
+    {
+      "gt_wall_id": "w_p_south_left",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 0.0,
+      "extracted_coord_m": 0.006,
+      "deviation_cm": 0.62,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_recess_left",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 3.72,
+      "extracted_coord_m": 3.732,
+      "deviation_cm": 1.2,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_south_center",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 0.6,
+      "extracted_coord_m": 0.604,
+      "deviation_cm": 0.38,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_recess_right",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 6.72,
+      "extracted_coord_m": 6.732,
+      "deviation_cm": 1.2,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_south_right",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 0.0,
+      "extracted_coord_m": 0.006,
+      "deviation_cm": 0.62,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_east",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 10.44,
+      "extracted_coord_m": 10.446,
+      "deviation_cm": 0.62,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_north",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 8.04,
+      "extracted_coord_m": 8.046,
+      "deviation_cm": 0.62,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_west",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "expected_coord_m": 0.0,
+      "extracted_coord_m": 0.006,
+      "deviation_cm": 0.62,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_sw1_east_core",
+      "level_id": "parter",
+      "wall_type": "interior_loadbearing",
+      "expected_coord_m": 6.6,
+      "extracted_coord_m": 6.604,
+      "deviation_cm": 0.43,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_spizarnia_west",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 3.6,
+      "extracted_coord_m": 3.606,
+      "deviation_cm": 0.56,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_spizarnia_east",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 4.5,
+      "extracted_coord_m": 4.502,
+      "deviation_cm": 0.24,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_wiatrolap_north",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 2.73,
+      "extracted_coord_m": 2.742,
+      "deviation_cm": 1.2,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_pokoj18_north",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 3.5,
+      "extracted_coord_m": 3.504,
+      "deviation_cm": 0.4,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_lazienka_west",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 8.04,
+      "extracted_coord_m": 8.04,
+      "deviation_cm": 0.04,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_kotlownia_south",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 5.25,
+      "extracted_coord_m": 5.253,
+      "deviation_cm": 0.3,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_knee_south",
+      "level_id": "poddasze",
+      "wall_type": "knee_wall",
+      "expected_coord_m": 0.6,
+      "extracted_coord_m": 0.6,
+      "deviation_cm": 0.0,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_knee_north",
+      "level_id": "poddasze",
+      "wall_type": "knee_wall",
+      "expected_coord_m": 8.04,
+      "extracted_coord_m": 8.043,
+      "deviation_cm": 0.34,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_gable_east",
+      "level_id": "poddasze",
+      "wall_type": "gable_wall",
+      "expected_coord_m": 10.44,
+      "extracted_coord_m": 10.44,
+      "deviation_cm": 0.0,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_gable_west",
+      "level_id": "poddasze",
+      "wall_type": "gable_wall",
+      "expected_coord_m": 0.0,
+      "extracted_coord_m": 0.006,
+      "deviation_cm": 0.56,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_komunikacja_south",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 3.85,
+      "extracted_coord_m": 3.862,
+      "deviation_cm": 1.2,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_komunikacja_north",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 5.27,
+      "extracted_coord_m": 5.048,
+      "deviation_cm": 22.15,
+      "within_5cm": false
+    },
+    {
+      "gt_wall_id": "w_a_gard_pok25_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 2.0,
+      "extracted_coord_m": 2.0,
+      "deviation_cm": 0.01,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_pok25_pok24_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 6.56,
+      "extracted_coord_m": 6.572,
+      "deviation_cm": 1.2,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_a_laz_pralnia_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 4.6,
+      "extracted_coord_m": 4.805,
+      "deviation_cm": 20.51,
+      "within_5cm": false
+    }
+  ],
+  "room_ious": [
+    {
+      "gt_room_id": "parter_1_1_wiatrolap",
+      "level_id": "parter",
+      "room_name": "Wiatrołap",
+      "gt_area_m2": 3.56,
+      "extracted_area_m2": 3.63,
+      "iou": 0.9763
+    },
+    {
+      "gt_room_id": "parter_1_2_hol",
+      "level_id": "parter",
+      "room_name": "Hol + Komunikacja",
+      "gt_area_m2": 9.02,
+      "extracted_area_m2": 9.17,
+      "iou": 0.9789
+    },
+    {
+      "gt_room_id": "parter_1_3_spizarnia",
+      "level_id": "parter",
+      "room_name": "Spiżarnia",
+      "gt_area_m2": 1.37,
+      "extracted_area_m2": 1.33,
+      "iou": 0.944
+    },
+    {
+      "gt_room_id": "parter_1_4_salon_kuchnia",
+      "level_id": "parter",
+      "room_name": "Salon + Kuchnia",
+      "gt_area_m2": 29.82,
+      "extracted_area_m2": 29.74,
+      "iou": 0.987
+    },
+    {
+      "gt_room_id": "parter_1_5_kotlownia",
+      "level_id": "parter",
+      "room_name": "Kotłownia",
+      "gt_area_m2": 7.76,
+      "extracted_area_m2": 7.82,
+      "iou": 0.9784
+    },
+    {
+      "gt_room_id": "parter_1_6_korytarz",
+      "level_id": "parter",
+      "room_name": "Korytarz",
+      "gt_area_m2": 1.87,
+      "extracted_area_m2": 1.55,
+      "iou": 0.7892
+    },
+    {
+      "gt_room_id": "parter_1_7_lazienka",
+      "level_id": "parter",
+      "room_name": "Łazienka",
+      "gt_area_m2": 3.21,
+      "extracted_area_m2": 2.88,
+      "iou": 0.8699
+    },
+    {
+      "gt_room_id": "parter_1_8_pokoj",
+      "level_id": "parter",
+      "room_name": "Pokój",
+      "gt_area_m2": 10.75,
+      "extracted_area_m2": 10.25,
+      "iou": 0.932
+    },
+    {
+      "gt_room_id": "poddasze_2_1_komunikacja",
+      "level_id": "poddasze",
+      "room_name": "Komunikacja",
+      "gt_area_m2": 3.4,
+      "extracted_area_m2": 3.12,
+      "iou": 0.8575
+    },
+    {
+      "gt_room_id": "poddasze_2_2_lazienka",
+      "level_id": "poddasze",
+      "room_name": "Łazienka",
+      "gt_area_m2": 6.03,
+      "extracted_area_m2": 5.82,
+      "iou": 0.9203
+    },
+    {
+      "gt_room_id": "poddasze_2_3_pralnia",
+      "level_id": "poddasze",
+      "room_name": "Pralnia",
+      "gt_area_m2": 4.48,
+      "extracted_area_m2": 4.61,
+      "iou": 0.9704
+    },
+    {
+      "gt_room_id": "poddasze_2_4_pokoj",
+      "level_id": "poddasze",
+      "room_name": "Pokój SE",
+      "gt_area_m2": 14.5,
+      "extracted_area_m2": 12.42,
+      "iou": 0.8473
+    },
+    {
+      "gt_room_id": "poddasze_2_5_pokoj",
+      "level_id": "poddasze",
+      "room_name": "Pokój S",
+      "gt_area_m2": 14.3,
+      "extracted_area_m2": 11.46,
+      "iou": 0.7872
+    },
+    {
+      "gt_room_id": "poddasze_2_6_garderoba",
+      "level_id": "poddasze",
+      "room_name": "Garderoba",
+      "gt_area_m2": 5.88,
+      "extracted_area_m2": 4.83,
+      "iou": 0.8128
+    },
+    {
+      "gt_room_id": "poddasze_2_7_pokoj",
+      "level_id": "poddasze",
+      "room_name": "Pokój NW",
+      "gt_area_m2": 17.23,
+      "extracted_area_m2": 16.11,
+      "iou": 0.9269
+    }
+  ]
+}

@@ -9,13 +9,23 @@ from pdf2bim.extract.overlay import (
     calibrate_project_levels,
     generate_project_overlays,
 )
+from pdf2bim.extract.pdf_extractor import (
+    ExtractionEvalReport,
+    RoomIoUEval,
+    WallMatchEval,
+    extract_and_evaluate_project,
+)
 
 __all__ = [
+    "ExtractionEvalReport",
     "LevelCalibration",
     "LevelOverlayResult",
     "ProjectOverlayReport",
+    "RoomIoUEval",
     "WallDeviationItem",
+    "WallMatchEval",
     "calibrate_project_levels",
+    "extract_and_evaluate_project",
     "extract_site_from_dxf",
     "generate_project_overlays",
     "geodetic_to_local",
