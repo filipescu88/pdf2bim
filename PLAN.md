@@ -1,66 +1,23 @@
 # Plan Nowej Architektury: Forward Pipeline (`pdf2bim`)
 
-> **Status realizacji:** W trakcie (Krok 0 — Fundament)  
 > **Katalog repozytorium:** `/home/hermes/pdf2bim`  
-> **Zasada weryfikacji:** Po każdym kroku uruchamiane jest automatyczne sprawdzenie kryteriów `Gotowe, gdy:` (`pytest` + weryfikacja artefaktów), a status w poniższej tabeli jest aktualizowany przed przejściem do kolejnego kroku.
+> **Środowisko wykonawcze:** `/home/hermes/pdf2bim/.venv` (`.venv/bin/pytest`, `.venv/bin/pdf2bim`)  
+> **Zasada weryfikacji:** Po każdym podkroku uruchamiane jest automatyczne sprawdzenie kryteriów `Gotowe, gdy:` (`.venv/bin/pytest`), a status w poniższej tabeli jest aktualizowany przed przejściem dalej.
 
 ---
 
 ## Tabela Postępu i Weryfikacji Kroków
 
-| Krok | Nazwa etapu | Zakres | Kryterium „Gotowe, gdy” | Status |
+| Krok | Nazwa etapu | Zakres | Kryterium „Gotowe, gdy” (Mierzalne) | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Krok 0** | **Fundament** | Struktura repo `pdf2bim/`, `pyproject.toml`, `pytest`, nowy `AGENTS.md`, pobranie danych Domu 1 (`dom_w_gnieznikach`) i Domu 2 (`amor_woe1092`). | `pytest` działa i przechodzi w `<1 s`, `AGENTS.md` i `PLAN.md` opisują nowy proces i rozstrzygnięte decyzje. | ✅ Zrealizowany (`4/4 PASS`) |
-| **Krok 1** | **Dane i Walidator** | Schemat `scene_graph.json` v2 (`pydantic` + JSON Schema), import DXF (`ezdxf`), generator nakładki 2D (`Overlay Preview` na PNG z PDF), pełne dane `dom_w_gnieznikach` i `amor_woe1092`, walidator topologii/metraży (PN-ISO 9836)/WZ. | Oba domy przechodzą pełną walidację (`0` błędów topologii i metrażu), a wygenerowane nakładki 2D pokrywają się z rzutami PDF. | 🔄 Następny |
-| **Krok 2** | **Kompilator Architektury** | Generatory w czystym Pythonie (`numpy`/`shapely`/`trimesh`): ściany + otwory -> posadzki i stropy -> schody -> dach. Eksport `.glb` z `extras`. Testy niezmienników 3D. | Oba domy kompilują się z samego `scene_graph.json` do `.glb`, a wszystkie testy niezmienników przechodzą w `pytest`. | ⏳ Oczekuje |
-| **Krok 3** | **WebXR + Mazak QA** | Viewer `web_vr/index.html` czyta kolizje, schody i drzwi z `GLB extras` / `scene_graph.json` (zero współrzędnych w JS). Mazak z `element_id` i statusami w `review/markers.json`. Zdalne GPU (bake, panoramy) z `--python-exit-code 1` i kontrolą timestampów. | Można przejść oba domy w VR bez ręcznych poprawek w JS; testy cyklu życia Mazaka i zdalnego runnera przechodzą. | ⏳ Oczekuje |
-| **Krok 4** | **Eksport Unreal / Twinmotion** | Konwencja `SM_`/`M_`, pivoty, łączenie siatek wg materiału/pokoju, instancjonowanie, eksport `.glb` + `.usda` (z metadanymi) oraz zdalny `.fbx`, przyłącza `mep_sockets`. | Import obu domów do UE / Twinmotion zawiera komplet metadanych, hierarchii i `mep_sockets` bez ręcznych poprawek. | ⏳ Oczekuje |
-| **Krok 5** | **Półautomatyczny Ekstraktor PDF** | Ekstrakcja skali z linii wymiarowych, kandydatów ścian (12 cm / 24–44 cm) i wielokątów pokoi (`polygonize` + etykiety z tabeli) do szkicu `scene_graph.json` sprawdzanego na nakładce 2D. | Spełniona poprzeczka `>= 90%` ścian z dokładnością `2 cm` na obu zestawach testowych PDF. | ⏳ Oczekuje |
-
----
-
-## Rozstrzygnięte Decyzje Architektoniczne
-
-1. **Drugi dom testowy (`projects/amor_woe1092/`):**
-   Projekt **Extradom Amor (WOE1092)** pobrany z `C:\Users\filip\Desktop\dom2` (`extradom-amor-WOE1092-rzut-parteru-459221.pdf`, `extradom-amor-WOE1092-rzut-poddasza-459222.pdf`, `extradom-amor-WOE1092-przekroj-459223.pdf`). Pierwszy dom to **Dom w gnieźnikach (E)** (`projects/dom_w_gnieznikach/`).
-2. **Rdzeń geometrii:**
-   **Czysty Python (`numpy` + `shapely` + `trimesh` + `mapbox_earcut`)** na Linuksie (testowalny przez `pytest` w ułamku sekundy bez SSH). Zdalne GPU (`filip@192.168.0.11`, Blender 5.1) służy wyłącznie do zadań wymagających karty graficznej (Cycles lightmap bake, panoramy 360° stereo, rendery QA oraz konwersja do `.fbx`).
-3. **Format eksportu pod Unreal Engine / Twinmotion:**
-   Natywny eksport **`GLB` (glTF 2.0 z `extras`)** oraz **`USD` (`.usda`)** bezpośrednio z Pythona (przenosi hierarchię, pivoty i metadane BIM do UE5 Interchange / Twinmotion) + zdalny eksport **`.fbx`** przez Blender 5.1.
-
----
-
-## Filar 1 — Schemat `scene_graph.json` v2.0
-- Definicja w `pydantic` (`pdf2bim/schema/`) z eksportem do JSON Schema (`schema_version: "2.0.0"`, jednostki w metrach).
-- Jeden prawoskrętny układ współrzędnych: **X na wschód, Y na północ, Z w górę**, początek `(0, 0, 0)` w południowo-zachodnim narożniku obrysu budynku (koniec z `8.40 - y`).
-- Transformacja do układu geodezyjnego DXF w `site.transform`.
-- Stałe ID i referencje: `opening.wall_id`, `room.level_id`, `stair.from_level_id` / `to_level_id`, `mep.room_id`.
-- Ściany jako oś + grubość (`start`, `end`, `thickness`, `alignment: center|left|right`) + reguła priorytetów narożników `L`/`T`.
-- Sekcje: `site`, `levels`, `walls`, `openings`, `rooms`, `slabs`, `stairs`, `roof`, `mep_sockets`, `custom_elements`, `furniture` (opcjonalne, domyślnie wyłączone).
-
-## Filar 2 — Kompilator Geometrii (`pdf2bim/geometry/`)
-- Wejście: wyłącznie `scene_graph.json`.
-- Generatory: `build_walls`, `build_openings`, `build_floors_and_slabs`, `build_stairs`, `build_roof`, `build_mep_sockets`.
-- Wbudowane niezmienniki geometryczne (testowane automatycznie w `pytest`):
-  1. Ściany jako graniastosłupy o 4-wierzchołkowej podstawie prostokątnej (z górą opcjonalnie dociętą do połaci dachu `clip_to_roof`), zero ukośnych trójkątów na podłodze.
-  2. Posadzki stykające się w osiach ścian, zero nakładania w pionie (zero Z-fightingu).
-  3. Okładzina elewacji powyżej cokołu.
-  4. Podbitka kończąca się na licu ścian szczytowych, nie na nawisie.
-  5. Otwory przechodzące na wylot przez wszystkie warstwy ściany/dachu.
-  6. Schody z pełnymi podstopnicami bez bocznych prześwitów.
-  7. Elementy poddasza nie przebijają połaci dachu.
-
-## Filar 3 — Wprowadzanie Danych i Ekstrakcja (`pdf2bim/extract/`)
-- Importer DXF (`ezdxf`) do sekcji `site`.
-- Generator nakładki 2D (`Overlay Preview`) nakładający wygenerowany rzut `scene_graph.json` na raster PNG strony PDF w skali.
-- Półautomatyczny ekstraktor wektorów PDF (`PyMuPDF` + `shapely`).
-
-## Filar 4 — Walidator (`pdf2bim/validate/`)
-- Walidacja schematu `pydantic` i referencji ID.
-- Walidacja topologii: rozłączność pokoi (`< 0.01 m²`), zawieranie w obrysie wewnętrznym, poprawne osadzenie otworów w ścianach, wolny łuk otwierania drzwi.
-- Walidacja metraży: tolerancja względna `<= 5%`, na poddaszu wg **PN-ISO 9836** (`100% > 2.20 m`, `50% 1.40–2.20 m`, `0% < 1.40 m`).
-- Walidacja WZ (linia zabudowy, wysokość kalenicy, kąt dachu).
-
-## Filar 5 — WebXR + Mazak QA (`web_vr/`)
-- Viewer buduje kolizje, schody i drzwi z `GLB extras` / `scene_graph.json`.
-- Mazak zapisuje zgłoszenia z `element_id` i zrzutem ekranu do `projects/<slug>/review/markers.json` ze statusami `open -> needs_verification -> verified`.
+| **Krok 0** | **Fundament** | Struktura repo `pdf2bim/`, lokalne `.venv`, `pyproject.toml`, CLI `pdf2bim`, `pytest`, nowy `AGENTS.md`, pobranie PDF/DXF dla Domu 1 (`dom_w_gnieznikach`) i Domu 2 (`amor_woe1092`). | `.venv/bin/pytest` i `.venv/bin/pdf2bim --help` działają w `<1 s`, `AGENTS.md` i `PLAN.md` opisują nowy proces. | ✅ Zrealizowany |
+| **Krok 1a** | **Schemat `scene_graph.json` v2** | Modele `pydantic` (`pdf2bim/schema/`) + eksport JSON Schema: jednoznaczny układ współrzędnych (AABB muru konstrukcyjnego), słownik `materials` (`M_`), ściany warstwowe (`layers`), otwory (`sill_z`, `lintel_z`, kierunek otwierania drzwi), typy dachów (`gable`, `multi_pitched`, `shed` z połaciami i oknami dachowymi), `rooms`, `slabs`, `stairs`, `mep_sockets`. | Walidacja schematu `pydantic` i eksport `scene_graph.schema.json` przechodzą testy jednostkowe (`pytest`). | 🔄 W trakcie |
+| **Krok 1b** | **Importer DXF (`site`)** | Moduł `pdf2bim/extract/dxf_extractor.py` (`ezdxf`): ekstrakcja wielokąta działki (`585/8`), rzędnych terenu, obrysów sąsiadów oraz transformacji `site.transform` (azymut strzałki `N` i offset geodezyjny). | Test `pytest` parsuje `Purda 585_8 mdcp.DXF` do modelu `SiteSpec` z poprawną powierzchnią i granicami działki. | ⏳ Oczekuje |
+| **Krok 1c** | **Walidator Topologii, Metraży i WZ** | Moduł `pdf2bim/validate/`: referencje ID, rozłączność pokoi (`<0.01 m²`), zawieranie w obrysie wewnętrznym, osadzenie otworów w ścianach, wolne łuki otwierania drzwi, metraż parteru i poddasza wg **PN-ISO 9836** (`100% >2.20 m`, `50% 1.40–2.20 m`, `0% <1.40 m`, tolerancja `<= 5%`), zgodność z WZ. | Testy jednostkowe walidatora wykrywają celowo wstrzyknięte błędy (nakładanie pokoi, kolizję drzwi, zły metraż) i zwracają raport JSON. | ⏳ Oczekuje |
+| **Krok 1d** | **Wzorzec (*Ground Truth*) — Dom 1** | Ręcznie/półautomatycznie zweryfikowany wzorzec `projects/dom_w_gnieznikach/scene_graph.json` (dach dwuspadowy `40°`, ścianka kolankowa `140 cm`, 4 okna dachowe, 12 pokoi, 10 drzwi, przyłącza MEP). | `pdf2bim validate projects/dom_w_gnieznikach` zwraca `PASS` (`0` błędów, wszystkie metraże w tolerancji `<= 5%`). | ⏳ Oczekuje |
+| **Krok 1e** | **Wzorzec (*Ground Truth*) — Dom 2** | Ręcznie/półautomatycznie zweryfikowany wzorzec `projects/amor_woe1092/scene_graph.json` (rzut z podcieniem, dach `40°` + zadaszenie tarasu `25°`, ścianka kolankowa `97 cm`, 15 pokoi parter+poddasze, schody dwubiegowe ze spocznikiem `7+9`). | `pdf2bim validate projects/amor_woe1092` zwraca `PASS` (`0` błędów, pełna zgodność tabeli parteru `67.38 m²` i poddasza PN-ISO 9836 `49.93 m²` / podłogi `65.81 m²`). | ⏳ Oczekuje |
+| **Krok 1f** | **Nakładka 2D (`Overlay Preview`)** | Moduł `pdf2bim/extract/overlay.py`: renderuje rzut ścian, otworów i pokoi z `scene_graph.json` na raster PNG strony PDF dla obu domów + liczy metrykę zgodności. | Odchylenie osi ścian zewnętrznych i wymiarowanych względem rastra PDF `<= 5 cm` oraz pokrycie konturów w teście automatycznym `pytest`. | ⏳ Oczekuje |
+| **Krok 2** | **Kompilator Geometrii 3D** | Generatory w czystym Pythonie (`numpy`/`shapely`/`trimesh`): ściany wielowarstwowe + otwory $\rightarrow$ posadzki i stropy $\rightarrow$ schody $\rightarrow$ dach wielopołaciowy $\rightarrow$ MEP; eksport `.glb` z `extras`; komenda `pdf2bim build`. | Oba domy kompilują się z samego `scene_graph.json` w `<1 s`, a automatyczne testy 7 niezmienników 3D przechodzą w `pytest`. | ⏳ Oczekuje |
+| **Krok 3** | **Półautomatyczny Ekstraktor PDF (Wektor + Raster)** | Moduł `pdf2bim/extract/pdf_extractor.py`: tryb wektorowy (`PyMuPDF` dla `karta.pdf`) oraz tryb rastrowy (`OpenCV` dla bitmapy `3020×4404 px` w `amor_woe1092`) + kalibracja skali i etykiet (OCR / kotwice wymiarowe) $\rightarrow$ szkic `draft_scene_graph.json` porównywany ze wzorcem *Ground Truth* z `1d`/`1e`. | Na obu domach testowych ekstraktor osiąga dokładność `±5 cm` (lub zgodność z liczbami wymiarowymi) dla `>= 90%` ścian zewnętrznych i konstrukcyjnych oraz wykrywa otwory i wielokąty pokoi (`IoU >= 0.85`). | ⏳ Oczekuje |
+| **Krok 4** | **WebXR + Mazak QA + Zdalne GPU** | Viewer `web_vr/index.html` czyta kolizje, schody i drzwi z `GLB extras` / `scene_graph.json`. Mazak z `element_id` i statusami w `review/markers.json`. Zdalne GPU (`--python-exit-code 1`, kontrola `mtime`, timeout). | Oba domy działają w WebXR bez współrzędnych zaszytych w JS; testy cyklu życia Mazaka i zdalnego runnera przechodzą. | ⏳ Oczekuje |
+| **Krok 5** | **Eksport Unreal Engine / Twinmotion** | Konwencja `SM_`/`M_`, pivoty, łączenie siatek wg materiału/pokoju, instancjonowanie, eksport `.glb` + `.usda` (ASCII OpenUSD z metadanymi BIM) + zdalny `.fbx`, zachowanie `mep_sockets`. | Eksport obu domów przechodzi testy struktury węzłów `SM_`, materiałów `M_`, obecności `mep_sockets` i poprawności plików `.glb`/`.usda`. | ⏳ Oczekuje |
