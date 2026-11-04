@@ -294,8 +294,8 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                 hx = round(x0 + tx * u_hinge + nx * mid_lat, 4)
                 hy = round(y0 + ty * u_hinge + ny * mid_lat, 4)
 
-                leaf_quad = _quad_on_wall(w, u0 + 0.02, u1 - 0.02, mid_lat - 0.02, mid_lat + 0.02)
-                leaf_mesh = extrude_quad_prism(leaf_quad, op.sill_z, op.lintel_z - 0.02)
+                leaf_quad = _quad_on_wall(w, u0 + 0.035, u1 - 0.035, mid_lat - 0.022, mid_lat + 0.022)
+                leaf_mesh = extrude_quad_prism(leaf_quad, op.sill_z, op.lintel_z - 0.035)
                 if leaf_mesh is not None:
                     nodes.append(
                         CompiledMeshNode(
@@ -320,6 +320,79 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                                 "swing_dir": op.swing_dir,
                                 "open_angle_deg": op.open_angle_deg,
                             },
+                        )
+                    )
+
+                # 3D Door Frame (Ościeżnica: left jamb, right jamb, top header wrapping the wall thickness)
+                df_parts = []
+                for du0, du1, dz0, dz1 in [
+                    (u0, u0 + 0.04, op.sill_z, op.lintel_z),
+                    (u1 - 0.04, u1, op.sill_z, op.lintel_z),
+                    (u0, u1, op.lintel_z - 0.04, op.lintel_z),
+                ]:
+                    q_df = _quad_on_wall(w, du0, du1, total_lo - 0.008, total_hi + 0.008)
+                    m_df = extrude_quad_prism(q_df, dz0, dz1)
+                    if m_df is not None:
+                        df_parts.append(m_df)
+                if df_parts:
+                    df_mesh = trimesh.util.concatenate(df_parts)
+                    nodes.append(
+                        CompiledMeshNode(
+                            node_id=f"OscieznicaDrzwi_{op.id}",
+                            element_id=op.id,
+                            category="door_frame",
+                            level_id=w.level_id,
+                            material_id=op.leaf_material_id,
+                            ue_mesh_name=f"SM_DoorFrame_{op.id}",
+                            ue_material_name=_ue_mat_name(sg, op.leaf_material_id),
+                            mesh=df_mesh,
+                            collidable=False,
+                            base_quad_xy=leaf_quad,
+                            extras={"element_id": op.id, "wall_id": w.id, "category": "door_frame", "level_id": w.level_id},
+                        )
+                    )
+
+                # 3D Lever Door Handles & Escutcheon Roses on BOTH sides of the door leaf (z = sill_z + 1.05m)
+                zh = op.sill_z + 1.05
+                if op.hinge_side == "left":
+                    u_spindle0, u_spindle1 = u1 - 0.125, u1 - 0.075
+                    u_lever0, u_lever1 = u1 - 0.225, u1 - 0.075
+                else:
+                    u_spindle0, u_spindle1 = u0 + 0.075, u0 + 0.125
+                    u_lever0, u_lever1 = u0 + 0.075, u0 + 0.225
+
+                handle_parts = []
+                for hu0, hu1, hlat0, hlat1, hz0, hz1 in [
+                    # Escutcheon plates + spindle through door
+                    (u_spindle0, u_spindle1, mid_lat - 0.032, mid_lat + 0.032, zh - 0.028, zh + 0.028),
+                    # Spindle necks on both sides
+                    (u_spindle0 + 0.012, u_spindle1 - 0.012, mid_lat - 0.068, mid_lat + 0.068, zh - 0.012, zh + 0.012),
+                    # Lever grip on -lat side
+                    (u_lever0, u_lever1, mid_lat - 0.075, mid_lat - 0.052, zh - 0.012, zh + 0.012),
+                    # Lever grip on +lat side
+                    (u_lever0, u_lever1, mid_lat + 0.052, mid_lat + 0.075, zh - 0.012, zh + 0.012),
+                    # Lower key rose escutcheon
+                    (u_spindle0, u_spindle1, mid_lat - 0.030, mid_lat + 0.030, zh - 0.115, zh - 0.065),
+                ]:
+                    q_h = _quad_on_wall(w, hu0, hu1, hlat0, hlat1)
+                    m_h = extrude_quad_prism(q_h, hz0, hz1)
+                    if m_h is not None:
+                        handle_parts.append(m_h)
+                if handle_parts:
+                    h_mesh = trimesh.util.concatenate(handle_parts)
+                    nodes.append(
+                        CompiledMeshNode(
+                            node_id=f"KlamkaDrzwi_{op.id}",
+                            element_id=op.id,
+                            category="door_handle",
+                            level_id=w.level_id,
+                            material_id=op.frame_material_id,
+                            ue_mesh_name=f"SM_DoorHandle_{op.id}",
+                            ue_material_name=_ue_mat_name(sg, op.frame_material_id),
+                            mesh=h_mesh,
+                            collidable=False,
+                            base_quad_xy=leaf_quad,
+                            extras={"element_id": op.id, "wall_id": w.id, "category": "door_handle", "level_id": w.level_id},
                         )
                     )
 

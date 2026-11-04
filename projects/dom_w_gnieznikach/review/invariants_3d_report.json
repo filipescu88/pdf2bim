@@ -1,7 +1,7 @@
 {
   "project_slug": "dom_w_gnieznikach",
   "passed": true,
-  "total_nodes": 265,
+  "total_nodes": 285,
   "checks": [
     {
       "invariant_id": 1,

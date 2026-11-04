@@ -23,7 +23,7 @@ asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
 
 # 1. Import individual Fab furniture meshes from C:/Users/filip/pdf2bim_remote/fab_furniture_pieces.fbx
 fbx_path = "C:/Users/filip/pdf2bim_remote/fab_furniture_pieces.fbx"
-dest_folder = "/Game/PDF2BIM/FabFurniture"
+dest_folder = "/Game/PDF2BIM/FabFurnitureV2"
 
 if not unreal.EditorAssetLibrary.does_asset_exist(f"{dest_folder}/SM_Fab_Executive_Desk"):
     task = unreal.AssetImportTask()
@@ -69,16 +69,18 @@ for pname in piece_names:
     if unreal.EditorAssetLibrary.does_asset_exist(p_asset_path):
         sm = unreal.EditorAssetLibrary.load_asset(p_asset_path)
         sm_Mats = sm.get_editor_property("static_materials")
+        needs_bind = False
         new_mats = []
         for sm_mat in sm_Mats:
             slot_name = str(sm_mat.material_slot_name)
             base_slot = slot_name.split(".")[0]
-            if slot_name in fab_mats:
-                sm_mat.material_interface = fab_mats[slot_name]
-            elif base_slot in fab_mats:
-                sm_mat.material_interface = fab_mats[base_slot]
+            target_m = fab_mats.get(slot_name) or fab_mats.get(base_slot)
+            if target_m and sm_mat.material_interface != target_m:
+                sm_mat.material_interface = target_m
+                needs_bind = True
             new_mats.append(sm_mat)
-        sm.set_editor_property("static_materials", new_mats)
+        if needs_bind:
+            sm.set_editor_property("static_materials", new_mats)
         loaded_pieces[pname] = sm
         print("BOUND_FAB_MESH", pname, len(new_mats))
 
@@ -121,6 +123,15 @@ placements = [
     # Poddasze: 2.4 Pokój SE (Z=402.0)
     ("Poddasze_PokojSE_Shelving", "SM_Fab_Shelving_Decor", (840.0, -140.0, 402.0), 180.0, (0.58, 0.58, 0.70)),
     ("Poddasze_PokojSE_Armchair", "SM_Fab_Lounge_Armchair", (890.0, -280.0, 402.0), 160.0, (0.85, 0.85, 0.85)),
+
+    # Exterior Garden & Terrace Landscaping (visible through windows and on exterior shots)
+    ("Terrace_Lounge_Chair_1", "SM_Fab_Lounge_Armchair", (550.0, -980.0, 92.0), -25.0, (0.95, 0.95, 0.95)),
+    ("Terrace_Lounge_Chair_2", "SM_Fab_Lounge_Armchair", (720.0, -980.0, 92.0), -155.0, (0.95, 0.95, 0.95)),
+    ("Garden_Tree_Back_1", "SM_Fab_Indoor_Plant_Tree", (220.0, -1180.0, 58.0), 15.0, (2.1, 2.1, 2.2)),
+    ("Garden_Tree_Back_2", "SM_Fab_Indoor_Plant_Tree", (880.0, -1240.0, 58.0), 85.0, (2.3, 2.3, 2.4)),
+    ("Garden_Tree_East_1", "SM_Fab_Indoor_Plant_Tree", (1280.0, -620.0, 58.0), -40.0, (2.2, 2.2, 2.3)),
+    ("Garden_Tree_Front_1", "SM_Fab_Indoor_Plant_Tree", (1240.0, 320.0, 58.0), 45.0, (1.9, 1.9, 2.0)),
+    ("Garden_Tree_Front_2", "SM_Fab_Indoor_Plant_Tree", (-180.0, 280.0, 58.0), 110.0, (2.0, 2.0, 2.1)),
 ]
 
 for label_sfx, mesh_key, loc, yaw, scale in placements:
@@ -133,27 +144,32 @@ for label_sfx, mesh_key, loc, yaw, scale in placements:
         act.set_actor_label(f"PDF2BIM_Furn_{label_sfx}")
         act.set_folder_path("PDF2BIM/Dom1_Furniture")
 
-# 5. Spawn warm architectural interior ceiling lights so rooms are well-lit in the viewport
+# 5. Spawn soft area interior lights (large source_radius so there are no harsh point hotspots)
 int_lights = [
-    ("Salon_West", (420.0, -620.0, 340.0), 10.0),
-    ("Jadalnia_East", (800.0, -600.0, 340.0), 10.0),
-    ("Parter_Hol", (580.0, -350.0, 340.0), 8.0),
-    ("Poddasze_Hol", (580.0, -460.0, 620.0), 10.0),
-    ("Poddasze_Gabinet_NE", (750.0, -630.0, 590.0), 12.0),
-    ("Poddasze_Pokoj_NW", (260.0, -640.0, 590.0), 10.0),
-    ("Poddasze_Pokoj_SE", (830.0, -260.0, 590.0), 10.0),
+    ("Salon_West", (420.0, -620.0, 295.0), 8.5, 55.0, (1.0, 0.95, 0.88)),
+    ("Jadalnia_East", (800.0, -600.0, 295.0), 8.5, 55.0, (1.0, 0.95, 0.88)),
+    ("WindowPortal_North", (510.0, -780.0, 210.0), 6.5, 85.0, (0.94, 0.97, 1.0)),
+    ("WindowPortal_East", (960.0, -560.0, 210.0), 6.5, 85.0, (0.94, 0.97, 1.0)),
+    ("Parter_Hol", (520.0, -320.0, 295.0), 7.5, 45.0, (1.0, 0.95, 0.88)),
+    ("Poddasze_Hol", (520.0, -455.0, 585.0), 8.5, 50.0, (1.0, 0.95, 0.88)),
+    ("Poddasze_Gabinet_NE", (750.0, -630.0, 565.0), 9.5, 55.0, (1.0, 0.95, 0.88)),
+    ("Poddasze_Pokoj_NW", (260.0, -640.0, 565.0), 8.5, 50.0, (1.0, 0.95, 0.88)),
+    ("Poddasze_Pokoj_SE", (830.0, -260.0, 565.0), 8.5, 50.0, (1.0, 0.95, 0.88)),
 ]
-for l_name, l_pos, l_int in int_lights:
+for l_name, l_pos, l_int, l_rad, l_col in int_lights:
     pl = actor_sub.spawn_actor_from_class(unreal.PointLight, unreal.Vector(*l_pos), unreal.Rotator(0, 0, 0))
     pl.set_actor_label(f"PDF2BIM_IntLight_{l_name}")
     pl.set_folder_path("PDF2BIM/Lighting")
     plc = pl.point_light_component
     plc.set_mobility(unreal.ComponentMobility.MOVABLE)
     plc.set_intensity(l_int)
-    plc.set_attenuation_radius(900.0)
-    plc.set_light_color(unreal.LinearColor(1.0, 0.96, 0.90, 1.0))
+    plc.set_attenuation_radius(950.0)
+    plc.set_editor_property("source_radius", l_rad)
+    plc.set_editor_property("soft_source_radius", l_rad * 1.3)
+    plc.set_editor_property("contact_shadow_length", 0.04)
+    plc.set_light_color(unreal.LinearColor(l_col[0], l_col[1], l_col[2], 1.0))
 
-# 6. Capture 4 interior verification screenshots
+# 6. Capture 4 interior verification screenshots with full Lumen GI + Reflections + SSAO
 out_dir = "C:/Users/filip/pdf2bim_remote"
 
 def capture_interior(cam_loc, target_loc, fov, filename):
@@ -168,9 +184,36 @@ def capture_interior(cam_loc, target_loc, fov, filename):
     comp.set_editor_property("texture_target", rt)
     comp.set_editor_property("capture_source", unreal.SceneCaptureSource.SCS_FINAL_TONE_CURVE_HDR)
     comp.set_editor_property("fov_angle", fov)
-    comp.set_editor_property("capture_every_frame", False)
-    comp.set_editor_property("capture_on_movement", False)
-    comp.capture_scene()
+    comp.set_editor_property("always_persist_rendering_state", True)
+    comp.set_editor_property("capture_every_frame", True)
+    comp.set_editor_property("capture_on_movement", True)
+
+    cpps = comp.get_editor_property("post_process_settings")
+    cpps.set_editor_property("override_dynamic_global_illumination_method", True)
+    cpps.set_editor_property("dynamic_global_illumination_method", unreal.DynamicGlobalIlluminationMethod.LUMEN)
+    cpps.set_editor_property("override_reflection_method", True)
+    cpps.set_editor_property("reflection_method", unreal.ReflectionMethod.LUMEN)
+    cpps.set_editor_property("override_lumen_scene_lighting_quality", True)
+    cpps.set_editor_property("lumen_scene_lighting_quality", 4.0)
+    cpps.set_editor_property("override_lumen_final_gather_quality", True)
+    cpps.set_editor_property("lumen_final_gather_quality", 4.0)
+    cpps.set_editor_property("override_lumen_reflection_quality", True)
+    cpps.set_editor_property("lumen_reflection_quality", 4.0)
+    cpps.set_editor_property("override_ambient_occlusion_intensity", True)
+    cpps.set_editor_property("ambient_occlusion_intensity", 0.85)
+    cpps.set_editor_property("override_ambient_occlusion_radius", True)
+    cpps.set_editor_property("ambient_occlusion_radius", 140.0)
+    cpps.set_editor_property("override_bloom_intensity", True)
+    cpps.set_editor_property("bloom_intensity", 0.42)
+    cpps.set_editor_property("override_vignette_intensity", True)
+    cpps.set_editor_property("vignette_intensity", 0.30)
+    cpps.set_editor_property("override_auto_exposure_min_brightness", True)
+    cpps.set_editor_property("auto_exposure_min_brightness", 1.0)
+    cpps.set_editor_property("override_auto_exposure_max_brightness", True)
+    cpps.set_editor_property("auto_exposure_max_brightness", 1.0)
+
+    for _ in range(8):
+        comp.capture_scene()
 
     unreal.RenderingLibrary.export_render_target(world, rt, out_dir, filename)
     actor_sub.destroy_actor(cap_actor)
@@ -186,8 +229,8 @@ capture_interior(
 
 # Shot 2: Upstairs Furnished Room 2.3 Pokój NE / Gabinet (from SW door corner looking NE at Fab desk, chair, rug, credenza, armchair, plant & sloped ceiling)
 capture_interior(
-    unreal.Vector(545.0, -515.0, 555.0),
-    unreal.Vector(820.0, -685.0, 480.0),
+    unreal.Vector(575.0, -540.0, 555.0),
+    unreal.Vector(825.0, -675.0, 480.0),
     78.0,
     "ue5_int2_poddasze_rooms.png",
 )
