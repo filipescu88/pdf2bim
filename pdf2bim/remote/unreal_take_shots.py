@@ -53,7 +53,7 @@ exp_fog = None
 for a in actor_sub.get_all_level_actors():
     lbl = a.get_actor_label()
     cls = a.get_class().get_name()
-    if lbl == "Floor" or lbl.startswith("PDF2BIM_PostProcess") or lbl.startswith("PDF2BIM_Hedge_") or lbl.startswith("PDF2BIM_Furn_") or lbl.startswith("PDF2BIM_Fab_"):
+    if lbl == "Floor" or any(lbl.startswith(p) for p in ("PDF2BIM_PostProcess", "PDF2BIM_Hedge_", "PDF2BIM_Furn_", "PDF2BIM_Fab_", "PDF2BIM_Fol_", "PDF2BIM_Env_")):
         if lbl == "Floor":
             a.set_actor_hidden_in_game(True)
             a.set_is_temporarily_hidden_in_editor(True)
@@ -226,9 +226,14 @@ pbr_defs = {
     "M_Structure_Concrete": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.02, 1.03, 1.03), True, 0.98, 0.0, 0.24, 2.4),
     "M_Terrace_Paver_Grey": ("concrete_pavers_02_diffuse", "concrete_pavers_02_nor_gl", "concrete_pavers_02_rough", (0.76, 0.77, 0.79), False, 0.72, 0.0, 0.48, 2.5),
     "M_WalkwayPavers": ("concrete_pavers_02_diffuse", "concrete_pavers_02_nor_gl", "concrete_pavers_02_rough", (0.72, 0.73, 0.75), False, 0.75, 0.0, 0.45, 2.5),
-    "M_ParcelGrass": ("lawn_grass_diffuse", "leafy_grass_nor_gl", "leafy_grass_rough", (0.72, 0.86, 0.64), False, 0.90, 0.0, 0.25, 28.0),
+    "M_ParcelGrass": ("lawn_grass_diffuse", "leafy_grass_nor_gl", "leafy_grass_rough", (0.68, 0.84, 0.58), False, 0.90, 0.0, 0.25, 28.0),
     "M_Hedge_Boxwood": ("hedge_boxwood_diffuse", "hedge_boxwood_nor_gl", "hedge_boxwood_rough", (0.62, 0.78, 0.55), False, 0.85, 0.0, 0.30, 3.2),
     "M_Window_Frame_Anthracite": (None, None, None, (0.045, 0.050, 0.058), False, 0.28, 0.45, 0.70, 1.0),
+    "M_Gravel_Pebbles": ("gravel_pebbles_diffuse", "gravel_pebbles_nor_gl", "gravel_pebbles_rough", (0.86, 0.85, 0.83), False, 0.86, 0.0, 0.32, 1.8),
+    "M_Foliage_Boulder": ("boulder_01_diff_1k", "boulder_01_nor_gl_1k", "boulder_01_arm_1k", (0.90, 0.89, 0.87), False, 0.85, 0.0, 0.30, 1.0),
+    "M_Foliage_Pot": ("potted_plant_01_pot_diff_1k", "potted_plant_01_pot_nor_gl_1k", "potted_plant_01_pot_rough_1k", (0.92, 0.90, 0.88), False, 0.65, 0.0, 0.40, 1.0),
+    "M_Foliage_Tree_Trunk": ("tree_small_02_diff_1k", "tree_small_02_nor_gl_1k", "tree_small_02_arm_1k", (0.88, 0.85, 0.82), False, 0.88, 0.0, 0.25, 1.0),
+    "M_Foliage_Tree_Branch": ("tree_small_02_branch_diff_1k", "tree_small_02_branch_nor_gl_1k", "tree_small_02_branch_arm_1k", (0.88, 0.85, 0.82), False, 0.88, 0.0, 0.25, 1.0),
 }
 
 built_mats = {"M_Glass_Clear": m_glass}
@@ -455,24 +460,265 @@ for a in actor_sub.get_all_level_actors():
 
 print("ASSIGNED_MATERIAL_SLOTS", assigned)
 
-# 4. Spawn 3D Boxwood Perimeter Hedge around the parcel & Unbound PostProcessVolume for Lumen ArchViz
-cube_sm = unreal.EditorAssetLibrary.load_asset("/Engine/BasicShapes/Cube")
-hedge_mat = built_mats.get("M_Hedge_Boxwood")
-if cube_sm and hedge_mat:
-    hedge_segments = [
-        ("North", (515.0, -1780.0, 140.0), (22.0, 0.75, 1.75)),
-        ("West", (-550.0, -480.0, 140.0), (0.75, 26.5, 1.75)),
-        ("East_Back", (1580.0, -1080.0, 140.0), (0.75, 14.5, 1.75)),
-        ("South_West", (-180.0, 820.0, 140.0), (7.5, 0.75, 1.55)),
-        ("South_East", (1120.0, 820.0, 140.0), (9.5, 0.75, 1.55)),
-    ]
-    for h_sfx, h_loc, h_scale in hedge_segments:
-        ha = actor_sub.spawn_actor_from_object(cube_sm, unreal.Vector(*h_loc), unreal.Rotator(0.0, 0.0, 0.0))
-        if ha:
-            ha.set_actor_scale3d(unreal.Vector(*h_scale))
-            ha.set_actor_label(f"PDF2BIM_Hedge_{h_sfx}")
-            ha.set_folder_path("PDF2BIM/Landscaping")
-            ha.static_mesh_component.set_material(0, hedge_mat)
+# 4. Build 360 SkyDome & Alpha-Masked Foliage Materials + Import/Spawn 3D Vegetation & Landscaping
+m_sky = make_mat("M_Env_Panorama_Sky")
+m_sky.set_editor_property("two_sided", True)
+try:
+    m_sky.set_editor_property("shading_model", unreal.MaterialShadingModel.MSM_UNLIT)
+except Exception:
+    pass
+sky_tex = load_tex("meadow_2_env_4k")
+if sky_tex:
+    try:
+        sky_tex.set_editor_property("never_stream", True)
+    except Exception:
+        pass
+    ts_sky = mel.create_material_expression(m_sky, unreal.MaterialExpressionTextureSample, -450, -100)
+    ts_sky.set_editor_property("texture", sky_tex)
+    c_sky_mul = mel.create_material_expression(m_sky, unreal.MaterialExpressionConstant3Vector, -450, 80)
+    c_sky_mul.set_editor_property("constant", unreal.LinearColor(1.08, 1.08, 1.08, 1.0))
+    mul_sky = mel.create_material_expression(m_sky, unreal.MaterialExpressionMultiply, -180, -40)
+    mel.connect_material_expressions(ts_sky, "RGB", mul_sky, "A")
+    mel.connect_material_expressions(c_sky_mul, "", mul_sky, "B")
+    mel.connect_material_property(mul_sky, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    mel.connect_material_property(mul_sky, "", unreal.MaterialProperty.MP_BASE_COLOR)
+mel.recompile_material(m_sky)
+built_mats["M_Env_Panorama_Sky"] = m_sky
+
+# (diff_stem, norm_stem, alpha_stem, tint_rgb, rough_val, clip_val)
+masked_foliage_defs = {
+    "M_Foliage_Tree_Leaves": ("tree_small_02_leaves_diff_1k", "tree_small_02_leaves_nor_gl_1k", "tree_small_02_leaves_alpha_1k", (0.86, 1.08, 0.74), 0.46, 0.24),
+    "M_Foliage_Shrub_02": ("shrub_02_diff_1k", "shrub_02_nor_gl_1k", "shrub_02_alpha_1k", (0.76, 1.18, 0.68), 0.50, 0.12),
+    "M_Foliage_Shrub_01": ("shrub_01_diff_1k", "shrub_01_nor_gl_1k", "shrub_01_alpha_1k", (0.82, 1.08, 0.72), 0.48, 0.22),
+    "M_Foliage_Grass_01": ("grass_medium_01_diff_1k", "grass_medium_01_nor_gl_1k", "grass_medium_01_alpha_1k", (0.84, 1.08, 0.72), 0.54, 0.20),
+    "M_Foliage_Plant_Leaves": ("potted_plant_01_leaves_diff_1k", "potted_plant_01_leaves_nor_gl_1k", "potted_plant_01_leaves_alpha_1k", (0.88, 1.06, 0.80), 0.40, 0.28),
+}
+
+for mf_name, (d_s, n_s, a_s, f_tint, f_rough, f_clip) in masked_foliage_defs.items():
+    mf = make_mat(mf_name)
+    mf.set_editor_property("blend_mode", unreal.BlendMode.BLEND_MASKED)
+    mf.set_editor_property("two_sided", True)
+    try:
+        mf.set_editor_property("opacity_mask_clip_value", f_clip)
+    except Exception:
+        pass
+    d_t = load_tex(d_s)
+    if d_t:
+        try:
+            d_t.set_editor_property("never_stream", True)
+        except Exception:
+            pass
+        ts_d = mel.create_material_expression(mf, unreal.MaterialExpressionTextureSample, -480, -220)
+        ts_d.set_editor_property("texture", d_t)
+        ct_f = mel.create_material_expression(mf, unreal.MaterialExpressionConstant3Vector, -480, -340)
+        ct_f.set_editor_property("constant", unreal.LinearColor(f_tint[0], f_tint[1], f_tint[2], 1.0))
+        mul_f = mel.create_material_expression(mf, unreal.MaterialExpressionMultiply, -200, -220)
+        mel.connect_material_expressions(ts_d, "RGB", mul_f, "A")
+        mel.connect_material_expressions(ct_f, "", mul_f, "B")
+        mel.connect_material_property(mul_f, "", unreal.MaterialProperty.MP_BASE_COLOR)
+        # Subtle warm green canopy bounce so shaded inner leaves never turn black
+        em_c = mel.create_material_expression(mf, unreal.MaterialExpressionConstant3Vector, -480, -80)
+        em_c.set_editor_property("constant", unreal.LinearColor(0.035, 0.055, 0.020, 1.0))
+        em_f = mel.create_material_expression(mf, unreal.MaterialExpressionMultiply, -200, -80)
+        mel.connect_material_expressions(mul_f, "", em_f, "A")
+        mel.connect_material_expressions(em_c, "", em_f, "B")
+        mel.connect_material_property(em_f, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    a_t = load_tex(a_s, is_linear=True)
+    if a_t:
+        try:
+            a_t.set_editor_property("never_stream", True)
+        except Exception:
+            pass
+        ts_a = mel.create_material_expression(mf, unreal.MaterialExpressionTextureSample, -480, 60)
+        ts_a.set_editor_property("texture", a_t)
+        ts_a.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR)
+        mel.connect_material_property(ts_a, "R", unreal.MaterialProperty.MP_OPACITY_MASK)
+    n_t = load_tex(n_s, is_normal=True)
+    if n_t:
+        ts_n = mel.create_material_expression(mf, unreal.MaterialExpressionTextureSample, -480, 220)
+        ts_n.set_editor_property("texture", n_t)
+        ts_n.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL)
+        mel.connect_material_property(ts_n, "RGB", unreal.MaterialProperty.MP_NORMAL)
+    rf_n = mel.create_material_expression(mf, unreal.MaterialExpressionConstant, -220, 340)
+    rf_n.set_editor_property("r", f_rough)
+    mel.connect_material_property(rf_n, "", unreal.MaterialProperty.MP_ROUGHNESS)
+    sf_n = mel.create_material_expression(mf, unreal.MaterialExpressionConstant, -220, 410)
+    sf_n.set_editor_property("r", 0.28)
+    mel.connect_material_property(sf_n, "", unreal.MaterialProperty.MP_SPECULAR)
+    mel.recompile_material(mf)
+    built_mats[mf_name] = mf
+
+fol_pkg = "/Game/PDF2BIM/Foliage"
+fol_fbx = "C:/Users/filip/pdf2bim_remote/foliage/foliage_and_env.fbx"
+if os.path.exists(fol_fbx) and (os.environ.get("PDF2BIM_REIMPORT_FOLIAGE") or not unreal.EditorAssetLibrary.does_asset_exist(f"{fol_pkg}/SM_Tree_Small_02")):
+    if unreal.EditorAssetLibrary.does_directory_exist(fol_pkg):
+        unreal.EditorAssetLibrary.delete_directory(fol_pkg)
+    fbx_ui_f = unreal.FbxImportUI()
+    fbx_ui_f.import_mesh = True
+    fbx_ui_f.import_as_skeletal = False
+    fbx_ui_f.import_materials = False
+    fbx_ui_f.import_textures = False
+    fbx_ui_f.static_mesh_import_data.combine_meshes = False
+    fbx_ui_f.static_mesh_import_data.remove_degenerates = False
+    tf_task = unreal.AssetImportTask()
+    tf_task.set_editor_property("filename", fol_fbx)
+    tf_task.set_editor_property("destination_path", fol_pkg)
+    tf_task.set_editor_property("automated", True)
+    tf_task.set_editor_property("replace_existing", True)
+    tf_task.set_editor_property("replace_existing_settings", True)
+    tf_task.set_editor_property("save", False)
+    tf_task.set_editor_property("options", fbx_ui_f)
+    asset_tools.import_asset_tasks([tf_task])
+
+fol_meshes = {}
+fol_mat_slots = {
+    "SM_Env_SkyDome": ["M_Env_Panorama_Sky"],
+    "SM_Garden_Terrace": ["M_Terrace_Paver_Grey"],
+    "SM_Gravel_Drainage_Strip": ["M_Gravel_Pebbles"],
+    "SM_Gravel_Curb": ["M_Window_Frame_Anthracite"],
+    "SM_Boulder_01": ["M_Foliage_Boulder"],
+    "SM_Grass_Patch_3D": ["M_Foliage_Grass_01"],
+    "SM_Hedge_Row_4m": ["M_Foliage_Shrub_02"],
+    "SM_Shrub_02_A": ["M_Foliage_Shrub_02"],
+    "SM_Shrub_02_B": ["M_Foliage_Shrub_02"],
+    "SM_Shrub_01_Bush": ["M_Foliage_Shrub_01"],
+    "SM_Potted_Plant_01": ["M_Foliage_Plant_Leaves", "M_Foliage_Pot"],
+    "SM_Tree_Small_02": ["M_Foliage_Tree_Branch", "M_Foliage_Tree_Leaves", "M_Foliage_Tree_Trunk"],
+}
+for sm_name, slot_mats in fol_mat_slots.items():
+    sm_path = f"{fol_pkg}/{sm_name}"
+    if unreal.EditorAssetLibrary.does_asset_exist(sm_path):
+        sm_obj = unreal.EditorAssetLibrary.load_asset(sm_path)
+        if sm_obj:
+            resolved_slots = []
+            try:
+                st_mats = sm_obj.get_editor_property("static_materials")
+                for s_idx, stm in enumerate(st_mats):
+                    sname = str(stm.get_editor_property("material_slot_name"))
+                    matched = next((k for k in built_mats if sname.startswith(k)), None)
+                    if not matched and s_idx < len(slot_mats):
+                        matched = slot_mats[s_idx]
+                    resolved_slots.append(matched)
+            except Exception:
+                resolved_slots = list(slot_mats)
+            fol_mat_slots[sm_name] = resolved_slots
+            for s_idx, m_key in enumerate(resolved_slots):
+                if m_key and m_key in built_mats:
+                    sm_obj.set_material(s_idx, built_mats[m_key])
+            fol_meshes[sm_name] = sm_obj
+
+def spawn_fol(sm_name, label, loc_xyz, yaw_deg=0.0, scale_xyz=(1.0, 1.0, 1.0), cast_shadow=True):
+    sm_obj = fol_meshes.get(sm_name)
+    if not sm_obj:
+        return None
+    act = actor_sub.spawn_actor_from_object(sm_obj, unreal.Vector(*loc_xyz), unreal.Rotator(0.0, 0.0, yaw_deg))
+    if act:
+        act.set_actor_scale3d(unreal.Vector(*scale_xyz))
+        act.set_actor_label(label)
+        act.set_folder_path("PDF2BIM/Landscaping")
+        smc = act.static_mesh_component
+        slot_mats = fol_mat_slots.get(sm_name, [])
+        for s_idx, m_key in enumerate(slot_mats):
+            if m_key in built_mats:
+                smc.set_material(s_idx, built_mats[m_key])
+        if not cast_shadow:
+            smc.set_editor_property("cast_shadow", False)
+    return act
+
+# A) Spawn 360 SkyDome (no shadow casting!), Garden Terrace, Gravel Strip & Curb at base_loc (0, 0, 92)
+spawn_fol("SM_Env_SkyDome", "PDF2BIM_Env_SkyDome_360", (0.0, 0.0, 92.0), 0.0, (1.0, 1.0, 1.0), cast_shadow=False)
+spawn_fol("SM_Garden_Terrace", "PDF2BIM_Env_Garden_Terrace", (0.0, 0.0, 92.0))
+spawn_fol("SM_Gravel_Drainage_Strip", "PDF2BIM_Env_Gravel_Strip", (0.0, 0.0, 92.0))
+spawn_fol("SM_Gravel_Curb", "PDF2BIM_Env_Gravel_Curb", (0.0, 0.0, 92.0))
+
+# B) Spawn 3D Natural Shrub Perimeter Hedges (SM_Hedge_Row_4m) replacing flat Cube hedges
+hedge_3d_placements = [
+    ("North_1", (-420.0, -1850.0, 66.0), 0.0, (1.05, 1.15, 1.25)),
+    ("North_2", (-60.0, -1850.0, 66.0), 180.0, (1.05, 1.15, 1.28)),
+    ("North_3", (300.0, -1850.0, 66.0), 0.0, (1.05, 1.15, 1.22)),
+    ("North_4", (660.0, -1850.0, 66.0), 180.0, (1.05, 1.15, 1.26)),
+    ("North_5", (1020.0, -1850.0, 66.0), 0.0, (1.05, 1.15, 1.24)),
+    ("North_6", (1380.0, -1850.0, 66.0), 180.0, (1.05, 1.15, 1.25)),
+    ("West_1", (-580.0, -1550.0, 66.0), 90.0, (1.05, 1.15, 1.25)),
+    ("West_2", (-580.0, -1190.0, 66.0), 270.0, (1.05, 1.15, 1.22)),
+    ("West_3", (-580.0, -830.0, 66.0), 90.0, (1.05, 1.15, 1.26)),
+    ("West_4", (-580.0, -470.0, 66.0), 270.0, (1.05, 1.15, 1.24)),
+    ("West_5", (-580.0, -110.0, 66.0), 90.0, (1.05, 1.15, 1.22)),
+    ("West_6", (-580.0, 250.0, 66.0), 270.0, (1.05, 1.15, 1.25)),
+    ("West_7", (-580.0, 610.0, 66.0), 90.0, (1.05, 1.15, 1.20)),
+    ("East_1", (1620.0, -1450.0, 66.0), 270.0, (1.05, 1.15, 1.22)),
+    ("East_2", (1620.0, -1090.0, 66.0), 90.0, (1.05, 1.15, 1.25)),
+    ("East_3", (1620.0, -730.0, 66.0), 270.0, (1.05, 1.15, 1.20)),
+    ("East_4", (1620.0, -370.0, 66.0), 90.0, (1.05, 1.15, 1.18)),
+    ("South_W1", (-360.0, 840.0, 66.0), 0.0, (1.00, 1.10, 1.12)),
+    ("South_E1", (580.0, 840.0, 66.0), 0.0, (1.05, 1.10, 1.12)),
+    ("South_E2", (950.0, 840.0, 66.0), 180.0, (1.05, 1.10, 1.14)),
+    ("South_E3", (1310.0, 840.0, 66.0), 0.0, (1.00, 1.10, 1.10)),
+]
+for h_id, h_xyz, h_yaw, h_sc in hedge_3d_placements:
+    spawn_fol("SM_Hedge_Row_4m", f"PDF2BIM_Fol_Hedge_{h_id}", h_xyz, h_yaw, h_sc)
+    spawn_fol("SM_Shrub_01_Bush", f"PDF2BIM_Fol_HedgeBase_{h_id}", h_xyz, h_yaw + 35.0, (2.7, 2.7, 2.4))
+
+# C) Spawn 12 Photoscanned 3D Deciduous Trees (SM_Tree_Small_02) around garden, background & yard
+tree_placements = [
+    ("Back_NW_1", (-360.0, -1460.0, 65.0), 25.0, (1.45, 1.45, 1.55)),
+    ("Back_NW_2", (-780.0, -980.0, 65.0), 115.0, (1.75, 1.75, 1.85)),
+    ("Back_Center", (180.0, -1680.0, 65.0), -42.0, (1.38, 1.38, 1.48)),
+    ("Back_North_Far1", (-220.0, -2350.0, 65.0), 68.0, (1.85, 1.85, 1.95)),
+    ("Back_North_Far2", (750.0, -2420.0, 65.0), 145.0, (1.78, 1.78, 1.88)),
+    ("West_Side", (-440.0, -240.0, 65.0), 160.0, (1.32, 1.32, 1.40)),
+    ("Front_SW", (-350.0, 540.0, 65.0), -82.0, (1.28, 1.28, 1.36)),
+    ("Front_South_Far1", (420.0, 1420.0, 65.0), 18.0, (1.65, 1.65, 1.75)),
+    ("Front_South_Far2", (-750.0, 1180.0, 65.0), 195.0, (1.80, 1.80, 1.90)),
+    ("Front_Walkway_Left", (-80.0, 620.0, 65.0), -35.0, (1.18, 1.18, 1.25)),
+    ("East_Garden", (1470.0, -860.0, 65.0), -125.0, (1.18, 1.18, 1.25)),
+    ("East_Far_Refl", (2450.0, -380.0, 65.0), 48.0, (1.75, 1.75, 1.85)),
+]
+for t_id, t_xyz, t_yaw, t_sc in tree_placements:
+    spawn_fol("SM_Tree_Small_02", f"PDF2BIM_Fol_Tree_{t_id}", t_xyz, t_yaw, t_sc)
+
+# D) Spawn Garden Shrubs, Boulders, Potted Plants & 3D Meadow Grass Patches
+shrub_placements = [
+    ("SM_Shrub_02_A", "Shrub_Terrace_NE", (1230.0, -1080.0, 66.0), 35.0, (1.10, 1.10, 1.15)),
+    ("SM_Shrub_02_B", "Shrub_Terrace_E", (1240.0, -420.0, 66.0), 125.0, (1.05, 1.05, 1.10)),
+    ("SM_Shrub_02_A", "Shrub_Terrace_NW", (150.0, -1060.0, 66.0), -60.0, (1.15, 1.15, 1.20)),
+    ("SM_Shrub_01_Bush", "Shrub_Front_Bed1", (440.0, 95.0, 66.0), 15.0, (1.15, 1.15, 1.15)),
+    ("SM_Shrub_01_Bush", "Shrub_Front_Bed2", (760.0, 95.0, 66.0), 105.0, (1.20, 1.20, 1.20)),
+    ("SM_Shrub_02_B", "Shrub_Walkway_R1", (285.0, 220.0, 66.0), 45.0, (0.85, 0.85, 0.88)),
+    ("SM_Shrub_01_Bush", "Shrub_Walkway_R2", (285.0, 440.0, 66.0), 165.0, (1.10, 1.10, 1.10)),
+    ("SM_Shrub_02_A", "Shrub_Walkway_L1", (-40.0, 280.0, 66.0), -45.0, (0.90, 0.90, 0.92)),
+    ("SM_Shrub_01_Bush", "Shrub_East_Corner", (1160.0, 90.0, 66.0), 75.0, (1.25, 1.25, 1.25)),
+]
+for s_mesh, s_id, s_xyz, s_yaw, s_sc in shrub_placements:
+    spawn_fol(s_mesh, f"PDF2BIM_Fol_{s_id}", s_xyz, s_yaw, s_sc)
+
+boulder_placements = [
+    ("Boulder_NE", (1290.0, -980.0, 65.0), 20.0, (0.48, 0.48, 0.42)),
+    ("Boulder_Walkway", (310.0, 330.0, 65.0), 115.0, (0.38, 0.38, 0.34)),
+    ("Boulder_NW", (60.0, -1120.0, 65.0), -55.0, (0.52, 0.52, 0.45)),
+    ("Boulder_SE", (1230.0, 140.0, 65.0), 80.0, (0.42, 0.42, 0.36)),
+]
+for b_id, b_xyz, b_yaw, b_sc in boulder_placements:
+    spawn_fol("SM_Boulder_01", f"PDF2BIM_Fol_{b_id}", b_xyz, b_yaw, b_sc)
+
+pot_placements = [
+    ("Pot_Terrace_Patio1", (335.0, -885.0, 90.0), 15.0, (0.85, 0.85, 0.85)),
+    ("Pot_Terrace_Patio2", (1015.0, -885.0, 90.0), 105.0, (0.88, 0.88, 0.88)),
+    ("Pot_Terrace_East", (1080.0, -460.0, 90.0), -45.0, (0.82, 0.82, 0.82)),
+    ("Pot_Front_Porch", (32.0, -35.0, 90.0), 60.0, (0.80, 0.80, 0.80)),
+]
+for p_id, p_xyz, p_yaw, p_sc in pot_placements:
+    spawn_fol("SM_Potted_Plant_01", f"PDF2BIM_Fol_{p_id}", p_xyz, p_yaw, p_sc)
+
+grass_coords = [
+    (480.0, 280.0, 15.0), (820.0, 290.0, 75.0), (1180.0, 310.0, 135.0), (1460.0, 340.0, 210.0),
+    (460.0, 560.0, 45.0), (790.0, 580.0, 165.0), (1160.0, 560.0, 255.0), (1440.0, 610.0, 95.0),
+    (-190.0, 520.0, 125.0), (1340.0, -120.0, 35.0), (1380.0, -540.0, 155.0), (1360.0, -1240.0, 85.0),
+    (1020.0, -1320.0, 195.0), (660.0, -1340.0, 25.0), (310.0, -1320.0, 115.0), (-60.0, -1300.0, 225.0),
+    (1180.0, -1580.0, 65.0), (810.0, -1600.0, 175.0), (440.0, -1580.0, 285.0), (60.0, -1560.0, 145.0),
+]
+for g_idx, (gx, gy, gyaw) in enumerate(grass_coords):
+    spawn_fol("SM_Grass_Patch_3D", f"PDF2BIM_Fol_GrassPatch_{g_idx+1:02d}", (gx, gy, 66.5), gyaw, (1.15, 1.15, 1.35))
 
 ppv = actor_sub.spawn_actor_from_class(unreal.PostProcessVolume, unreal.Vector(500.0, -420.0, 250.0), unreal.Rotator(0.0, 0.0, 0.0))
 if ppv:
