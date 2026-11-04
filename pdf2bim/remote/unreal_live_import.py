@@ -52,6 +52,9 @@ tex_files = [
     "wood_floor_deck_diffuse.jpg",
     "wood_floor_deck_nor_gl.jpg",
     "wood_floor_deck_rough.jpg",
+    "facade_timber_cladding_diffuse.jpg",
+    "facade_timber_cladding_nor_gl.jpg",
+    "facade_timber_cladding_rough.jpg",
     "concrete_tiles_diffuse.jpg",
     "concrete_tiles_nor_gl.jpg",
     "concrete_tiles_rough.jpg",
@@ -74,7 +77,13 @@ asset_tools.import_asset_tasks(tex_tasks)
 def load_tex(stem):
     path = f"{tex_dest}/{stem}"
     if unreal.EditorAssetLibrary.does_asset_exist(path):
-        return unreal.EditorAssetLibrary.load_asset(path)
+        t = unreal.EditorAssetLibrary.load_asset(path)
+        if t:
+            try:
+                t.set_editor_property("never_stream", True)
+            except Exception:
+                pass
+        return t
     return None
 
 # 3. Clean up old meshes and re-import Dom1_Gniezniki FBX (with metric Box UVs)
@@ -109,7 +118,7 @@ pbr_recipes = {
     "M_Wall_Ceramic_Block": (None, "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.92, 0.91, 0.88), 0.86, 0.0, 4.5),
     "M_Wall_Insulation_EPS": (None, "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.92, 0.91, 0.88), 0.86, 0.0, 4.5),
     "M_Roof_Tile_Anthracite": ("grey_roof_tiles_02_diffuse", "grey_roof_tiles_02_nor_gl", "grey_roof_tiles_02_rough", (0.14, 0.15, 0.17), 0.50, 0.08, 2.2),
-    "M_Facade_Cladding_Oak": ("wood_floor_deck_diffuse", "wood_floor_deck_nor_gl", "wood_floor_deck_rough", (0.58, 0.36, 0.19), 0.55, 0.0, 1.3),
+    "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse", "facade_timber_cladding_nor_gl", "facade_timber_cladding_rough", (0.98, 0.98, 0.98), 0.78, 0.0, 1.0),
     "M_Door_Veneer_Oak": ("laminate_floor_02_diffuse", None, None, (0.52, 0.33, 0.18), 0.42, 0.0, 1.2),
     "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", None, None, (0.64, 0.47, 0.30), 0.40, 0.0, 1.5),
     "M_Floor_Tile_Gres": ("concrete_tiles_diffuse", "concrete_tiles_nor_gl", "concrete_tiles_rough", (0.82, 0.80, 0.77), 0.35, 0.0, 1.5),

@@ -35,6 +35,8 @@ for cvar, val in [
     ("r.ContactShadows", 1),
     ("r.ShadowQuality", 5),
     ("r.Streaming.PoolSize", 3000),
+    ("r.Streaming.FullyLoadUsedTextures", 1),
+    ("r.Streaming.UseFixedPoolSize", 1),
     ("sg.AntiAliasingQuality", 4),
     ("sg.ShadowQuality", 4),
     ("sg.GlobalIlluminationQuality", 4),
@@ -86,7 +88,7 @@ if os.path.isdir(tex_disk_dir):
         if not fn.lower().endswith(".jpg"):
             continue
         stem = os.path.splitext(fn)[0]
-        if not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
+        if "facade_timber_cladding" in stem or not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
             t = unreal.AssetImportTask()
             t.set_editor_property("filename", f"{tex_disk_dir}/{fn}")
             t.set_editor_property("destination_path", tex_pkg)
@@ -103,6 +105,11 @@ def load_tex(stem, is_normal=False, is_linear=False):
     p = f"{tex_pkg}/{stem}"
     if unreal.EditorAssetLibrary.does_asset_exist(p):
         t = unreal.EditorAssetLibrary.load_asset(p)
+        if t:
+            try:
+                t.set_editor_property("never_stream", True)
+            except Exception:
+                pass
         if t and is_normal:
             t.set_editor_property("compression_settings", unreal.TextureCompressionSettings.TC_NORMALMAP)
             t.set_editor_property("srgb", False)
@@ -142,7 +149,7 @@ mel.recompile_material(m_glass)
 pbr_defs = {
     "M_Wall_Plaster_White": ("painted_plaster_wall_diffuse", "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.95, 0.94, 0.91), True, 0.88, 0.0, 0.35, 3.5),
     "M_Roof_Tile_Anthracite": ("grey_roof_tiles_02_diffuse", "grey_roof_tiles_02_nor_gl", "grey_roof_tiles_02_rough", (0.18, 0.20, 0.23), False, 0.55, 0.15, 0.65, 2.4),
-    "M_Facade_Cladding_Oak": ("wood_floor_deck_diffuse", "wood_floor_deck_nor_gl", "wood_floor_deck_rough", (0.78, 0.64, 0.48), False, 0.58, 0.0, 0.55, 1.4),
+    "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse", "facade_timber_cladding_nor_gl", "facade_timber_cladding_rough", (0.98, 0.98, 0.98), False, 1.0, 0.0, 0.22, 1.0),
     "M_Door_Veneer_Oak": ("oak_countertop_diffuse", "oak_veneer_nor_gl", "oak_veneer_rough", (0.76, 0.56, 0.38), False, 0.38, 0.0, 0.62, 0.65),
     "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", "laminate_floor_02_nor_gl", "laminate_floor_02_rough", (0.86, 0.76, 0.65), False, 0.36, 0.0, 0.68, 1.6),
     "M_Floor_Tile_Gres": ("concrete_tiles_diffuse", "concrete_tiles_nor_gl", "concrete_tiles_rough", (0.91, 0.90, 0.88), False, 0.28, 0.0, 0.72, 1.5),
@@ -394,6 +401,16 @@ capture_shot(
     48.0,
     out_dir,
     "ue5_shot2_garden.png",
+)
+
+# Shot 3: Close-up of 3D timber cladding planks at South-East corner
+capture_shot(
+    unreal.Vector(1310.0, 230.0, 215.0),
+    unreal.Vector(980.0, -110.0, 210.0),
+    unreal.Rotator(roll=0.0, pitch=-22.0, yaw=-135.0),
+    42.0,
+    out_dir,
+    "ue5_shot3_wood_closeup.png",
 )
 """
 

@@ -962,11 +962,77 @@ def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                 )
             )
 
-    # Custom architectural elements (porch soffits, lintels, facade wood panels, etc.)
+    # Custom architectural elements (porch soffits, lintels, 3D timber facade cladding planks, etc.)
     for ce in sg.custom_elements:
         cx0, cy0, cx1, cy1 = ce.bbox_xy
         ce_quad = [(cx0, cy0), (cx1, cy0), (cx1, cy1), (cx0, cy1)]
-        ce_mesh = extrude_quad_prism(ce_quad, ce.z_bottom, ce.z_top)
+        if ce.id.startswith("facade_wood_") or ce.id.startswith("porch_wall_wood"):
+            plank_meshes: list[trimesh.Trimesh] = []
+            dx = cx1 - cx0
+            dy = cy1 - cy0
+            along_x = dx >= dy
+            # Recessed dark tongue-and-groove shadow backing plate behind the 5 mm plank joints
+            if along_x:
+                ym = 0.5 * (cy0 + cy1)
+                yt = 0.22 * dy
+                back_q = [(cx0 + 0.002, ym - yt), (cx1 - 0.002, ym - yt), (cx1 - 0.002, ym + yt), (cx0 + 0.002, ym + yt)]
+            else:
+                xm = 0.5 * (cx0 + cx1)
+                xt = 0.22 * dx
+                back_q = [(xm - xt, cy0 + 0.002), (xm + xt, cy0 + 0.002), (xm + xt, cy1 - 0.002), (xm - xt, cy1 - 0.002)]
+            bm_back = extrude_quad_prism(back_q, ce.z_bottom + 0.002, ce.z_top - 0.002)
+            if bm_back is not None:
+                g_mat = flashing_mat or ce.material_id
+                nodes.append(
+                    CompiledMeshNode(
+                        node_id=f"Detal_{ce.id}_groove",
+                        element_id=f"{ce.id}_groove",
+                        category="custom_element",
+                        level_id=ce.level_id,
+                        material_id=g_mat,
+                        ue_mesh_name=f"SM_Custom_{ce.id}_groove",
+                        ue_material_name=_ue_mat_name(sg, g_mat),
+                        mesh=bm_back,
+                        collidable=False,
+                        base_quad_xy=back_q,
+                        extras={"element_id": f"{ce.id}_groove", "category": "custom_element", "level_id": ce.level_id},
+                    )
+                )
+
+            plank_pitch = 0.145
+            n_rows = max(1, int(math.ceil((ce.z_top - ce.z_bottom) / plank_pitch)))
+            seed = int(round((cx0 + cy0) * 37.0))
+            span_len = dx if along_x else dy
+            for r_idx in range(n_rows):
+                zr0 = ce.z_bottom + r_idx * plank_pitch + 0.0025
+                zr1 = min(ce.z_top, ce.z_bottom + (r_idx + 1) * plank_pitch) - 0.0025
+                if zr1 - zr0 < 0.01:
+                    continue
+                # Staggered vertical butt-joints on long panels (> 2.10 m)
+                if span_len > 2.10:
+                    split_u = 0.65 + ((r_idx * 0.73 + seed * 0.19) % (span_len - 1.30))
+                    u_intervals = [(0.0, split_u - 0.002), (split_u + 0.002, span_len)]
+                else:
+                    u_intervals = [(0.0, span_len)]
+                for c_idx, (ua, ub) in enumerate(u_intervals):
+                    if ub - ua < 0.05:
+                        continue
+                    # Subtle per-plank surface relief (+/- 1.6 mm)
+                    rel = 0.0016 * math.sin(r_idx * 2.71 + c_idx * 4.13 + seed)
+                    if along_x:
+                        py0 = cy0 - rel if cy0 < 2.0 else cy0
+                        py1 = cy1 if cy0 < 2.0 else cy1 + rel
+                        pq = [(cx0 + ua, py0), (cx0 + ub, py0), (cx0 + ub, py1), (cx0 + ua, py1)]
+                    else:
+                        px0 = cx0 - rel if cx0 < 5.0 else cx0
+                        px1 = cx1 if cx0 < 5.0 else cx1 + rel
+                        pq = [(px0, cy0 + ua), (px1, cy0 + ua), (px1, cy0 + ub), (px0, cy0 + ub)]
+                    pm = extrude_quad_prism(pq, zr0, zr1)
+                    if pm is not None:
+                        plank_meshes.append(pm)
+            ce_mesh = trimesh.util.concatenate(plank_meshes) if plank_meshes else extrude_quad_prism(ce_quad, ce.z_bottom, ce.z_top)
+        else:
+            ce_mesh = extrude_quad_prism(ce_quad, ce.z_bottom, ce.z_top)
         if ce_mesh is not None:
             nodes.append(
                 CompiledMeshNode(

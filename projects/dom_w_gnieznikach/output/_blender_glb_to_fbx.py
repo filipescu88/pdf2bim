@@ -1,6 +1,7 @@
 """Blender 5.1 headless converter: .glb -> .fbx with metric Box UVs and PBR textures for Unreal Engine 5."""
 import os
 import sys
+import math
 import bpy
 import bmesh
 
@@ -64,19 +65,57 @@ for obj in bpy.data.objects:
     bm.normal_update()
     uv_layer = bm.loops.layers.uv.verify()
     oname = obj.name.lower()
-    scale = 0.75 if ("dach_" in oname or "roof" in oname) else (0.60 if "wood" in oname else 0.45)
+    is_wood_plank = ("facade_wood" in oname or "porch_wall_wood" in oname)
+    is_wood_soffit = ("roofboarding" in oname or "roofsoffit" in oname or "podbitka" in oname or "porch_ceiling_wood" in oname)
+    scale = 0.75 if ("dach_" in oname or "roofplane" in oname) else 0.45
     for face in bm.faces:
         face.smooth = False
         n = face.normal
         ax, ay, az = abs(n.x), abs(n.y), abs(n.z)
-        for loop in face.loops:
-            co = loop.vert.co
-            if az >= ax and az >= ay:
-                loop[uv_layer].uv = (co.x * scale, co.y * scale)
-            elif ax >= ay:
-                loop[uv_layer].uv = (co.y * scale, co.z * scale)
-            else:
-                loop[uv_layer].uv = (co.x * scale, co.z * scale)
+        if is_wood_plank:
+            zs = [lp.vert.co.z for lp in face.loops]
+            us = [(lp.vert.co.y if ax >= ay else lp.vert.co.x) for lp in face.loops]
+            z_min_f, z_max_f = min(zs), max(zs)
+            u_min_f, u_max_f = min(us), max(us)
+            dz_f = max(0.02, z_max_f - z_min_f)
+            z_box_mid = 0.5 * (z_min_f + z_max_f)
+            u_box_mid = 0.5 * (u_min_f + u_max_f)
+            row_idx = int(round((z_box_mid - 0.12 - 0.0725) / 0.145))
+            col_idx = int(round(u_box_mid * 4.0))
+            h_val = (row_idx * 73856093) ^ (col_idx * 19349663) ^ len(oname)
+            tex_p = (row_idx * 3 + col_idx * 5 + (abs(h_val) % 7)) % 8
+            u_shift = ((abs(h_val) % 997) / 997.0)
+            u_dir = -1.0 if ((abs(h_val) // 997) % 2 == 1) else 1.0
+            v_lo = (tex_p + 0.05) / 8.0
+            v_hi = (tex_p + 0.95) / 8.0
+            for loop in face.loops:
+                co = loop.vert.co
+                u_coord = co.y if ax >= ay else co.x
+                u_val = u_shift + u_dir * (u_coord * 0.4545)
+                if az >= 0.8:
+                    v_val = 0.5 * (v_lo + v_hi)
+                else:
+                    t_z = max(0.0, min(1.0, (co.z - z_min_f) / dz_f))
+                    v_val = v_lo + t_z * (v_hi - v_lo)
+                loop[uv_layer].uv = (u_val, v_val)
+        elif is_wood_soffit:
+            for loop in face.loops:
+                co = loop.vert.co
+                if az >= ax and az >= ay:
+                    loop[uv_layer].uv = (co.x * 0.4545, co.y * 0.862)
+                elif ax >= ay:
+                    loop[uv_layer].uv = (co.y * 0.4545, co.z * 0.862)
+                else:
+                    loop[uv_layer].uv = (co.x * 0.4545, co.z * 0.862)
+        else:
+            for loop in face.loops:
+                co = loop.vert.co
+                if az >= ax and az >= ay:
+                    loop[uv_layer].uv = (co.x * scale, co.y * scale)
+                elif ax >= ay:
+                    loop[uv_layer].uv = (co.y * scale, co.z * scale)
+                else:
+                    loop[uv_layer].uv = (co.x * scale, co.z * scale)
     bm.to_mesh(me)
     bm.free()
 
@@ -85,7 +124,7 @@ tex_dir = "C:/Users/filip/pdf2bim_remote/textures"
 tex_bindings = {
     "M_Wall_Plaster_White": ("painted_plaster_wall_diffuse.jpg", "painted_plaster_wall_nor_gl.jpg", "painted_plaster_wall_rough.jpg"),
     "M_Roof_Tile_Anthracite": ("anthracite_roof_diffuse.jpg", "grey_roof_tiles_02_nor_gl.jpg", "grey_roof_tiles_02_rough.jpg"),
-    "M_Facade_Cladding_Oak": ("wood_floor_deck_diffuse.jpg", "wood_floor_deck_nor_gl.jpg", "wood_floor_deck_rough.jpg"),
+    "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse.jpg", "facade_timber_cladding_nor_gl.jpg", "facade_timber_cladding_rough.jpg"),
     "M_Door_Veneer_Oak": ("laminate_floor_02_diffuse.jpg", None, None),
     "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse.jpg", None, None),
     "M_Floor_Tile_Gres": ("concrete_tiles_diffuse.jpg", "concrete_tiles_nor_gl.jpg", "concrete_tiles_rough.jpg"),
