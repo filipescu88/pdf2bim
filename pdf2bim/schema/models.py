@@ -96,7 +96,7 @@ class WallSpec(BaseModel):
     wall_type: Literal["exterior", "interior_loadbearing", "interior_partition", "knee_wall", "gable_wall"]
     start_xy: Point2D
     end_xy: Point2D
-    alignment: Literal["center", "left", "right"] = "center"
+    alignment: Literal["center", "left", "right", "core_left", "core_right"] = "center"
     priority: int = Field(1, description="Higher priority extends through L/T corners; lower butts against it")
     z_bottom: float
     z_top: float
@@ -106,6 +106,20 @@ class WallSpec(BaseModel):
     @property
     def total_thickness(self) -> float:
         return round(sum(layer.thickness for layer in self.layers), 4)
+
+    @property
+    def ext_insulation_thickness(self) -> float:
+        return round(
+            sum(layer.thickness for layer in self.layers if layer.role in ("insulation", "finish_ext")),
+            4,
+        )
+
+    @property
+    def core_and_int_thickness(self) -> float:
+        return round(
+            sum(layer.thickness for layer in self.layers if layer.role in ("core", "finish_int")),
+            4,
+        )
 
     @property
     def length(self) -> float:

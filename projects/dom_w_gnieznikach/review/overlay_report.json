@@ -1,0 +1,215 @@
+{
+  "project_slug": "dom_w_gnieznikach",
+  "passed": true,
+  "max_exterior_wall_deviation_cm": 1.2,
+  "mean_wall_deviation_cm": 0.86,
+  "min_contour_overlap_ratio": 0.884,
+  "levels": [
+    {
+      "level_id": "parter",
+      "pdf_filename": "karta.pdf",
+      "overlay_image_path": "review/overlay_parter.png",
+      "scale_x_pt_per_m": 16.732,
+      "scale_y_pt_per_m": 16.7321,
+      "max_exterior_wall_deviation_cm": 1.2,
+      "mean_wall_deviation_cm": 1.02,
+      "wall_contour_overlap_ratio": 0.884,
+      "passed": true,
+      "wall_metrics": [
+        {
+          "wall_id": "w_p_south_main",
+          "wall_type": "exterior",
+          "orientation": "H",
+          "expected_coord_m": 0.0,
+          "detected_pdf_coord_m": 0.012,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.782
+        },
+        {
+          "wall_id": "w_p_south_recess_v",
+          "wall_type": "exterior",
+          "orientation": "V",
+          "expected_coord_m": 2.48,
+          "detected_pdf_coord_m": 2.485,
+          "deviation_cm": 0.48,
+          "contour_overlap": 1.0
+        },
+        {
+          "wall_id": "w_p_south_entrance",
+          "wall_type": "exterior",
+          "orientation": "H",
+          "expected_coord_m": 1.38,
+          "detected_pdf_coord_m": 1.392,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.794
+        },
+        {
+          "wall_id": "w_p_east",
+          "wall_type": "exterior",
+          "orientation": "V",
+          "expected_coord_m": 10.3,
+          "detected_pdf_coord_m": 10.309,
+          "deviation_cm": 0.89,
+          "contour_overlap": 0.924
+        },
+        {
+          "wall_id": "w_p_north",
+          "wall_type": "exterior",
+          "orientation": "H",
+          "expected_coord_m": 8.4,
+          "detected_pdf_coord_m": 8.405,
+          "deviation_cm": 0.54,
+          "contour_overlap": 0.897
+        },
+        {
+          "wall_id": "w_p_west",
+          "wall_type": "exterior",
+          "orientation": "V",
+          "expected_coord_m": 0.0,
+          "detected_pdf_coord_m": 0.009,
+          "deviation_cm": 0.88,
+          "contour_overlap": 0.985
+        },
+        {
+          "wall_id": "w_p_kotlownia_east",
+          "wall_type": "interior_loadbearing",
+          "orientation": "V",
+          "expected_coord_m": 2.36,
+          "detected_pdf_coord_m": 2.372,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.834
+        },
+        {
+          "wall_id": "w_p_wiatrolap_north",
+          "wall_type": "interior_partition",
+          "orientation": "H",
+          "expected_coord_m": 4.15,
+          "detected_pdf_coord_m": 4.162,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.886
+        },
+        {
+          "wall_id": "w_p_lazienka_north",
+          "wall_type": "interior_partition",
+          "orientation": "H",
+          "expected_coord_m": 1.68,
+          "detected_pdf_coord_m": 1.692,
+          "deviation_cm": 1.2,
+          "contour_overlap": 1.0
+        },
+        {
+          "wall_id": "w_p_lazienka_east",
+          "wall_type": "interior_partition",
+          "orientation": "V",
+          "expected_coord_m": 5.66,
+          "detected_pdf_coord_m": 5.672,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.617
+        },
+        {
+          "wall_id": "w_p_schody_north",
+          "wall_type": "interior_loadbearing",
+          "orientation": "H",
+          "expected_coord_m": 4.0,
+          "detected_pdf_coord_m": 4.012,
+          "deviation_cm": 1.2,
+          "contour_overlap": 1.0
+        }
+      ]
+    },
+    {
+      "level_id": "poddasze",
+      "pdf_filename": "karta.pdf",
+      "overlay_image_path": "review/overlay_poddasze.png",
+      "scale_x_pt_per_m": 16.7311,
+      "scale_y_pt_per_m": 16.7321,
+      "max_exterior_wall_deviation_cm": 1.03,
+      "mean_wall_deviation_cm": 0.71,
+      "wall_contour_overlap_ratio": 0.923,
+      "passed": true,
+      "wall_metrics": [
+        {
+          "wall_id": "w_a_knee_south",
+          "wall_type": "knee_wall",
+          "orientation": "H",
+          "expected_coord_m": 0.0,
+          "detected_pdf_coord_m": 0.01,
+          "deviation_cm": 1.03,
+          "contour_overlap": 1.0
+        },
+        {
+          "wall_id": "w_a_knee_north",
+          "wall_type": "knee_wall",
+          "orientation": "H",
+          "expected_coord_m": 8.4,
+          "detected_pdf_coord_m": 8.406,
+          "deviation_cm": 0.62,
+          "contour_overlap": 1.0
+        },
+        {
+          "wall_id": "w_a_gable_east",
+          "wall_type": "gable_wall",
+          "orientation": "V",
+          "expected_coord_m": 10.3,
+          "detected_pdf_coord_m": 10.308,
+          "deviation_cm": 0.75,
+          "contour_overlap": 0.953
+        },
+        {
+          "wall_id": "w_a_gable_west",
+          "wall_type": "gable_wall",
+          "orientation": "V",
+          "expected_coord_m": 0.0,
+          "detected_pdf_coord_m": 0.009,
+          "deviation_cm": 0.89,
+          "contour_overlap": 0.955
+        },
+        {
+          "wall_id": "w_a_north_rooms_div",
+          "wall_type": "interior_partition",
+          "orientation": "V",
+          "expected_coord_m": 4.96,
+          "detected_pdf_coord_m": 4.962,
+          "deviation_cm": 0.18,
+          "contour_overlap": 0.742
+        },
+        {
+          "wall_id": "w_a_hol_north",
+          "wall_type": "interior_partition",
+          "orientation": "H",
+          "expected_coord_m": 5.11,
+          "detected_pdf_coord_m": 5.122,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.961
+        },
+        {
+          "wall_id": "w_a_hol_south",
+          "wall_type": "interior_partition",
+          "orientation": "H",
+          "expected_coord_m": 2.92,
+          "detected_pdf_coord_m": 2.921,
+          "deviation_cm": 0.12,
+          "contour_overlap": 1.0
+        },
+        {
+          "wall_id": "w_a_sw_laz_div",
+          "wall_type": "interior_partition",
+          "orientation": "V",
+          "expected_coord_m": 4.09,
+          "detected_pdf_coord_m": 4.102,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.894
+        },
+        {
+          "wall_id": "w_a_laz_se_div",
+          "wall_type": "interior_partition",
+          "orientation": "V",
+          "expected_coord_m": 6.58,
+          "detected_pdf_coord_m": 6.584,
+          "deviation_cm": 0.36,
+          "contour_overlap": 0.799
+        }
+      ]
+    }
+  ]
+}

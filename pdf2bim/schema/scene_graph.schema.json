@@ -1480,7 +1480,9 @@
           "enum": [
             "center",
             "left",
-            "right"
+            "right",
+            "core_left",
+            "core_right"
           ],
           "title": "Alignment",
           "type": "string"

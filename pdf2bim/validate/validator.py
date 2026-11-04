@@ -86,8 +86,12 @@ def wall_footprint_polygon(w: WallSpec) -> Polygon:
         off_left, off_right = 0.5 * th, -0.5 * th
     elif w.alignment == "left":
         off_left, off_right = th, 0.0
-    else:  # "right"
+    elif w.alignment == "right":
         off_left, off_right = 0.0, -th
+    elif w.alignment == "core_left":
+        off_left, off_right = w.core_and_int_thickness, -w.ext_insulation_thickness
+    else:  # "core_right"
+        off_left, off_right = w.ext_insulation_thickness, -w.core_and_int_thickness
 
     p1 = (x0 + nx * off_right, y0 + ny * off_right)
     p2 = (x1 + nx * off_right, y1 + ny * off_right)

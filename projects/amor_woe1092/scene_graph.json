@@ -299,7 +299,7 @@
         3.72,
         0.0
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -347,7 +347,7 @@
         3.72,
         0.6
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 2,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -395,7 +395,7 @@
         6.72,
         0.6
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -443,7 +443,7 @@
         6.72,
         0.0
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 2,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -491,7 +491,7 @@
         10.44,
         0.0
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -539,7 +539,7 @@
         10.44,
         8.04
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -587,7 +587,7 @@
         0.0,
         8.04
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -635,7 +635,7 @@
         0.0,
         0.0
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -676,14 +676,14 @@
       "level_id": "parter",
       "wall_type": "interior_loadbearing",
       "start_xy": [
-        6.67,
+        6.6,
         0.85
       ],
       "end_xy": [
-        6.67,
+        6.6,
         7.78
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 2,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -703,14 +703,14 @@
       "level_id": "parter",
       "wall_type": "interior_partition",
       "start_xy": [
-        3.72,
+        3.6,
         0.85
       ],
       "end_xy": [
-        3.72,
+        3.6,
         2.73
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -730,14 +730,14 @@
       "level_id": "parter",
       "wall_type": "interior_partition",
       "start_xy": [
-        4.53,
+        4.5,
         0.85
       ],
       "end_xy": [
-        4.53,
+        4.5,
         2.73
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -761,7 +761,7 @@
         2.73
       ],
       "end_xy": [
-        6.67,
+        6.6,
         2.73
       ],
       "alignment": "left",
@@ -784,12 +784,12 @@
       "level_id": "parter",
       "wall_type": "interior_partition",
       "start_xy": [
-        6.82,
-        3.73
+        6.84,
+        3.5
       ],
       "end_xy": [
         10.18,
-        3.73
+        3.5
       ],
       "alignment": "left",
       "priority": 1,
@@ -811,14 +811,14 @@
       "level_id": "parter",
       "wall_type": "interior_partition",
       "start_xy": [
-        7.92,
-        3.85
+        8.04,
+        3.62
       ],
       "end_xy": [
-        7.92,
+        8.04,
         5.35
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 0.0,
       "z_top": 2.68,
@@ -838,12 +838,12 @@
       "level_id": "parter",
       "wall_type": "interior_partition",
       "start_xy": [
-        6.82,
-        5.35
+        6.84,
+        5.25
       ],
       "end_xy": [
         10.18,
-        5.35
+        5.25
       ],
       "alignment": "left",
       "priority": 1,
@@ -872,7 +872,7 @@
         10.44,
         0.6
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 2.95,
       "z_top": 3.92,
@@ -920,7 +920,7 @@
         0.0,
         8.04
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 2.95,
       "z_top": 3.92,
@@ -968,7 +968,7 @@
         10.44,
         8.04
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 2.95,
       "z_top": 7.7,
@@ -1016,7 +1016,7 @@
         0.0,
         0.6
       ],
-      "alignment": "left",
+      "alignment": "core_left",
       "priority": 3,
       "z_bottom": 2.95,
       "z_top": 7.7,
@@ -1057,7 +1057,7 @@
       "level_id": "poddasze",
       "wall_type": "interior_partition",
       "start_xy": [
-        2.25,
+        0.26,
         3.85
       ],
       "end_xy": [
@@ -1111,14 +1111,14 @@
       "level_id": "poddasze",
       "wall_type": "interior_partition",
       "start_xy": [
-        2.15,
+        2.0,
         0.9
       ],
       "end_xy": [
-        2.15,
+        2.0,
         3.85
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 2.95,
       "z_top": 5.05,
@@ -1138,14 +1138,14 @@
       "level_id": "poddasze",
       "wall_type": "interior_partition",
       "start_xy": [
-        6.3,
+        6.56,
         0.9
       ],
       "end_xy": [
-        6.3,
-        3.85
+        6.56,
+        4.7
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 2.95,
       "z_top": 5.05,
@@ -1165,12 +1165,12 @@
       "level_id": "poddasze",
       "wall_type": "interior_partition",
       "start_xy": [
-        6.3,
-        6.45
+        6.66,
+        4.6
       ],
       "end_xy": [
         10.18,
-        6.45
+        4.6
       ],
       "alignment": "left",
       "priority": 1,
@@ -1342,8 +1342,8 @@
       },
       {
         "id": "door_dw_pokoj18",
-        "wall_id": "w_p_sw1_east_core",
-        "offset_along_wall": 2.0,
+        "wall_id": "w_p_pokoj18_north",
+        "offset_along_wall": 0.6,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 0.0,
@@ -1395,7 +1395,7 @@
       {
         "id": "door_attic_pok25",
         "wall_id": "w_a_komunikacja_south",
-        "offset_along_wall": 1.6,
+        "offset_along_wall": 3.6,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 2.95,
@@ -1407,8 +1407,8 @@
       },
       {
         "id": "door_attic_pok24",
-        "wall_id": "w_a_komunikacja_south",
-        "offset_along_wall": 3.1,
+        "wall_id": "w_a_pok25_pok24_div",
+        "offset_along_wall": 2.6,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 2.95,

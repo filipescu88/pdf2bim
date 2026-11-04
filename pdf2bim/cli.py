@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from pdf2bim.extract import generate_project_overlays
 from pdf2bim.schema import SceneGraphV2
 from pdf2bim.validate import validate_scene_graph_v2
 
@@ -41,6 +42,16 @@ def main(argv=None) -> int:
         rev_dir.mkdir(parents=True, exist_ok=True)
         (rev_dir / "validation_report.json").write_text(
             rep.model_dump_json(indent=2), encoding="utf-8"
+        )
+        return 0 if rep.passed else 1
+
+    if args.command == "overlay" and sg_path.is_file():
+        rep = generate_project_overlays(proj_dir)
+        print(
+            f"[overlay] {rep.project_slug}: status={'PASS' if rep.passed else 'FAIL'} "
+            f"| max_ext_dev={rep.max_exterior_wall_deviation_cm:.2f}cm "
+            f"| mean_dev={rep.mean_wall_deviation_cm:.2f}cm "
+            f"| min_overlap={rep.min_contour_overlap_ratio:.1%}"
         )
         return 0 if rep.passed else 1
 
