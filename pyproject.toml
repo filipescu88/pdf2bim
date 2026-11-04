@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdf2bim"
+version = "2.0.0"
+description = "Deterministic Forward Pipeline: PDF/DXF/WZ -> scene_graph.json v2 -> 3D BIM (GLB/USD/FBX) & WebXR"
+readme = "PLAN.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.5.0",
+    "shapely>=2.0.0",
+    "numpy>=1.24.0",
+    "trimesh>=4.0.0",
+    "mapbox-earcut>=1.0.0",
+    "ezdxf>=1.1.0",
+    "PyMuPDF>=1.23.0",
+    "Pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pdf2bim*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-v --tb=short"
