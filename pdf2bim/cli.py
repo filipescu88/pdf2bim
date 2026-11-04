@@ -5,7 +5,12 @@ import json
 import sys
 from pathlib import Path
 
-from pdf2bim.export import export_scene_to_glb, export_scene_to_usda
+from pdf2bim.export import (
+    build_unreal_optimized_scene,
+    export_scene_to_glb,
+    export_scene_to_remote_fbx,
+    export_scene_to_usda,
+)
 from pdf2bim.extract import extract_and_evaluate_project, generate_project_overlays
 from pdf2bim.geometry import compile_scene_graph_3d, verify_3d_invariants
 from pdf2bim.schema import SceneGraphV2
@@ -27,6 +32,8 @@ def main(argv=None) -> int:
     ]:
         p = sub.add_parser(cmd_name, help=help_text)
         p.add_argument("project_dir", type=Path, help="Path to project directory (e.g. projects/dom_w_gnieznikach)")
+        if cmd_name == "build":
+            p.add_argument("--remote-fbx", action="store_true", help="Also convert .glb -> .fbx on remote Windows GPU (filip@192.168.0.11)")
 
     args = parser.parse_args(argv)
     proj_dir = args.project_dir.resolve()
@@ -79,14 +86,24 @@ def main(argv=None) -> int:
         )
         out_dir = proj_dir / "output"
         glb_path = export_scene_to_glb(sg, scene3d, out_dir / f"{sg.project_slug}.glb")
+        ue_scene = build_unreal_optimized_scene(sg, scene3d)
+        ue_glb_path = export_scene_to_glb(sg, ue_scene, out_dir / f"{sg.project_slug}_unreal.glb")
         usda_path = export_scene_to_usda(sg, scene3d, out_dir / f"{sg.project_slug}_unreal.usda")
+        fbx_info = ""
+        if getattr(args, "remote_fbx", False):
+            fbx_path = out_dir / f"{sg.project_slug}_unreal.fbx"
+            fbx_res = export_scene_to_remote_fbx(ue_glb_path, fbx_path)
+            if not fbx_res.succeeded:
+                print(f"[ERROR] Remote FBX export failed: {fbx_res.error_message}\n{fbx_res.stderr}", file=sys.stderr)
+                return 1
+            fbx_info = f" | fbx={fbx_path.name}"
         transition_markers_on_rebuild(proj_dir, sg)
         all_ok = val_rep.passed and ov_rep.passed and inv_rep.passed
         print(
             f"[build] {sg.project_slug}: status={'PASS' if all_ok else 'FAIL'} "
             f"| overlay_dev={ov_rep.max_exterior_wall_deviation_cm:.2f}cm "
             f"| nodes={inv_rep.total_nodes} | invariants=7/7 "
-            f"| glb={glb_path.name} | usda={usda_path.name}"
+            f"| glb={glb_path.name} | usda={usda_path.name}{fbx_info}"
         )
         return 0 if all_ok else 1
 

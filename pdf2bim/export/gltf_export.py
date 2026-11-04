@@ -63,6 +63,9 @@ def export_scene_to_glb(
 
     for node in scene3d.nodes:
         mesh = node.mesh.copy()
+        # Convert BIM Z-up (x, y, z) to glTF 2.0 Y-up (x, z, -y); det=+1 preserves face winding
+        v = mesh.vertices
+        mesh.vertices = np.column_stack([v[:, 0], v[:, 2], -v[:, 1]])
         mat_spec = sg.materials.get(node.material_id)
         if mat_spec is not None:
             r, g, b = mat_spec.base_color_rgb
@@ -79,10 +82,14 @@ def export_scene_to_glb(
         else:
             mesh.visual.face_colors = np.array([210, 210, 210, 255], dtype=np.uint8)
 
+        pivot = node.extras.get("world_pivot_xyz", [0.0, 0.0, 0.0])
+        px, py, pz = float(pivot[0]), float(pivot[1]), float(pivot[2])
+        xform = trimesh.transformations.translation_matrix([px, pz, -py])
         tm_scene.add_geometry(
             mesh,
             node_name=node.node_id,
             geom_name=node.ue_mesh_name,
+            transform=xform,
             metadata=node.extras,
         )
         extras_by_node[node.node_id] = node.extras
