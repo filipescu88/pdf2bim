@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>PDF2BIM WebXR Viewer & Laser Marker QA (v2.0)</title>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; background: #121417; color: #f1f3f5; }
+    #hud {
+      position: fixed; top: 12px; left: 12px; z-index: 10;
+      background: rgba(18, 20, 23, 0.88); padding: 12px 16px; border-radius: 8px;
+      border: 1px solid #343a40; max-width: 380px;
+    }
+    #hud select, #hud button, #hud input {
+      background: #212529; color: #f8f9fa; border: 1px solid #495057;
+      padding: 6px 10px; border-radius: 4px; margin-top: 6px;
+    }
+    .marker-badge { font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
+    .status-open { background: #c92a2a; }
+    .status-needs_verification { background: #e67700; }
+    .status-verified { background: #2b8a3e; }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.164.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="hud">
+    <div><strong>PDF2BIM WebXR + Mazak QA</strong></div>
+    <label for="projectSelect">Projekt:</label>
+    <select id="projectSelect">
+      <option value="dom_w_gnieznikach">dom_w_gnieznikach</option>
+      <option value="amor_woe1092">amor_woe1092</option>
+    </select>
+    <button id="flyBtn" type="button">Tryb: Spacer [F]</button>
+    <div id="statusText" style="margin-top:8px;font-size:13px;">Ładowanie modelu GLB...</div>
+    <div id="markersList" style="margin-top:8px;max-height:180px;overflow-y:auto;font-size:12px;"></div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { VRButton } from 'three/addons/webxr/VRButton.js';
+
+    const params = new URLSearchParams(window.location.search);
+    let currentProject = params.get('project') || 'dom_w_gnieznikach';
+    const selectEl = document.getElementById('projectSelect');
+    selectEl.value = currentProject;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xdce8f2);
+    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 250);
+    const playerRig = new THREE.Group();
+    playerRig.add(camera);
+    scene.add(playerRig);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.xr.enabled = true;
+    document.body.appendChild(renderer.domElement);
+    document.body.appendChild(VRButton.createButton(renderer));
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x556070, 1.1));
+    const dirLight = new THREE.DirectionalLight(0xfff6e5, 1.4);
+    dirLight.position.set(14, 24, 16);
+    scene.add(dirLight);
+
+    // Dynamic state populated strictly from GLB node.userData (extras) & scene_graph.json
+    let collidableBoxes = [];
+    let stairSteps = [];
+    let interactiveDoors = [];
+    let levelFloors = [];
+    let flyMode = false;
+    const EYE_HEIGHT = 1.65;
+
+    function buildDynamicSceneMetadata(gltfRoot, sceneGraph) {
+      collidableBoxes = [];
+      stairSteps = [];
+      interactiveDoors = [];
+      levelFloors = (sceneGraph.levels || []).map(l => ({ id: l.id, z_floor: l.z_floor }));
+
+      const toPivotWrap = [];
+      gltfRoot.traverse(node => {
+        if (!node.isMesh && !node.userData) return;
+        const extras = node.userData || {};
+        if (extras.category === 'door_leaf' && Array.isArray(extras.hinge_xy)) {
+          toPivotWrap.push({ node, extras });
+        } else if (extras.category === 'stair_step' || extras.category === 'stair_landing') {
+          const box = new THREE.Box3().setFromObject(node);
+          stairSteps.push({ box, z_top: Number(extras.z_top || 0), element_id: extras.element_id });
+        } else if (extras.collidable === true && extras.category === 'wall_segment') {
+          collidableBoxes.push(new THREE.Box3().setFromObject(node));
+        }
+      });
+
+      // Wrap door leaves in a pivot group located at exact hinge_xy (in Blender/BIM XY -> Three.js X, -Y)
+      for (const { node, extras } of toPivotWrap) {
+        const [hx, hy] = extras.hinge_xy;
+        const pivotGroup = new THREE.Group();
+        pivotGroup.name = `Pivot_${node.name}`;
+        pivotGroup.position.set(hx, 0, -hy);
+        pivotGroup.userData = {
+          ...extras,
+          isOpen: false,
+          closedBox: new THREE.Box3().setFromObject(node)
+        };
+        node.parent.add(pivotGroup);
+        node.position.x -= hx;
+        node.position.z -= (-hy);
+        pivotGroup.add(node);
+        interactiveDoors.push(pivotGroup);
+      }
+    }
+
+    export function resolvePlayerCollisions(nextPos, radius = 0.24) {
+      if (flyMode) return nextPos;
+      const playerSphere = new THREE.Sphere(nextPos, radius);
+      for (const box of collidableBoxes) {
+        if (box.intersectsSphere(playerSphere)) {
+          const closest = new THREE.Vector3();
+          box.clampPoint(nextPos, closest);
+          const push = nextPos.clone().sub(closest);
+          push.y = 0;
+          const dist = push.length();
+          if (dist > 1e-4 && dist < radius) {
+            nextPos.addScaledVector(push.normalize(), radius - dist);
+          }
+        }
+      }
+      for (const doorPivot of interactiveDoors) {
+        if (!doorPivot.userData.isOpen && doorPivot.userData.closedBox.intersectsSphere(playerSphere)) {
+          return nextPos;
+        }
+      }
+      return nextPos;
+    }
+
+    export function updateDynamicFloorHeight(playerPos) {
+      if (flyMode) return;
+      for (const st of stairSteps) {
+        if (
+          playerPos.x >= st.box.min.x - 0.08 && playerPos.x <= st.box.max.x + 0.08 &&
+          playerPos.z >= st.box.min.z - 0.08 && playerPos.z <= st.box.max.z + 0.08
+        ) {
+          playerPos.y = st.z_top + EYE_HEIGHT;
+          return;
+        }
+      }
+    }
+
+    async function refreshMarkersUI(slug) {
+      const res = await fetch(`/api/project/${slug}/markers`);
+      if (!res.ok) return;
+      const store = await res.json();
+      const listEl = document.getElementById('markersList');
+      listEl.innerHTML = '';
+      for (const m of store.markers || []) {
+        const row = document.createElement('div');
+        row.style.marginTop = '4px';
+        row.innerHTML = `<code>${m.marker_id}</code> [${m.element_id}] ${m.note} <span class="marker-badge status-${m.status}">${m.status}</span>`;
+        if (m.status !== 'verified') {
+          const btn = document.createElement('button');
+          btn.textContent = '✓ Zweryfikowane';
+          btn.style.marginLeft = '6px';
+          btn.onclick = async () => {
+            await fetch(`/api/project/${slug}/markers/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ marker_id: m.marker_id })
+            });
+            refreshMarkersUI(slug);
+          };
+          row.appendChild(btn);
+        }
+        listEl.appendChild(row);
+      }
+    }
+
+    async function loadProject(slug) {
+      const statusEl = document.getElementById('statusText');
+      statusEl.textContent = `Wczytywanie ${slug}...`;
+      const sgRes = await fetch(`/projects/${slug}/scene_graph.json`);
+      const sgData = await sgRes.json();
+
+      const loader = new GLTFLoader();
+      loader.load(`/projects/${slug}/output/${slug}.glb`, gltf => {
+        scene.add(gltf.scene);
+        buildDynamicSceneMetadata(gltf.scene, sgData);
+        const [bx0, by0, bx1, by1] = sgData.coordinate_system.structural_bbox_xy;
+        playerRig.position.set(0.5 * (bx0 + bx1), EYE_HEIGHT, -0.5 * (by0 + by1));
+        statusEl.textContent = `Załadowano: ${sgData.project_name} (${interactiveDoors.length} drzwi, ${stairSteps.length} stopni)`;
+        refreshMarkersUI(slug);
+      });
+    }
+
+    selectEl.addEventListener('change', e => {
+      window.location.search = `?project=${e.target.value}`;
+    });
+    document.getElementById('flyBtn').addEventListener('click', () => {
+      flyMode = !flyMode;
+      document.getElementById('flyBtn').textContent = `Tryb: ${flyMode ? 'Lot [F]' : 'Spacer [F]'}`;
+    });
+
+    loadProject(currentProject);
+    renderer.setAnimationLoop(() => renderer.render(scene, camera));
+  </script>
+</body>
+</html>

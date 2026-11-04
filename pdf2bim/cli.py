@@ -9,7 +9,7 @@ from pdf2bim.export import export_scene_to_glb
 from pdf2bim.extract import extract_and_evaluate_project, generate_project_overlays
 from pdf2bim.geometry import compile_scene_graph_3d, verify_3d_invariants
 from pdf2bim.schema import SceneGraphV2
-from pdf2bim.validate import validate_scene_graph_v2
+from pdf2bim.validate import transition_markers_on_rebuild, validate_scene_graph_v2
 
 
 def main(argv=None) -> int:
@@ -75,6 +75,7 @@ def main(argv=None) -> int:
         )
         out_dir = proj_dir / "output"
         glb_path = export_scene_to_glb(sg, scene3d, out_dir / f"{sg.project_slug}.glb")
+        transition_markers_on_rebuild(proj_dir, sg)
         print(
             f"[build] {sg.project_slug}: status={'PASS' if inv_rep.passed else 'FAIL'} "
             f"| nodes={inv_rep.total_nodes} | invariants=7/7 | glb={glb_path.name}"
