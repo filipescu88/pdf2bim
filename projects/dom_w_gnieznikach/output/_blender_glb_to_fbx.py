@@ -48,17 +48,25 @@ add_env_box("SM_Entrance_Walkway", 0.45, -7.5, 2.25, -0.60, -0.245, -0.21, "M_Wa
 add_env_box("SM_Entrance_Step_1", 0.00, -0.60, 2.48, -0.30, -0.36, -0.14, "M_Terrace_Paver_Grey", (0.55, 0.56, 0.58))
 add_env_box("SM_Entrance_Step_2", 0.00, -0.30, 2.48, 0.00, -0.36, -0.02, "M_Terrace_Paver_Grey", (0.55, 0.56, 0.58))
 
-# 2. Generate world-space metric Box UVs on all meshes
+# 2. Clear glTF smoothed custom normals, split sharp edges, and generate world-space metric Box UVs
 for obj in bpy.data.objects:
     if obj.type != "MESH" or not obj.data.polygons:
         continue
+    bpy.context.view_layer.objects.active = obj
+    try:
+        bpy.ops.mesh.customdata_custom_splitnormals_clear()
+    except Exception:
+        pass
     me = obj.data
     bm = bmesh.new()
     bm.from_mesh(me)
+    bmesh.ops.split_edges(bm, edges=list(bm.edges))
+    bm.normal_update()
     uv_layer = bm.loops.layers.uv.verify()
     oname = obj.name.lower()
     scale = 0.75 if ("dach_" in oname or "roof" in oname) else (0.60 if "wood" in oname else 0.45)
     for face in bm.faces:
+        face.smooth = False
         n = face.normal
         ax, ay, az = abs(n.x), abs(n.y), abs(n.z)
         for loop in face.loops:

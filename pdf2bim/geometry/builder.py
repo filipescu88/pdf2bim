@@ -143,7 +143,18 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
 
                 z_spans: list[tuple[str, float, float]] = []
                 if active_op is None:
-                    z_spans.append(("full", zb_layer, zt_layer))
+                    if roof_clip is None:
+                        z_breaks = [zb_layer, zt_layer]
+                        for op_z in ops:
+                            if zb_layer + 1e-3 < op_z.sill_z < zt_layer - 1e-3:
+                                z_breaks.append(op_z.sill_z)
+                            if zb_layer + 1e-3 < op_z.lintel_z < zt_layer - 1e-3:
+                                z_breaks.append(op_z.lintel_z)
+                        z_breaks = sorted(set(round(z, 5) for z in z_breaks))
+                        for zi in range(len(z_breaks) - 1):
+                            z_spans.append(("full", z_breaks[zi], z_breaks[zi + 1]))
+                    else:
+                        z_spans.append(("full", zb_layer, zt_layer))
                 else:
                     if active_op.sill_z > zb_layer + 1e-3:
                         z_spans.append(("sill", zb_layer, min(zt_layer, active_op.sill_z)))
@@ -191,9 +202,12 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
             if isinstance(op, WindowSpec):
                 fw = 0.065  # 6.5 cm frame profile width
                 fd = 0.045  # 9 cm total frame depth around mid_lat
+                has_sill = (op.sill_z - w.z_bottom) >= 0.20
+                sill_h = 0.030 if has_sill else 0.0
+                z_frame_bot = op.sill_z + sill_h
                 # 1. Glass pane (2 cm thick at center of wall)
                 g_quad = _quad_on_wall(w, u0 + fw, u1 - fw, mid_lat - 0.01, mid_lat + 0.01)
-                g_mesh = extrude_quad_prism(g_quad, op.sill_z + fw, op.lintel_z - fw)
+                g_mesh = extrude_quad_prism(g_quad, z_frame_bot + fw, op.lintel_z - fw)
                 if g_mesh is not None:
                     nodes.append(
                         CompiledMeshNode(
@@ -211,14 +225,14 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                         )
                     )
 
-                # 2. Complete 4-sided window frame + vertical mullions + external/internal sills
+                # 2. Complete 4-sided window frame + vertical mullions + non-overlapping sills
                 frame_parts: list[trimesh.Trimesh] = []
-                f_quad_full = _quad_on_wall(w, u0, u1, mid_lat - fd, mid_lat + fd)
+                f_quad_full = _quad_on_wall(w, u0 + 0.002, u1 - 0.002, mid_lat - fd, mid_lat + fd)
                 for m_part in (
-                    extrude_quad_prism(f_quad_full, op.sill_z, op.sill_z + fw),  # Bottom sill bar
-                    extrude_quad_prism(f_quad_full, op.lintel_z - fw, op.lintel_z),  # Top head bar
-                    extrude_quad_prism(_quad_on_wall(w, u0, u0 + fw, mid_lat - fd, mid_lat + fd), op.sill_z + fw, op.lintel_z - fw),  # Left jamb
-                    extrude_quad_prism(_quad_on_wall(w, u1 - fw, u1, mid_lat - fd, mid_lat + fd), op.sill_z + fw, op.lintel_z - fw),  # Right jamb
+                    extrude_quad_prism(f_quad_full, z_frame_bot, z_frame_bot + fw),  # Bottom sill bar
+                    extrude_quad_prism(f_quad_full, op.lintel_z - fw, op.lintel_z - 0.002),  # Top head bar
+                    extrude_quad_prism(_quad_on_wall(w, u0 + 0.002, u0 + fw, mid_lat - fd, mid_lat + fd), z_frame_bot + fw, op.lintel_z - fw),  # Left jamb
+                    extrude_quad_prism(_quad_on_wall(w, u1 - fw, u1 - 0.002, mid_lat - fd, mid_lat + fd), z_frame_bot + fw, op.lintel_z - fw),  # Right jamb
                 ):
                     if m_part is not None:
                         frame_parts.append(m_part)
@@ -228,16 +242,20 @@ def build_walls_and_openings(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                 for p_idx in range(1, n_panes):
                     um = u0 + (op.width * p_idx) / n_panes
                     m_quad = _quad_on_wall(w, um - 0.028, um + 0.028, mid_lat - 0.035, mid_lat + 0.035)
-                    m_bar = extrude_quad_prism(m_quad, op.sill_z + fw, op.lintel_z - fw)
+                    m_bar = extrude_quad_prism(m_quad, z_frame_bot + fw, op.lintel_z - fw)
                     if m_bar is not None:
                         frame_parts.append(m_bar)
 
-                # Add external & internal window sill when window has a parapet (sill_z > level floor + 20 cm)
-                if op.sill_z - w.z_bottom >= 0.20:
-                    sill_quad = _quad_on_wall(w, u0 - 0.03, u1 + 0.03, total_lo - 0.04, total_hi + 0.03)
-                    sill_mesh = extrude_quad_prism(sill_quad, op.sill_z - 0.03, op.sill_z)
-                    if sill_mesh is not None:
-                        frame_parts.append(sill_mesh)
+                # Add external & internal window sill inside opening (above op.sill_z -> ZERO Z-fighting with wall!)
+                if has_sill:
+                    for sq in (
+                        _quad_on_wall(w, u0 + 0.002, u1 - 0.002, total_lo - 0.045, total_hi + 0.035),
+                        _quad_on_wall(w, u0 - 0.025, u1 + 0.025, total_lo - 0.045, total_lo - 0.004),
+                        _quad_on_wall(w, u0 - 0.025, u1 + 0.025, total_hi + 0.004, total_hi + 0.035),
+                    ):
+                        sm_part = extrude_quad_prism(sq, op.sill_z + 0.002, op.sill_z + sill_h)
+                        if sm_part is not None:
+                            frame_parts.append(sm_part)
 
                 # If French balcony (portfenetr), add exterior mounting rails & glass balustrade
                 if op.is_french_balcony:
@@ -665,9 +683,20 @@ def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
         if rw.roof_plane_id in rws_by_plane:
             rws_by_plane[rw.roof_plane_id].append(hole_poly)
 
+    flashing_mat = next(
+        (
+            k
+            for k, m in sg.materials.items()
+            if "frame" in k or ("anthracite" in m.ue_name.lower() and "tile" not in m.ue_name.lower())
+        ),
+        None,
+    )
     for rp in sg.roof.planes:
         cutouts = rws_by_plane.get(rp.id, [])
-        r_mesh = extrude_sloped_roof_plane(rp, cutout_polygons_xy=cutouts)
+        tile_thick = min(0.06, rp.thickness * 0.35)
+        board_thick = max(0.04, rp.thickness - tile_thick)
+        rp_tile = rp.model_copy(update={"thickness": tile_thick})
+        r_mesh = extrude_sloped_roof_plane(rp_tile, cutout_polygons_xy=cutouts)
         if r_mesh is not None:
             nodes.append(
                 CompiledMeshNode(
@@ -686,6 +715,79 @@ def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                         "level_id": "poddasze",
                         "cutouts_count": len(cutouts),
                     },
+                )
+            )
+
+        # Lower sloped wooden boarding / soffit layer under the roof tiles (so overhangs show wood, never tiles)
+        rp_board = rp.model_copy(
+            update={
+                "z_at_ridge": rp.z_at_ridge - tile_thick,
+                "thickness": board_thick,
+            }
+        )
+        b_mesh = extrude_sloped_roof_plane(rp_board, cutout_polygons_xy=cutouts)
+        if b_mesh is not None:
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Podbitka_Skos_{rp.id}",
+                    element_id=f"roof_boarding_{rp.id}",
+                    category="roof_boarding",
+                    level_id="poddasze",
+                    material_id=rp.soffit_material_id,
+                    ue_mesh_name=f"SM_RoofBoarding_{rp.id}",
+                    ue_material_name=_ue_mat_name(sg, rp.soffit_material_id),
+                    mesh=b_mesh,
+                    collidable=False,
+                    extras={"element_id": f"roof_boarding_{rp.id}", "category": "roof_boarding", "level_id": "poddasze"},
+                )
+            )
+
+        # Sheet-metal fascia & gable verge flashings (Obrobka blacharska okapu i wiatrownic szczytowych)
+        poly_xs = [p[0] for p in rp.polygon_xy]
+        poly_ys = [p[1] for p in rp.polygon_xy]
+        x_min, x_max = min(poly_xs), max(poly_xs)
+        eave_y = min(poly_ys) if rp.downslope_dir_xy[1] < 0 else max(poly_ys)
+        flash_meshes: list[trimesh.Trimesh] = []
+        # 1. Eave drip flashing along eave_y covering the top tile layer (so wooden soffit below is visible!)
+        ey0 = eave_y - 0.020 if rp.downslope_dir_xy[1] < 0 else eave_y - 0.004
+        ey1 = eave_y + 0.004 if rp.downslope_dir_xy[1] < 0 else eave_y + 0.020
+        rp_eave_fascia = rp.model_copy(
+            update={
+                "polygon_xy": [(x_min - 0.020, ey0), (x_max + 0.020, ey0), (x_max + 0.020, ey1), (x_min - 0.020, ey1)],
+                "z_at_ridge": rp.z_at_ridge + 0.008,
+                "thickness": tile_thick + 0.035,
+            }
+        )
+        ef_m = extrude_sloped_roof_plane(rp_eave_fascia)
+        if ef_m is not None:
+            flash_meshes.append(ef_m)
+        # 2. Left & right gable verge flashings (Wiatrownice szczytowe covering the full gable edge in anthracite metal)
+        y_s, y_n = min(poly_ys), max(poly_ys)
+        for gx0, gx1 in [(x_min - 0.020, x_min + 0.025), (x_max - 0.025, x_max + 0.020)]:
+            rp_verge = rp.model_copy(
+                update={
+                    "polygon_xy": [(gx0, y_s - 0.01), (gx1, y_s - 0.01), (gx1, y_n + 0.01), (gx0, y_n + 0.01)],
+                    "z_at_ridge": rp.z_at_ridge + 0.012,
+                    "thickness": rp.thickness + 0.020,
+                }
+            )
+            vf_m = extrude_sloped_roof_plane(rp_verge)
+            if vf_m is not None:
+                flash_meshes.append(vf_m)
+        if flash_meshes:
+            f_mat = flashing_mat or rp.tile_material_id
+            nodes.append(
+                CompiledMeshNode(
+                    node_id=f"Obrobka_Dachu_{rp.id}",
+                    element_id=f"roof_flashing_{rp.id}",
+                    category="roof_flashing",
+                    level_id="poddasze",
+                    material_id=f_mat,
+                    ue_mesh_name=f"SM_RoofFlashing_{rp.id}",
+                    ue_material_name=_ue_mat_name(sg, f_mat),
+                    mesh=trimesh.util.concatenate(flash_meshes),
+                    collidable=False,
+                    extras={"element_id": f"roof_flashing_{rp.id}", "category": "roof_flashing", "level_id": "poddasze"},
                 )
             )
 
@@ -719,16 +821,14 @@ def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                     )
                 )
 
-        # Horizontal soffit box at eave bounded strictly by rp.soffit_x_bounds (Invariant 6 / VR issue #1)
+        # Horizontal closed soffit box at eave bounded strictly by rp.soffit_x_bounds (Invariant 6 / VR issue #1)
         if rp.soffit_x_bounds is not None:
             sx0, sx1 = rp.soffit_x_bounds
-            poly_ys = [p[1] for p in rp.polygon_xy]
-            eave_y = min(poly_ys) if rp.downslope_dir_xy[1] < 0 else max(poly_ys)
             wall_y = eave_y + (sg.roof.overhang_m if rp.downslope_dir_xy[1] < 0 else -sg.roof.overhang_m)
             y_lo, y_hi = min(eave_y, wall_y), max(eave_y, wall_y)
             z_eave = rp.z_inner_at(0.5 * (sx0 + sx1), eave_y)
             soffit_quad = [(sx0, y_lo), (sx1, y_lo), (sx1, y_hi), (sx0, y_hi)]
-            s_mesh = extrude_quad_prism(soffit_quad, z_eave - 0.04, z_eave)
+            s_mesh = extrude_quad_prism(soffit_quad, z_eave - 0.04, z_eave + 0.58, roof_to_clip=sg.roof)
             if s_mesh is not None:
                 nodes.append(
                     CompiledMeshNode(

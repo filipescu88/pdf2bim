@@ -26,11 +26,17 @@ asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
 asset_reg = unreal.AssetRegistryHelpers.get_asset_registry()
 mel = unreal.MaterialEditingLibrary
 
-# 1. Remove any previous PDF2BIM actors from the level
+# 1. Remove any previous PDF2BIM actors from the level and hide OpenWorld Landscape sand dunes
 for act in actor_sub.get_all_level_actors():
     lbl = act.get_actor_label()
+    cls = act.get_class().get_name()
     if lbl.startswith("PDF2BIM_"):
         actor_sub.destroy_actor(act)
+    elif "Landscape" in cls or "HLOD" in cls:
+        act.set_actor_hidden_in_game(True)
+        act.set_is_temporarily_hidden_in_editor(True)
+        loc = act.get_actor_location()
+        act.set_actor_location(unreal.Vector(loc.x, loc.y, -2500.0), False, False)
 
 # 2. Import PBR textures into /Game/PDF2BIM/Textures
 tex_dir = "C:/Users/filip/pdf2bim_remote/textures"
@@ -81,6 +87,12 @@ fbx_path = "C:/Users/filip/Desktop/pdf2bim_unreal/dom_w_gnieznikach/dom_w_gniezn
 dest_path = "/Game/PDF2BIM/Dom1_Gniezniki"
 base_loc = unreal.Vector(0.0, 0.0, 92.0)
 
+fbx_ui = unreal.FbxImportUI()
+fbx_ui.import_mesh = True
+fbx_ui.import_as_skeletal = False
+fbx_ui.static_mesh_import_data.combine_meshes = False
+fbx_ui.static_mesh_import_data.remove_degenerates = False
+
 task = unreal.AssetImportTask()
 task.filename = fbx_path
 task.destination_path = dest_path
@@ -88,6 +100,7 @@ task.automated = True
 task.replace_existing = True
 task.replace_existing_settings = True
 task.save = False
+task.options = fbx_ui
 asset_tools.import_asset_tasks([task])
 
 # 4. Build PBR Material graphs for all imported M_* materials

@@ -4,8 +4,8 @@
   "passed": true,
   "structural_walls_within_5cm_ratio": 1.0,
   "max_structural_wall_deviation_cm": 1.2,
-  "mean_structural_wall_deviation_cm": 0.18,
-  "mean_room_iou": 0.9623,
+  "mean_structural_wall_deviation_cm": 0.25,
+  "mean_room_iou": 0.9624,
   "min_room_iou": 0.7764,
   "detected_openings_count": 24,
   "gt_openings_count": 24,
@@ -23,6 +23,15 @@
       "gt_wall_id": "w_p_south_recess_v",
       "level_id": "parter",
       "wall_type": "exterior",
+      "expected_coord_m": 2.48,
+      "extracted_coord_m": 2.492,
+      "deviation_cm": 1.2,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_lazienka_west",
+      "level_id": "parter",
+      "wall_type": "interior_loadbearing",
       "expected_coord_m": 2.48,
       "extracted_coord_m": 2.492,
       "deviation_cm": 1.2,
@@ -250,8 +259,8 @@
       "level_id": "parter",
       "room_name": "Hol",
       "gt_area_m2": 4.44,
-      "extracted_area_m2": 4.34,
-      "iou": 0.9432
+      "extracted_area_m2": 4.33,
+      "iou": 0.9445
     },
     {
       "gt_room_id": "parter_schody",

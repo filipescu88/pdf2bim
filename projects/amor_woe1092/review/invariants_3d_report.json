@@ -1,13 +1,13 @@
 {
   "project_slug": "amor_woe1092",
   "passed": true,
-  "total_nodes": 269,
+  "total_nodes": 429,
   "checks": [
     {
       "invariant_id": 1,
       "name": "Rectangular 4-vertex bases for all wall segments (no concave triangulation artifacts)",
       "passed": true,
-      "checked_count": 183,
+      "checked_count": 315,
       "violations": []
     },
     {

@@ -61,10 +61,10 @@ for a in actor_sub.get_all_level_actors():
         else:
             actor_sub.destroy_actor(a)
     elif "Landscape" in cls or "HLOD" in cls:
-        a.set_actor_hidden_in_game(False)
-        a.set_is_temporarily_hidden_in_editor(False)
+        a.set_actor_hidden_in_game(True)
+        a.set_is_temporarily_hidden_in_editor(True)
         loc = a.get_actor_location()
-        a.set_actor_location(unreal.Vector(loc.x, loc.y, -450.0), False, False)
+        a.set_actor_location(unreal.Vector(loc.x, loc.y, -2500.0), False, False)
     elif "DirectionalLight" in cls or "DirectionalLight" in lbl:
         dir_light = a
     elif "SkyLight" in cls or "SkyLight" in lbl:

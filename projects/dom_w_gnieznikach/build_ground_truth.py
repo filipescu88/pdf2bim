@@ -82,6 +82,7 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
             # Parter exterior walls (CCW around perimeter so "left" alignment points inward; z_top=3.08 covers slab edge seamlessly)
             {"id": "w_p_south_main", "level_id": "parter", "wall_type": "exterior", "start_xy": (2.48, 0.00), "end_xy": (10.30, 0.00), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
             {"id": "w_p_south_recess_v", "level_id": "parter", "wall_type": "exterior", "start_xy": (2.48, 0.00), "end_xy": (2.48, 1.38), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
+            {"id": "w_p_lazienka_west", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.48, 1.38), "end_xy": (2.48, 1.80), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": ext_layers},
             {"id": "w_p_south_entrance", "level_id": "parter", "wall_type": "exterior", "start_xy": (0.00, 1.38), "end_xy": (2.48, 1.38), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
             {"id": "w_p_east", "level_id": "parter", "wall_type": "exterior", "start_xy": (10.30, 0.00), "end_xy": (10.30, 8.40), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
             {"id": "w_p_north", "level_id": "parter", "wall_type": "exterior", "start_xy": (10.30, 8.40), "end_xy": (0.00, 8.40), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
@@ -253,19 +254,23 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
             {"id": "plinth_band_east", "level_id": "parter", "bbox_xy": (10.30, 0.00, 10.318, 8.40), "z_bottom": -0.36, "z_top": 0.118, "material_id": "mat_frame_dark", "collidable": False},
             {"id": "plinth_band_north", "level_id": "parter", "bbox_xy": (-0.018, 8.40, 10.318, 8.418), "z_bottom": -0.36, "z_top": 0.118, "material_id": "mat_frame_dark", "collidable": False},
             {"id": "plinth_band_west", "level_id": "parter", "bbox_xy": (-0.018, 1.38, 0.00, 8.40), "z_bottom": -0.36, "z_top": 0.118, "material_id": "mat_frame_dark", "collidable": False},
-            # Anthracite inter-window band between Bathroom and Kitchen windows on South facade
-            {"id": "facade_band_anthracite_south", "level_id": "parter", "bbox_xy": (5.38, -0.022, 6.38, -0.002), "z_bottom": 0.85, "z_top": 2.30, "material_id": "mat_frame_dark", "collidable": False},
-            # Oak wood facade cladding panels (starts at z=0.12 m above plinth — Invariant 3)
-            {"id": "facade_wood_south_kitchen", "level_id": "parter", "bbox_xy": (8.68, -0.022, 10.30, -0.002), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
-            {"id": "facade_wood_east_kitchen", "level_id": "parter", "bbox_xy": (10.302, 0.00, 10.322, 4.21), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
-            {"id": "facade_wood_east_north_corner", "level_id": "parter", "bbox_xy": (10.302, 6.96, 10.322, 8.40), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
-            {"id": "facade_wood_north_right", "level_id": "parter", "bbox_xy": (9.62, 8.402, 10.30, 8.422), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
-            {"id": "facade_wood_north_center", "level_id": "parter", "bbox_xy": (4.70, 8.402, 6.62, 8.422), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
-            {"id": "facade_wood_north_left", "level_id": "parter", "bbox_xy": (0.00, 8.402, 3.60, 8.422), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
-            {"id": "facade_wood_west_porch", "level_id": "parter", "bbox_xy": (-0.022, 1.38, -0.002, 4.83), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
-            # Eave gutters (anthracite)
-            {"id": "gutter_south_eave", "level_id": "poddasze", "bbox_xy": (-0.65, -0.72, 10.95, -0.64), "z_bottom": 3.56, "z_top": 3.66, "material_id": "mat_frame_dark", "collidable": False},
-            {"id": "gutter_north_eave", "level_id": "poddasze", "bbox_xy": (-0.65, 9.04, 10.95, 9.12), "z_bottom": 3.56, "z_top": 3.66, "material_id": "mat_frame_dark", "collidable": False},
+            # Anthracite inter-window band between Bathroom and Kitchen windows on South facade (4 mm outside wall -> zero Z-fighting)
+            {"id": "facade_band_anthracite_south", "level_id": "parter", "bbox_xy": (5.42, -0.024, 6.34, -0.004), "z_bottom": 0.85, "z_top": 2.30, "material_id": "mat_frame_dark", "collidable": False},
+            # Oak wood facade cladding panels (starts at z=0.12 m above plinth — Invariant 3; 4 mm outside wall -> zero Z-fighting)
+            {"id": "facade_wood_south_kitchen", "level_id": "parter", "bbox_xy": (8.72, -0.024, 10.30, -0.004), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_east_kitchen", "level_id": "parter", "bbox_xy": (10.304, 0.00, 10.324, 4.17), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_east_north_corner", "level_id": "parter", "bbox_xy": (10.304, 7.00, 10.324, 8.40), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_north_right", "level_id": "parter", "bbox_xy": (9.66, 8.404, 10.30, 8.424), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_north_center", "level_id": "parter", "bbox_xy": (4.74, 8.404, 6.58, 8.424), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_north_left", "level_id": "parter", "bbox_xy": (0.00, 8.404, 3.56, 8.424), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            {"id": "facade_wood_west_porch", "level_id": "parter", "bbox_xy": (-0.024, 1.38, -0.004, 4.79), "z_bottom": 0.12, "z_top": 2.30, "material_id": "mat_facade_wood", "collidable": False},
+            # Eave gutters right under the roof tile drip edge (z = 3.76 .. 3.85 m) + 4 vertical corner downspouts
+            {"id": "gutter_south_eave", "level_id": "poddasze", "bbox_xy": (-0.65, -0.74, 10.95, -0.65), "z_bottom": 3.76, "z_top": 3.85, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "gutter_north_eave", "level_id": "poddasze", "bbox_xy": (-0.65, 9.05, 10.95, 9.14), "z_bottom": 3.76, "z_top": 3.85, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "downspout_se", "level_id": "parter", "bbox_xy": (10.16, -0.11, 10.25, -0.02), "z_bottom": -0.25, "z_top": 3.58, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "downspout_sw", "level_id": "parter", "bbox_xy": (2.52, -0.11, 2.61, -0.02), "z_bottom": -0.25, "z_top": 3.58, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "downspout_ne", "level_id": "parter", "bbox_xy": (10.16, 8.42, 10.25, 8.51), "z_bottom": -0.25, "z_top": 3.58, "material_id": "mat_frame_dark", "collidable": False},
+            {"id": "downspout_nw", "level_id": "parter", "bbox_xy": (0.05, 8.42, 0.14, 8.51), "z_bottom": -0.25, "z_top": 3.58, "material_id": "mat_frame_dark", "collidable": False},
         ],
     }
 

@@ -1154,6 +1154,47 @@
       ]
     },
     {
+      "id": "w_p_lazienka_west",
+      "level_id": "parter",
+      "wall_type": "interior_loadbearing",
+      "start_xy": [
+        2.48,
+        1.38
+      ],
+      "end_xy": [
+        2.48,
+        1.8
+      ],
+      "alignment": "right",
+      "priority": 2,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
       "id": "w_p_south_entrance",
       "level_id": "parter",
       "wall_type": "exterior",
@@ -3061,10 +3102,10 @@
       "id": "facade_band_anthracite_south",
       "level_id": "parter",
       "bbox_xy": [
-        5.38,
-        -0.022,
-        6.38,
-        -0.002
+        5.42,
+        -0.024,
+        6.34,
+        -0.004
       ],
       "z_bottom": 0.85,
       "z_top": 2.3,
@@ -3075,10 +3116,10 @@
       "id": "facade_wood_south_kitchen",
       "level_id": "parter",
       "bbox_xy": [
-        8.68,
-        -0.022,
+        8.72,
+        -0.024,
         10.3,
-        -0.002
+        -0.004
       ],
       "z_bottom": 0.12,
       "z_top": 2.3,
@@ -3089,10 +3130,10 @@
       "id": "facade_wood_east_kitchen",
       "level_id": "parter",
       "bbox_xy": [
-        10.302,
+        10.304,
         0.0,
-        10.322,
-        4.21
+        10.324,
+        4.17
       ],
       "z_bottom": 0.12,
       "z_top": 2.3,
@@ -3103,9 +3144,9 @@
       "id": "facade_wood_east_north_corner",
       "level_id": "parter",
       "bbox_xy": [
-        10.302,
-        6.96,
-        10.322,
+        10.304,
+        7.0,
+        10.324,
         8.4
       ],
       "z_bottom": 0.12,
@@ -3117,10 +3158,10 @@
       "id": "facade_wood_north_right",
       "level_id": "parter",
       "bbox_xy": [
-        9.62,
-        8.402,
+        9.66,
+        8.404,
         10.3,
-        8.422
+        8.424
       ],
       "z_bottom": 0.12,
       "z_top": 2.3,
@@ -3131,10 +3172,10 @@
       "id": "facade_wood_north_center",
       "level_id": "parter",
       "bbox_xy": [
-        4.7,
-        8.402,
-        6.62,
-        8.422
+        4.74,
+        8.404,
+        6.58,
+        8.424
       ],
       "z_bottom": 0.12,
       "z_top": 2.3,
@@ -3146,9 +3187,9 @@
       "level_id": "parter",
       "bbox_xy": [
         0.0,
-        8.402,
-        3.6,
-        8.422
+        8.404,
+        3.56,
+        8.424
       ],
       "z_bottom": 0.12,
       "z_top": 2.3,
@@ -3159,10 +3200,10 @@
       "id": "facade_wood_west_porch",
       "level_id": "parter",
       "bbox_xy": [
-        -0.022,
+        -0.024,
         1.38,
-        -0.002,
-        4.83
+        -0.004,
+        4.79
       ],
       "z_bottom": 0.12,
       "z_top": 2.3,
@@ -3174,12 +3215,12 @@
       "level_id": "poddasze",
       "bbox_xy": [
         -0.65,
-        -0.72,
+        -0.74,
         10.95,
-        -0.64
+        -0.65
       ],
-      "z_bottom": 3.56,
-      "z_top": 3.66,
+      "z_bottom": 3.76,
+      "z_top": 3.85,
       "material_id": "mat_frame_dark",
       "collidable": false
     },
@@ -3188,12 +3229,68 @@
       "level_id": "poddasze",
       "bbox_xy": [
         -0.65,
-        9.04,
+        9.05,
         10.95,
-        9.12
+        9.14
       ],
-      "z_bottom": 3.56,
-      "z_top": 3.66,
+      "z_bottom": 3.76,
+      "z_top": 3.85,
+      "material_id": "mat_frame_dark",
+      "collidable": false
+    },
+    {
+      "id": "downspout_se",
+      "level_id": "parter",
+      "bbox_xy": [
+        10.16,
+        -0.11,
+        10.25,
+        -0.02
+      ],
+      "z_bottom": -0.25,
+      "z_top": 3.58,
+      "material_id": "mat_frame_dark",
+      "collidable": false
+    },
+    {
+      "id": "downspout_sw",
+      "level_id": "parter",
+      "bbox_xy": [
+        2.52,
+        -0.11,
+        2.61,
+        -0.02
+      ],
+      "z_bottom": -0.25,
+      "z_top": 3.58,
+      "material_id": "mat_frame_dark",
+      "collidable": false
+    },
+    {
+      "id": "downspout_ne",
+      "level_id": "parter",
+      "bbox_xy": [
+        10.16,
+        8.42,
+        10.25,
+        8.51
+      ],
+      "z_bottom": -0.25,
+      "z_top": 3.58,
+      "material_id": "mat_frame_dark",
+      "collidable": false
+    },
+    {
+      "id": "downspout_nw",
+      "level_id": "parter",
+      "bbox_xy": [
+        0.05,
+        8.42,
+        0.14,
+        8.51
+      ],
+      "z_bottom": -0.25,
+      "z_top": 3.58,
       "material_id": "mat_frame_dark",
       "collidable": false
     }

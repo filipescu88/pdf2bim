@@ -3,7 +3,7 @@
   "passed": true,
   "max_exterior_wall_deviation_cm": 1.2,
   "mean_wall_deviation_cm": 1.04,
-  "min_contour_overlap_ratio": 0.934,
+  "min_contour_overlap_ratio": 0.938,
   "levels": [
     {
       "level_id": "parter",
@@ -12,8 +12,8 @@
       "scale_x_pt_per_m": 16.732,
       "scale_y_pt_per_m": 16.7321,
       "max_exterior_wall_deviation_cm": 1.2,
-      "mean_wall_deviation_cm": 1.03,
-      "wall_contour_overlap_ratio": 0.934,
+      "mean_wall_deviation_cm": 1.04,
+      "wall_contour_overlap_ratio": 0.938,
       "passed": true,
       "wall_metrics": [
         {
@@ -32,6 +32,15 @@
           "expected_coord_m": 2.48,
           "detected_pdf_coord_m": 2.489,
           "deviation_cm": 0.86,
+          "contour_overlap": 1.0
+        },
+        {
+          "wall_id": "w_p_lazienka_west",
+          "wall_type": "interior_loadbearing",
+          "orientation": "V",
+          "expected_coord_m": 2.48,
+          "detected_pdf_coord_m": 2.492,
+          "deviation_cm": 1.2,
           "contour_overlap": 1.0
         },
         {
