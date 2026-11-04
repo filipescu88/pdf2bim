@@ -1,8 +1,12 @@
 """Unified CLI entry point for pdf2bim (`pdf2bim validate|overlay|build|extract <project_dir>`)."""
 
 import argparse
+import json
 import sys
 from pathlib import Path
+
+from pdf2bim.schema import SceneGraphV2
+from pdf2bim.validate import validate_scene_graph_v2
 
 
 def main(argv=None) -> int:
@@ -26,6 +30,19 @@ def main(argv=None) -> int:
     if not proj_dir.is_dir():
         print(f"[ERROR] Project directory not found: {proj_dir}", file=sys.stderr)
         return 1
+
+    sg_path = proj_dir / "scene_graph.json"
+    if args.command == "validate" and sg_path.is_file():
+        data = json.loads(sg_path.read_text(encoding="utf-8"))
+        sg = SceneGraphV2.model_validate(data)
+        rep = validate_scene_graph_v2(sg)
+        print(rep.format_text())
+        rev_dir = proj_dir / "review"
+        rev_dir.mkdir(parents=True, exist_ok=True)
+        (rev_dir / "validation_report.json").write_text(
+            rep.model_dump_json(indent=2), encoding="utf-8"
+        )
+        return 0 if rep.passed else 1
 
     print(f"[pdf2bim] Command '{args.command}' initialized for project: {proj_dir.name}")
     return 0
