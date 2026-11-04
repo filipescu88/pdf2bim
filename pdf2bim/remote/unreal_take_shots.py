@@ -53,7 +53,7 @@ exp_fog = None
 for a in actor_sub.get_all_level_actors():
     lbl = a.get_actor_label()
     cls = a.get_class().get_name()
-    if lbl == "Floor" or lbl.startswith("PDF2BIM_PostProcess") or lbl.startswith("PDF2BIM_Hedge_"):
+    if lbl == "Floor" or lbl.startswith("PDF2BIM_PostProcess") or lbl.startswith("PDF2BIM_Hedge_") or lbl.startswith("PDF2BIM_Furn_") or lbl.startswith("PDF2BIM_Fab_"):
         if lbl == "Floor":
             a.set_actor_hidden_in_game(True)
             a.set_is_temporarily_hidden_in_editor(True)
@@ -85,7 +85,7 @@ if os.path.isdir(tex_disk_dir):
         if not fn.lower().endswith(".jpg"):
             continue
         stem = os.path.splitext(fn)[0]
-        if "facade_timber_cladding" in stem or not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
+        if any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite")) or not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
             t = unreal.AssetImportTask()
             t.set_editor_property("filename", f"{tex_disk_dir}/{fn}")
             t.set_editor_property("destination_path", tex_pkg)
@@ -102,7 +102,7 @@ def load_tex(stem, is_normal=False, is_linear=False):
     p = f"{tex_pkg}/{stem}"
     if unreal.EditorAssetLibrary.does_asset_exist(p):
         t = unreal.EditorAssetLibrary.load_asset(p)
-        if t and "facade_timber_cladding" in stem:
+        if t and any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite")):
             try:
                 t.set_editor_property("never_stream", True)
             except Exception:
@@ -123,34 +123,107 @@ def make_mat(name):
         return m
     return asset_tools.create_asset(name, mat_pkg, unreal.Material, unreal.MaterialFactoryNew())
 
-# Glass (translucent architectural double-glazing with crisp sky reflection)
+# Glass (Physically-based Fresnel architectural Low-E double-glazing with per-pixel lighting & sky/horizon reflections)
 m_glass = make_mat("M_Glass_Clear")
 m_glass.set_editor_property("blend_mode", unreal.BlendMode.BLEND_TRANSLUCENT)
-m_glass.set_editor_property("translucency_lighting_mode", unreal.TranslucencyLightingMode.TLM_SURFACE)
+for tlm_name in ("TLM_SURFACE_PER_PIXEL_LIGHTING", "TLM_SURFACE_PERPIXEL_LIGHTING", "TLM_SURFACE"):
+    if hasattr(unreal.TranslucencyLightingMode, tlm_name):
+        m_glass.set_editor_property("translucency_lighting_mode", getattr(unreal.TranslucencyLightingMode, tlm_name))
+        break
+try:
+    m_glass.set_editor_property("screen_space_reflections", True)
+except Exception:
+    pass
 m_glass.set_editor_property("two_sided", True)
-c_gl = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant3Vector, -300, -100)
-c_gl.set_editor_property("constant", unreal.LinearColor(0.05, 0.11, 0.15, 1.0))
-mel.connect_material_property(c_gl, "", unreal.MaterialProperty.MP_BASE_COLOR)
-m_gl = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -300, 0)
-m_gl.set_editor_property("r", 0.90)
-mel.connect_material_property(m_gl, "", unreal.MaterialProperty.MP_METALLIC)
-o_gl = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -300, 100)
-o_gl.set_editor_property("r", 0.32)
-mel.connect_material_property(o_gl, "", unreal.MaterialProperty.MP_OPACITY)
-r_gl = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -300, 200)
-r_gl.set_editor_property("r", 0.01)
+
+fres = mel.create_material_expression(m_glass, unreal.MaterialExpressionFresnel, -750, 0)
+f_exp = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -950, -40)
+f_exp.set_editor_property("r", 3.0)
+f_base = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -950, 40)
+f_base.set_editor_property("r", 0.08)
+mel.connect_material_expressions(f_exp, "", fres, "ExponentIn")
+mel.connect_material_expressions(f_base, "", fres, "BaseReflectFractionIn")
+
+# Reflection vector sky/horizon/ground environment gradient for natural outdoor sky & cloud reflections on panes
+refl_vec = mel.create_material_expression(m_glass, unreal.MaterialExpressionReflectionVectorWS, -950, -280)
+up_vec = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant3Vector, -950, -180)
+up_vec.set_editor_property("constant", unreal.LinearColor(0.0, 0.0, 1.0, 1.0))
+dot_sky = mel.create_material_expression(m_glass, unreal.MaterialExpressionDotProduct, -750, -240)
+mel.connect_material_expressions(refl_vec, "", dot_sky, "A")
+mel.connect_material_expressions(up_vec, "", dot_sky, "B")
+# Remap Z in [-1..1] -> [0..1]
+add_bias = mel.create_material_expression(m_glass, unreal.MaterialExpressionAdd, -580, -240)
+add_bias.set_editor_property("const_b", 0.35)
+mel.connect_material_expressions(dot_sky, "", add_bias, "A")
+clamp_sky = mel.create_material_expression(m_glass, unreal.MaterialExpressionClamp, -440, -240)
+mel.connect_material_expressions(add_bias, "", clamp_sky, "")
+
+c_ground = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant3Vector, -650, -420)
+c_ground.set_editor_property("constant", unreal.LinearColor(0.14, 0.22, 0.16, 1.0))
+c_sky = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant3Vector, -650, -330)
+c_sky.set_editor_property("constant", unreal.LinearColor(0.46, 0.68, 0.92, 1.0))
+env_lerp = mel.create_material_expression(m_glass, unreal.MaterialExpressionLinearInterpolate, -280, -320)
+mel.connect_material_expressions(c_ground, "", env_lerp, "A")
+mel.connect_material_expressions(c_sky, "", env_lerp, "B")
+mel.connect_material_expressions(clamp_sky, "", env_lerp, "Alpha")
+
+c_gl_transmission = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant3Vector, -550, -120)
+c_gl_transmission.set_editor_property("constant", unreal.LinearColor(0.04, 0.09, 0.12, 1.0))
+c_gl_lerp = mel.create_material_expression(m_glass, unreal.MaterialExpressionLinearInterpolate, -120, -180)
+mel.connect_material_expressions(c_gl_transmission, "", c_gl_lerp, "A")
+mel.connect_material_expressions(env_lerp, "", c_gl_lerp, "B")
+mel.connect_material_expressions(fres, "", c_gl_lerp, "Alpha")
+mel.connect_material_property(c_gl_lerp, "", unreal.MaterialProperty.MP_BASE_COLOR)
+
+# Subtle sky reflection boost on Emissive controlled by Fresnel so panes reflect the sky vault crisply
+em_mul = mel.create_material_expression(m_glass, unreal.MaterialExpressionMultiply, -120, -60)
+em_scale = mel.create_material_expression(m_glass, unreal.MaterialExpressionMultiply, -280, -40)
+em_const = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -450, -20)
+em_const.set_editor_property("r", 0.55)
+mel.connect_material_expressions(fres, "", em_scale, "A")
+mel.connect_material_expressions(em_const, "", em_scale, "B")
+mel.connect_material_expressions(env_lerp, "", em_mul, "A")
+mel.connect_material_expressions(em_scale, "", em_mul, "B")
+mel.connect_material_property(em_mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+
+m_gl_lo = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -650, 120)
+m_gl_lo.set_editor_property("r", 0.25)
+m_gl_hi = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -650, 180)
+m_gl_hi.set_editor_property("r", 0.96)
+m_gl_lerp = mel.create_material_expression(m_glass, unreal.MaterialExpressionLinearInterpolate, -320, 140)
+mel.connect_material_expressions(m_gl_lo, "", m_gl_lerp, "A")
+mel.connect_material_expressions(m_gl_hi, "", m_gl_lerp, "B")
+mel.connect_material_expressions(fres, "", m_gl_lerp, "Alpha")
+mel.connect_material_property(m_gl_lerp, "", unreal.MaterialProperty.MP_METALLIC)
+
+s_gl = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -320, 220)
+s_gl.set_editor_property("r", 0.98)
+mel.connect_material_property(s_gl, "", unreal.MaterialProperty.MP_SPECULAR)
+
+o_gl_lo = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -650, 260)
+o_gl_lo.set_editor_property("r", 0.16)
+o_gl_hi = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -650, 320)
+o_gl_hi.set_editor_property("r", 0.72)
+o_gl_lerp = mel.create_material_expression(m_glass, unreal.MaterialExpressionLinearInterpolate, -320, 290)
+mel.connect_material_expressions(o_gl_lo, "", o_gl_lerp, "A")
+mel.connect_material_expressions(o_gl_hi, "", o_gl_lerp, "B")
+mel.connect_material_expressions(fres, "", o_gl_lerp, "Alpha")
+mel.connect_material_property(o_gl_lerp, "", unreal.MaterialProperty.MP_OPACITY)
+
+r_gl = mel.create_material_expression(m_glass, unreal.MaterialExpressionConstant, -320, 370)
+r_gl.set_editor_property("r", 0.02)
 mel.connect_material_property(r_gl, "", unreal.MaterialProperty.MP_ROUGHNESS)
 mel.recompile_material(m_glass)
 
 # (diff_stem, norm_stem, rough_stem, tint, is_plaster, rough_mult, metal_v, spec_v, uv_t)
 pbr_defs = {
-    "M_Wall_Plaster_White": ("painted_plaster_wall_diffuse", "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.95, 0.94, 0.91), True, 0.88, 0.0, 0.35, 3.5),
-    "M_Roof_Tile_Anthracite": ("grey_roof_tiles_02_diffuse", "grey_roof_tiles_02_nor_gl", "grey_roof_tiles_02_rough", (0.18, 0.20, 0.23), False, 0.55, 0.15, 0.65, 2.4),
+    "M_Wall_Plaster_White": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), True, 0.98, 0.0, 0.24, 3.2),
+    "M_Roof_Tile_Anthracite": ("roof_tiles_anthracite_diffuse", "roof_tiles_anthracite_nor_gl", "roof_tiles_anthracite_rough", (0.40, 0.46, 0.56), False, 1.0, 0.0, 0.26, 0.42),
     "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse", "facade_timber_cladding_nor_gl", "facade_timber_cladding_rough", (0.98, 0.98, 0.98), False, 1.0, 0.0, 0.22, 1.0),
     "M_Door_Veneer_Oak": ("oak_countertop_diffuse", "oak_veneer_nor_gl", "oak_veneer_rough", (0.76, 0.56, 0.38), False, 0.38, 0.0, 0.62, 0.65),
     "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", "laminate_floor_02_nor_gl", "laminate_floor_02_rough", (0.86, 0.76, 0.65), False, 0.36, 0.0, 0.68, 1.6),
     "M_Floor_Tile_Gres": ("concrete_tiles_diffuse", "concrete_tiles_nor_gl", "concrete_tiles_rough", (0.91, 0.90, 0.88), False, 0.28, 0.0, 0.72, 1.5),
-    "M_Structure_Concrete": ("painted_plaster_wall_diffuse", "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.95, 0.94, 0.92), True, 0.85, 0.0, 0.35, 3.0),
+    "M_Structure_Concrete": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.02, 1.03, 1.03), True, 0.98, 0.0, 0.24, 2.4),
     "M_Terrace_Paver_Grey": ("concrete_pavers_02_diffuse", "concrete_pavers_02_nor_gl", "concrete_pavers_02_rough", (0.76, 0.77, 0.79), False, 0.72, 0.0, 0.48, 2.5),
     "M_WalkwayPavers": ("concrete_pavers_02_diffuse", "concrete_pavers_02_nor_gl", "concrete_pavers_02_rough", (0.72, 0.73, 0.75), False, 0.75, 0.0, 0.45, 2.5),
     "M_ParcelGrass": ("lawn_grass_diffuse", "leafy_grass_nor_gl", "leafy_grass_rough", (0.72, 0.86, 0.64), False, 0.90, 0.0, 0.25, 28.0),
@@ -177,18 +250,27 @@ for mname, (diff_s, norm_s, rough_s, tint, is_plaster, rough_v, metal_v, spec_v,
         mel.connect_material_expressions(ct, "", mul, "B")
         mel.connect_material_property(mul, "", unreal.MaterialProperty.MP_BASE_COLOR)
     elif dtex and is_plaster:
-        ts = mel.create_material_expression(mat, unreal.MaterialExpressionTextureSample, -450, -220)
+        uv_micro = mel.create_material_expression(mat, unreal.MaterialExpressionTextureCoordinate, -700, -180)
+        uv_micro.set_editor_property("u_tiling", uv_t * 3.7)
+        uv_micro.set_editor_property("v_tiling", uv_t * 3.7)
+        ts = mel.create_material_expression(mat, unreal.MaterialExpressionTextureSample, -480, -260)
         ts.set_editor_property("texture", dtex)
         mel.connect_material_expressions(uv, "", ts, "UVs")
-        lerp = mel.create_material_expression(mat, unreal.MaterialExpressionLinearInterpolate, -180, -220)
-        c_white = mel.create_material_expression(mat, unreal.MaterialExpressionConstant3Vector, -450, -360)
+        ts_m = mel.create_material_expression(mat, unreal.MaterialExpressionTextureSample, -480, -120)
+        ts_m.set_editor_property("texture", dtex)
+        mel.connect_material_expressions(uv_micro, "", ts_m, "UVs")
+        lerp_d = mel.create_material_expression(mat, unreal.MaterialExpressionLinearInterpolate, -300, -200)
+        a_d = mel.create_material_expression(mat, unreal.MaterialExpressionConstant, -480, -20)
+        a_d.set_editor_property("r", 0.45)
+        mel.connect_material_expressions(ts, "RGB", lerp_d, "A")
+        mel.connect_material_expressions(ts_m, "RGB", lerp_d, "B")
+        mel.connect_material_expressions(a_d, "", lerp_d, "Alpha")
+        mul = mel.create_material_expression(mat, unreal.MaterialExpressionMultiply, -140, -200)
+        c_white = mel.create_material_expression(mat, unreal.MaterialExpressionConstant3Vector, -300, -340)
         c_white.set_editor_property("constant", unreal.LinearColor(tint[0], tint[1], tint[2], 1.0))
-        alpha = mel.create_material_expression(mat, unreal.MaterialExpressionConstant, -450, -80)
-        alpha.set_editor_property("r", 0.16)
-        mel.connect_material_expressions(c_white, "", lerp, "A")
-        mel.connect_material_expressions(ts, "RGB", lerp, "B")
-        mel.connect_material_expressions(alpha, "", lerp, "Alpha")
-        mel.connect_material_property(lerp, "", unreal.MaterialProperty.MP_BASE_COLOR)
+        mel.connect_material_expressions(lerp_d, "", mul, "A")
+        mel.connect_material_expressions(c_white, "", mul, "B")
+        mel.connect_material_property(mul, "", unreal.MaterialProperty.MP_BASE_COLOR)
     else:
         c = mel.create_material_expression(mat, unreal.MaterialExpressionConstant3Vector, -300, -180)
         c.set_editor_property("constant", unreal.LinearColor(tint[0], tint[1], tint[2], 1.0))
@@ -210,7 +292,28 @@ for mname, (diff_s, norm_s, rough_s, tint, is_plaster, rough_v, metal_v, spec_v,
         mel.connect_material_property(r_const, "", unreal.MaterialProperty.MP_ROUGHNESS)
 
     ntex = load_tex(norm_s, is_normal=True)
-    if ntex:
+    if ntex and is_plaster:
+        uv_nm = mel.create_material_expression(mat, unreal.MaterialExpressionTextureCoordinate, -700, 360)
+        uv_nm.set_editor_property("u_tiling", uv_t * 3.7)
+        uv_nm.set_editor_property("v_tiling", uv_t * 3.7)
+        nts = mel.create_material_expression(mat, unreal.MaterialExpressionTextureSample, -480, 260)
+        nts.set_editor_property("texture", ntex)
+        nts.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL)
+        mel.connect_material_expressions(uv, "", nts, "UVs")
+        nts_m = mel.create_material_expression(mat, unreal.MaterialExpressionTextureSample, -480, 400)
+        nts_m.set_editor_property("texture", ntex)
+        nts_m.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL)
+        mel.connect_material_expressions(uv_nm, "", nts_m, "UVs")
+        n_add = mel.create_material_expression(mat, unreal.MaterialExpressionAdd, -280, 320)
+        mel.connect_material_expressions(nts, "RGB", n_add, "A")
+        mel.connect_material_expressions(nts_m, "RGB", n_add, "B")
+        n_scale = mel.create_material_expression(mat, unreal.MaterialExpressionConstant3Vector, -280, 440)
+        n_scale.set_editor_property("constant", unreal.LinearColor(1.65, 1.65, 0.50, 1.0))
+        n_mul = mel.create_material_expression(mat, unreal.MaterialExpressionMultiply, -120, 340)
+        mel.connect_material_expressions(n_add, "", n_mul, "A")
+        mel.connect_material_expressions(n_scale, "", n_mul, "B")
+        mel.connect_material_property(n_mul, "", unreal.MaterialProperty.MP_NORMAL)
+    elif ntex:
         nts = mel.create_material_expression(mat, unreal.MaterialExpressionTextureSample, -450, 280)
         nts.set_editor_property("texture", ntex)
         nts.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL)
@@ -353,11 +456,11 @@ def capture_shot(cam_loc, target_loc, sun_rot, fov, out_dir, filename):
     cpps.set_editor_property("override_reflection_method", True)
     cpps.set_editor_property("reflection_method", unreal.ReflectionMethod.LUMEN)
     cpps.set_editor_property("override_lumen_scene_lighting_quality", True)
-    cpps.set_editor_property("lumen_scene_lighting_quality", 4.0)
+    cpps.set_editor_property("lumen_scene_lighting_quality", 2.0)
     cpps.set_editor_property("override_lumen_final_gather_quality", True)
-    cpps.set_editor_property("lumen_final_gather_quality", 4.0)
+    cpps.set_editor_property("lumen_final_gather_quality", 2.0)
     cpps.set_editor_property("override_lumen_reflection_quality", True)
-    cpps.set_editor_property("lumen_reflection_quality", 4.0)
+    cpps.set_editor_property("lumen_reflection_quality", 2.0)
     cpps.set_editor_property("override_ambient_occlusion_intensity", True)
     cpps.set_editor_property("ambient_occlusion_intensity", 0.85)
     cpps.set_editor_property("override_ambient_occlusion_radius", True)
@@ -371,7 +474,7 @@ def capture_shot(cam_loc, target_loc, sun_rot, fov, out_dir, filename):
     cpps.set_editor_property("override_auto_exposure_max_brightness", True)
     cpps.set_editor_property("auto_exposure_max_brightness", 1.0)
 
-    for _ in range(8):
+    for _ in range(3):
         comp.capture_scene()
 
     unreal.RenderingLibrary.export_render_target(world, rt, out_dir, filename)
@@ -411,6 +514,22 @@ if do_capture:
         out_dir,
         "ue5_shot3_wood_closeup.png",
     )
+
+    # Shot 4: Close-up of mineral stucco plaster, window glass reflections & anthracite roof tiles
+    capture_shot(
+        unreal.Vector(1380.0, 340.0, 445.0),
+        unreal.Vector(820.0, -240.0, 465.0),
+        unreal.Rotator(roll=0.0, pitch=-22.0, yaw=-135.0),
+        42.0,
+        out_dir,
+        "ue5_shot4_plaster_roof_glass.png",
+    )
+
+try:
+    unreal.EditorAssetLibrary.save_directory("/Game/PDF2BIM", only_if_is_dirty=False, recursive=True)
+    unreal.EditorLoadingAndSavingUtils.save_map(world, "/Game/PDF2BIM/Dom1_Gniezniki_Map")
+except Exception:
+    pass
 """
 
 

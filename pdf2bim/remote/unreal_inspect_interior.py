@@ -134,15 +134,17 @@ placements = [
     ("Garden_Tree_Front_2", "SM_Fab_Indoor_Plant_Tree", (-180.0, 280.0, 58.0), 110.0, (2.0, 2.0, 2.1)),
 ]
 
-for label_sfx, mesh_key, loc, yaw, scale in placements:
-    sm = loaded_pieces.get(mesh_key)
-    if not sm:
-        continue
-    act = actor_sub.spawn_actor_from_object(sm, unreal.Vector(*loc), unreal.Rotator(roll=0.0, pitch=0.0, yaw=yaw))
-    if act:
-        act.set_actor_scale3d(unreal.Vector(*scale))
-        act.set_actor_label(f"PDF2BIM_Furn_{label_sfx}")
-        act.set_folder_path("PDF2BIM/Dom1_Furniture")
+spawn_furniture = False
+if spawn_furniture:
+    for label_sfx, mesh_key, loc, yaw, scale in placements:
+        sm = loaded_pieces.get(mesh_key)
+        if not sm:
+            continue
+        act = actor_sub.spawn_actor_from_object(sm, unreal.Vector(*loc), unreal.Rotator(roll=0.0, pitch=0.0, yaw=yaw))
+        if act:
+            act.set_actor_scale3d(unreal.Vector(*scale))
+            act.set_actor_label(f"PDF2BIM_Furn_{label_sfx}")
+            act.set_folder_path("PDF2BIM/Dom1_Furniture")
 
 # 5. Spawn soft area interior lights (large source_radius so there are no harsh point hotspots)
 int_lights = [

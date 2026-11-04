@@ -55,6 +55,12 @@ tex_files = [
     "facade_timber_cladding_diffuse.jpg",
     "facade_timber_cladding_nor_gl.jpg",
     "facade_timber_cladding_rough.jpg",
+    "facade_stucco_plaster_diffuse.jpg",
+    "facade_stucco_plaster_nor_gl.jpg",
+    "facade_stucco_plaster_rough.jpg",
+    "roof_tiles_anthracite_diffuse.jpg",
+    "roof_tiles_anthracite_nor_gl.jpg",
+    "roof_tiles_anthracite_rough.jpg",
     "concrete_tiles_diffuse.jpg",
     "concrete_tiles_nor_gl.jpg",
     "concrete_tiles_rough.jpg",
@@ -78,7 +84,7 @@ def load_tex(stem):
     path = f"{tex_dest}/{stem}"
     if unreal.EditorAssetLibrary.does_asset_exist(path):
         t = unreal.EditorAssetLibrary.load_asset(path)
-        if t and "facade_timber_cladding" in stem:
+        if t and any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite")):
             try:
                 t.set_editor_property("never_stream", True)
             except Exception:
@@ -114,10 +120,10 @@ asset_tools.import_asset_tasks([task])
 
 # 4. Build PBR Material graphs for all imported M_* materials
 pbr_recipes = {
-    "M_Wall_Plaster_White": (None, "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.92, 0.91, 0.88), 0.86, 0.0, 4.5),
-    "M_Wall_Ceramic_Block": (None, "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.92, 0.91, 0.88), 0.86, 0.0, 4.5),
-    "M_Wall_Insulation_EPS": (None, "painted_plaster_wall_nor_gl", "painted_plaster_wall_rough", (0.92, 0.91, 0.88), 0.86, 0.0, 4.5),
-    "M_Roof_Tile_Anthracite": ("grey_roof_tiles_02_diffuse", "grey_roof_tiles_02_nor_gl", "grey_roof_tiles_02_rough", (0.14, 0.15, 0.17), 0.50, 0.08, 2.2),
+    "M_Wall_Plaster_White": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), 0.98, 0.0, 2.4),
+    "M_Wall_Ceramic_Block": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), 0.98, 0.0, 2.4),
+    "M_Wall_Insulation_EPS": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), 0.98, 0.0, 2.4),
+    "M_Roof_Tile_Anthracite": ("roof_tiles_anthracite_diffuse", "roof_tiles_anthracite_nor_gl", "roof_tiles_anthracite_rough", (0.98, 0.98, 1.00), 1.0, 0.0, 0.42),
     "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse", "facade_timber_cladding_nor_gl", "facade_timber_cladding_rough", (0.98, 0.98, 0.98), 0.78, 0.0, 1.0),
     "M_Door_Veneer_Oak": ("laminate_floor_02_diffuse", None, None, (0.52, 0.33, 0.18), 0.42, 0.0, 1.2),
     "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", None, None, (0.64, 0.47, 0.30), 0.40, 0.0, 1.5),
