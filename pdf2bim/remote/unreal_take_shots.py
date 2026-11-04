@@ -217,11 +217,11 @@ mel.recompile_material(m_glass)
 
 # (diff_stem, norm_stem, rough_stem, tint, is_plaster, rough_mult, metal_v, spec_v, uv_t)
 pbr_defs = {
-    "M_Wall_Plaster_White": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), True, 0.98, 0.0, 0.24, 3.2),
+    "M_Wall_Plaster_White": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.07, 1.07, 1.06), True, 0.98, 0.0, 0.24, 3.2),
     "M_Roof_Tile_Anthracite": ("roof_tiles_anthracite_diffuse", "roof_tiles_anthracite_nor_gl", "roof_tiles_anthracite_rough", (0.40, 0.46, 0.56), False, 1.0, 0.0, 0.26, 0.42),
     "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse", "facade_timber_cladding_nor_gl", "facade_timber_cladding_rough", (0.98, 0.98, 0.98), False, 1.0, 0.0, 0.22, 1.0),
     "M_Door_Veneer_Oak": ("oak_countertop_diffuse", "oak_veneer_nor_gl", "oak_veneer_rough", (0.76, 0.56, 0.38), False, 0.38, 0.0, 0.62, 0.65),
-    "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", "laminate_floor_02_nor_gl", "laminate_floor_02_rough", (0.86, 0.76, 0.65), False, 0.36, 0.0, 0.68, 1.6),
+    "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", "laminate_floor_02_nor_gl", "laminate_floor_02_rough", (0.86, 0.76, 0.65), False, 0.48, 0.0, 0.42, 1.6),
     "M_Floor_Tile_Gres": ("concrete_tiles_diffuse", "concrete_tiles_nor_gl", "concrete_tiles_rough", (0.91, 0.90, 0.88), False, 0.28, 0.0, 0.72, 1.5),
     "M_Structure_Concrete": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.02, 1.03, 1.03), True, 0.98, 0.0, 0.24, 2.4),
     "M_Terrace_Paver_Grey": ("concrete_pavers_02_diffuse", "concrete_pavers_02_nor_gl", "concrete_pavers_02_rough", (0.76, 0.77, 0.79), False, 0.72, 0.0, 0.48, 2.5),
@@ -308,7 +308,7 @@ for mname, (diff_s, norm_s, rough_s, tint, is_plaster, rough_v, metal_v, spec_v,
         mel.connect_material_expressions(nts, "RGB", n_add, "A")
         mel.connect_material_expressions(nts_m, "RGB", n_add, "B")
         n_scale = mel.create_material_expression(mat, unreal.MaterialExpressionConstant3Vector, -280, 440)
-        n_scale.set_editor_property("constant", unreal.LinearColor(1.65, 1.65, 0.50, 1.0))
+        n_scale.set_editor_property("constant", unreal.LinearColor(1.05, 1.05, 0.70, 1.0))
         n_mul = mel.create_material_expression(mat, unreal.MaterialExpressionMultiply, -120, 340)
         mel.connect_material_expressions(n_add, "", n_mul, "A")
         mel.connect_material_expressions(n_scale, "", n_mul, "B")
@@ -331,15 +331,100 @@ for mname, (diff_s, norm_s, rough_s, tint, is_plaster, rough_v, metal_v, spec_v,
     mel.recompile_material(mat)
     built_mats[mname] = mat
 
-# Map Ceramic_Block and Insulation_EPS to clean white plaster so window reveals are white
-built_mats["M_Wall_Ceramic_Block"] = built_mats["M_Wall_Plaster_White"]
+# Build realistic smooth interior gypsum skim-coat ("Gładź gipsowa malowana farbą lateksową matową")
+m_gladz = make_mat("M_Wall_Interior_Gladz")
+uv_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionTextureCoordinate, -700, 0)
+uv_g.set_editor_property("u_tiling", 4.5)
+uv_g.set_editor_property("v_tiling", 4.5)
+uv_g_micro = mel.create_material_expression(m_gladz, unreal.MaterialExpressionTextureCoordinate, -700, 160)
+uv_g_micro.set_editor_property("u_tiling", 14.0)
+uv_g_micro.set_editor_property("v_tiling", 14.0)
+
+d_gladz = load_tex("painted_plaster_wall_diffuse")
+c_gladz = mel.create_material_expression(m_gladz, unreal.MaterialExpressionConstant3Vector, -480, -340)
+c_gladz.set_editor_property("constant", unreal.LinearColor(0.955, 0.948, 0.935, 1.0))
+if d_gladz:
+    ts_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionTextureSample, -480, -200)
+    ts_g.set_editor_property("texture", d_gladz)
+    mel.connect_material_expressions(uv_g, "", ts_g, "UVs")
+    lerp_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionLinearInterpolate, -200, -240)
+    a_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionConstant, -480, -80)
+    a_g.set_editor_property("r", 0.24)
+    mel.connect_material_expressions(c_gladz, "", lerp_g, "A")
+    mel.connect_material_expressions(ts_g, "RGB", lerp_g, "B")
+    mel.connect_material_expressions(a_g, "", lerp_g, "Alpha")
+    mel.connect_material_property(lerp_g, "", unreal.MaterialProperty.MP_BASE_COLOR)
+else:
+    mel.connect_material_property(c_gladz, "", unreal.MaterialProperty.MP_BASE_COLOR)
+
+r_gladz = load_tex("painted_plaster_wall_rough", is_linear=True)
+rc_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionConstant, -480, 120)
+rc_g.set_editor_property("r", 0.86)
+if r_gladz:
+    rts_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionTextureSample, -480, 20)
+    rts_g.set_editor_property("texture", r_gladz)
+    rts_g.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR)
+    mel.connect_material_expressions(uv_g, "", rts_g, "UVs")
+    rmul_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionMultiply, -200, 60)
+    mel.connect_material_expressions(rts_g, "R", rmul_g, "A")
+    mel.connect_material_expressions(rc_g, "", rmul_g, "B")
+    mel.connect_material_property(rmul_g, "", unreal.MaterialProperty.MP_ROUGHNESS)
+else:
+    mel.connect_material_property(rc_g, "", unreal.MaterialProperty.MP_ROUGHNESS)
+
+n_gladz = load_tex("painted_plaster_wall_nor_gl", is_normal=True)
+n_stucco = load_tex("facade_stucco_plaster_nor_gl", is_normal=True)
+if n_gladz:
+    nts_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionTextureSample, -480, 260)
+    nts_g.set_editor_property("texture", n_gladz)
+    nts_g.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL)
+    mel.connect_material_expressions(uv_g, "", nts_g, "UVs")
+    if n_stucco:
+        nts_gm = mel.create_material_expression(m_gladz, unreal.MaterialExpressionTextureSample, -480, 400)
+        nts_gm.set_editor_property("texture", n_stucco)
+        nts_gm.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL)
+        mel.connect_material_expressions(uv_g_micro, "", nts_gm, "UVs")
+        ns_gm = mel.create_material_expression(m_gladz, unreal.MaterialExpressionConstant3Vector, -480, 520)
+        ns_gm.set_editor_property("constant", unreal.LinearColor(0.28, 0.28, 0.5, 1.0))
+        nmul_gm = mel.create_material_expression(m_gladz, unreal.MaterialExpressionMultiply, -320, 420)
+        mel.connect_material_expressions(nts_gm, "RGB", nmul_gm, "A")
+        mel.connect_material_expressions(ns_gm, "", nmul_gm, "B")
+        nadd_g = mel.create_material_expression(m_gladz, unreal.MaterialExpressionAdd, -160, 320)
+        mel.connect_material_expressions(nts_g, "RGB", nadd_g, "A")
+        mel.connect_material_expressions(nmul_gm, "", nadd_g, "B")
+        mel.connect_material_property(nadd_g, "", unreal.MaterialProperty.MP_NORMAL)
+    else:
+        mel.connect_material_property(nts_g, "RGB", unreal.MaterialProperty.MP_NORMAL)
+
+sg_node = mel.create_material_expression(m_gladz, unreal.MaterialExpressionConstant, -300, 200)
+sg_node.set_editor_property("r", 0.26)
+mel.connect_material_property(sg_node, "", unreal.MaterialProperty.MP_SPECULAR)
+mel.recompile_material(m_gladz)
+built_mats["M_Wall_Interior_Gladz"] = m_gladz
+
+# Map Ceramic_Block (inner core of exterior walls) to Interior Gladz, and Insulation_EPS (window reveals) to Exterior Stucco
+built_mats["M_Wall_Ceramic_Block"] = m_gladz
 built_mats["M_Wall_Insulation_EPS"] = built_mats["M_Wall_Plaster_White"]
 
-# 3. Assign built_mats to all spawned Dom 1 StaticMeshActors
+ext_facade_tokens = (
+    "_exterior_mat_wall_plaster",
+    "_exterior_mat_insulation",
+    "_knee_wall_mat_wall_plaster",
+    "_knee_wall_mat_insulation",
+    "_gable_wall_mat_wall_plaster",
+    "_gable_wall_mat_insulation",
+    "porch_col",
+    "komin_dach",
+)
+
+# 3. Assign built_mats to all spawned Dom 1 StaticMeshActors (exterior stucco on facade vs smooth gladz inside)
 assigned = 0
 for a in actor_sub.get_all_level_actors():
-    if not a.get_actor_label().startswith("PDF2BIM_Dom1_"):
+    lbl = a.get_actor_label()
+    if not lbl.startswith("PDF2BIM_Dom1_"):
         continue
+    lbl_low = lbl.lower()
+    is_ext_facade = any(tok in lbl_low for tok in ext_facade_tokens)
     smc = a.static_mesh_component
     sm = smc.static_mesh
     if not sm:
@@ -350,12 +435,23 @@ for a in actor_sub.get_all_level_actors():
         if not cur_m:
             continue
         cname = cur_m.get_name()
-        for k, target_m in built_mats.items():
+        target_m = None
+        for k, cand_m in built_mats.items():
             if cname.startswith(k):
-                smc.set_material(idx, target_m)
-                sm.set_material(idx, target_m)
-                assigned += 1
+                target_m = cand_m
                 break
+        if target_m is None and cname.startswith("M_Wall_Interior_Gladz"):
+            target_m = m_gladz
+        # Route interior walls, inner layer L2 of exterior walls, and interior slabs/ceilings to M_Wall_Interior_Gladz
+        if target_m in (built_mats["M_Wall_Plaster_White"], built_mats["M_Structure_Concrete"], m_gladz):
+            if is_ext_facade:
+                target_m = built_mats["M_Wall_Plaster_White"]
+            else:
+                target_m = m_gladz
+        if target_m:
+            smc.set_material(idx, target_m)
+            sm.set_material(idx, target_m)
+            assigned += 1
 
 print("ASSIGNED_MATERIAL_SLOTS", assigned)
 
@@ -523,6 +619,16 @@ if do_capture:
         42.0,
         out_dir,
         "ue5_shot4_plaster_roof_glass.png",
+    )
+
+    # Shot 5: Interior Salon/Jadalnia view showing smooth realistic interior gypsum skim-coat ("Gładź gipsowa")
+    capture_shot(
+        unreal.Vector(255.0, -535.0, 247.0),
+        unreal.Vector(720.0, -650.0, 210.0),
+        unreal.Rotator(roll=0.0, pitch=-22.0, yaw=135.0),
+        75.0,
+        out_dir,
+        "ue5_int3_parter_salon.png",
     )
 
 try:
