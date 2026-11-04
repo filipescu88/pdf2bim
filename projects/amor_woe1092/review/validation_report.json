@@ -1,0 +1,162 @@
+{
+  "project_slug": "amor_woe1092",
+  "passed": true,
+  "errors_count": 0,
+  "warnings_count": 0,
+  "checked_rooms": 15,
+  "checked_walls": 24,
+  "checked_openings": 24,
+  "room_audits": [
+    {
+      "room_id": "parter_1_1_wiatrolap",
+      "name": "1.1 Wiatrołap",
+      "floor_area_m2": 3.56,
+      "usable_area_pn_iso_m2": 3.56,
+      "pdf_usable_area_m2": 3.56,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "parter_1_2_hol",
+      "name": "1.2 Hol + Komunikacja",
+      "floor_area_m2": 9.02,
+      "usable_area_pn_iso_m2": 9.02,
+      "pdf_usable_area_m2": 9.03,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.11,
+      "passed": true
+    },
+    {
+      "room_id": "parter_1_3_spizarnia",
+      "name": "1.3 Spiżarnia",
+      "floor_area_m2": 1.37,
+      "usable_area_pn_iso_m2": 1.37,
+      "pdf_usable_area_m2": 1.37,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "parter_1_4_salon_kuchnia",
+      "name": "1.4 Salon + Kuchnia",
+      "floor_area_m2": 29.82,
+      "usable_area_pn_iso_m2": 29.82,
+      "pdf_usable_area_m2": 29.82,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "parter_1_5_kotlownia",
+      "name": "1.5 Kotłownia",
+      "floor_area_m2": 7.76,
+      "usable_area_pn_iso_m2": 7.76,
+      "pdf_usable_area_m2": 7.76,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "parter_1_6_korytarz",
+      "name": "1.6 Korytarz",
+      "floor_area_m2": 1.87,
+      "usable_area_pn_iso_m2": 1.87,
+      "pdf_usable_area_m2": 1.87,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "parter_1_7_lazienka",
+      "name": "1.7 Łazienka",
+      "floor_area_m2": 3.21,
+      "usable_area_pn_iso_m2": 3.21,
+      "pdf_usable_area_m2": 3.22,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.31,
+      "passed": true
+    },
+    {
+      "room_id": "parter_1_8_pokoj",
+      "name": "1.8 Pokój",
+      "floor_area_m2": 10.75,
+      "usable_area_pn_iso_m2": 10.75,
+      "pdf_usable_area_m2": 10.75,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_2_1_komunikacja",
+      "name": "2.1 Komunikacja",
+      "floor_area_m2": 3.4,
+      "usable_area_pn_iso_m2": 3.4,
+      "pdf_usable_area_m2": 3.4,
+      "pdf_floor_area_m2": 3.4,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_2_2_lazienka",
+      "name": "2.2 Łazienka",
+      "floor_area_m2": 6.03,
+      "usable_area_pn_iso_m2": 6.03,
+      "pdf_usable_area_m2": 6.03,
+      "pdf_floor_area_m2": 6.03,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_2_3_pralnia",
+      "name": "2.3 Pralnia",
+      "floor_area_m2": 4.48,
+      "usable_area_pn_iso_m2": 1.49,
+      "pdf_usable_area_m2": 1.59,
+      "pdf_floor_area_m2": 4.47,
+      "rel_error_pct": 6.29,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_2_4_pokoj",
+      "name": "2.4 Pokój SE",
+      "floor_area_m2": 14.5,
+      "usable_area_pn_iso_m2": 11.23,
+      "pdf_usable_area_m2": 11.28,
+      "pdf_floor_area_m2": 14.5,
+      "rel_error_pct": 0.44,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_2_5_pokoj",
+      "name": "2.5 Pokój S",
+      "floor_area_m2": 14.3,
+      "usable_area_pn_iso_m2": 10.1,
+      "pdf_usable_area_m2": 10.14,
+      "pdf_floor_area_m2": 14.3,
+      "rel_error_pct": 0.39,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_2_6_garderoba",
+      "name": "2.6 Garderoba",
+      "floor_area_m2": 5.88,
+      "usable_area_pn_iso_m2": 4.26,
+      "pdf_usable_area_m2": 4.28,
+      "pdf_floor_area_m2": 5.88,
+      "rel_error_pct": 0.47,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_2_7_pokoj",
+      "name": "2.7 Pokój NW",
+      "floor_area_m2": 17.23,
+      "usable_area_pn_iso_m2": 13.34,
+      "pdf_usable_area_m2": 13.21,
+      "pdf_floor_area_m2": 17.23,
+      "rel_error_pct": 0.98,
+      "passed": true
+    }
+  ],
+  "issues": []
+}

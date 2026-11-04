@@ -160,8 +160,8 @@ def compute_pn_iso_9836_area(room: RoomSpec, level: LevelSpec, roof: RoofSpec) -
             if not poly.contains(pt):
                 continue
             total_cells += 1
-            # Determine clear height h under roof planes and attic ceiling
-            h_clear = level.z_ceiling - level.z_floor
+            # Determine clear height h under sloped roof planes (PN-ISO 9836 isolines H=140cm and H=220cm)
+            h_clear = 99.0
             for rp, rpoly in plane_polys:
                 if rpoly.contains(pt):
                     z_in = rp.z_inner_at(x, y)
