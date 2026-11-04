@@ -4,8 +4,8 @@
   "passed": true,
   "structural_walls_within_5cm_ratio": 1.0,
   "max_structural_wall_deviation_cm": 1.2,
-  "mean_structural_wall_deviation_cm": 0.11,
-  "mean_room_iou": 0.9543,
+  "mean_structural_wall_deviation_cm": 0.18,
+  "mean_room_iou": 0.9623,
   "min_room_iou": 0.7764,
   "detected_openings_count": 24,
   "gt_openings_count": 24,
@@ -65,12 +65,30 @@
       "within_5cm": true
     },
     {
-      "gt_wall_id": "w_p_kotlownia_east",
+      "gt_wall_id": "w_p_wiatrolap_east",
       "level_id": "parter",
       "wall_type": "interior_loadbearing",
       "expected_coord_m": 2.36,
       "extracted_coord_m": 2.36,
       "deviation_cm": 0.0,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_under_stairs",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "expected_coord_m": 2.36,
+      "extracted_coord_m": 2.36,
+      "deviation_cm": 0.0,
+      "within_5cm": true
+    },
+    {
+      "gt_wall_id": "w_p_kotlownia_east",
+      "level_id": "parter",
+      "wall_type": "interior_loadbearing",
+      "expected_coord_m": 2.36,
+      "extracted_coord_m": 2.36,
+      "deviation_cm": 0.01,
       "within_5cm": true
     },
     {
@@ -122,9 +140,9 @@
       "gt_wall_id": "w_p_schody_north",
       "level_id": "parter",
       "wall_type": "interior_loadbearing",
-      "expected_coord_m": 3.97,
-      "extracted_coord_m": 3.97,
-      "deviation_cm": 0.0,
+      "expected_coord_m": 4.1,
+      "extracted_coord_m": 4.11,
+      "deviation_cm": 1.0,
       "within_5cm": true
     },
     {
@@ -231,25 +249,25 @@
       "gt_room_id": "parter_hol",
       "level_id": "parter",
       "room_name": "Hol",
-      "gt_area_m2": 4.3,
-      "extracted_area_m2": 4.19,
-      "iou": 0.9398
+      "gt_area_m2": 4.44,
+      "extracted_area_m2": 4.34,
+      "iou": 0.9432
     },
     {
       "gt_room_id": "parter_schody",
       "level_id": "parter",
       "room_name": "Schody",
       "gt_area_m2": 3.26,
-      "extracted_area_m2": 2.82,
-      "iou": 0.8293
+      "extracted_area_m2": 3.37,
+      "iou": 0.9659
     },
     {
       "gt_room_id": "parter_salon_jadalnia",
       "level_id": "parter",
       "room_name": "Salon + Jadalnia",
-      "gt_area_m2": 27.67,
-      "extracted_area_m2": 27.29,
-      "iou": 0.9816
+      "gt_area_m2": 28.04,
+      "extracted_area_m2": 27.03,
+      "iou": 0.9597
     },
     {
       "gt_room_id": "parter_kuchnia",
@@ -263,9 +281,9 @@
       "gt_room_id": "parter_lazienka",
       "level_id": "parter",
       "room_name": "Łazienka",
-      "gt_area_m2": 3.5,
-      "extracted_area_m2": 3.54,
-      "iou": 0.9807
+      "gt_area_m2": 3.4,
+      "extracted_area_m2": 3.47,
+      "iou": 0.9797
     },
     {
       "gt_room_id": "parter_kotlownia",
@@ -279,9 +297,9 @@
       "gt_room_id": "poddasze_hol",
       "level_id": "poddasze",
       "room_name": "Hol",
-      "gt_area_m2": 9.3,
-      "extracted_area_m2": 9.43,
-      "iou": 0.9792
+      "gt_area_m2": 8.98,
+      "extracted_area_m2": 9.13,
+      "iou": 0.9786
     },
     {
       "gt_room_id": "poddasze_pokoj_nw",
@@ -295,33 +313,33 @@
       "gt_room_id": "poddasze_pokoj_ne",
       "level_id": "poddasze",
       "room_name": "Pokój NE",
-      "gt_area_m2": 14.48,
-      "extracted_area_m2": 14.14,
-      "iou": 0.9707
+      "gt_area_m2": 13.95,
+      "extracted_area_m2": 13.69,
+      "iou": 0.969
     },
     {
       "gt_room_id": "poddasze_pokoj_se",
       "level_id": "poddasze",
       "room_name": "Pokój SE",
-      "gt_area_m2": 12.21,
-      "extracted_area_m2": 12.24,
-      "iou": 0.997
+      "gt_area_m2": 11.91,
+      "extracted_area_m2": 11.96,
+      "iou": 0.9962
     },
     {
       "gt_room_id": "poddasze_lazienka",
       "level_id": "poddasze",
       "room_name": "Łazienka",
-      "gt_area_m2": 6.1,
-      "extracted_area_m2": 6.13,
-      "iou": 0.995
+      "gt_area_m2": 5.9,
+      "extracted_area_m2": 5.97,
+      "iou": 0.9889
     },
     {
       "gt_room_id": "poddasze_pokoj_sw",
       "level_id": "poddasze",
       "room_name": "Pokój SW",
-      "gt_area_m2": 9.3,
-      "extracted_area_m2": 9.34,
-      "iou": 0.9951
+      "gt_area_m2": 9.05,
+      "extracted_area_m2": 9.13,
+      "iou": 0.9911
     }
   ]
 }

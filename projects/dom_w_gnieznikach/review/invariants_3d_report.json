@@ -1,13 +1,13 @@
 {
   "project_slug": "dom_w_gnieznikach",
   "passed": true,
-  "total_nodes": 255,
+  "total_nodes": 265,
   "checks": [
     {
       "invariant_id": 1,
       "name": "Rectangular 4-vertex bases for all wall segments (no concave triangulation artifacts)",
       "passed": true,
-      "checked_count": 137,
+      "checked_count": 139,
       "violations": []
     },
     {

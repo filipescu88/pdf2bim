@@ -5,7 +5,7 @@
   "structural_walls_within_5cm_ratio": 1.0,
   "max_structural_wall_deviation_cm": 1.2,
   "mean_structural_wall_deviation_cm": 0.55,
-  "mean_room_iou": 0.9052,
+  "mean_room_iou": 0.9062,
   "min_room_iou": 0.7872,
   "detected_openings_count": 24,
   "gt_openings_count": 24,
@@ -305,8 +305,8 @@
       "level_id": "poddasze",
       "room_name": "Łazienka",
       "gt_area_m2": 6.03,
-      "extracted_area_m2": 5.82,
-      "iou": 0.9203
+      "extracted_area_m2": 5.9,
+      "iou": 0.9357
     },
     {
       "gt_room_id": "poddasze_2_3_pralnia",

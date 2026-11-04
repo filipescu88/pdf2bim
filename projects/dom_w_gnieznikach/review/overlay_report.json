@@ -2,8 +2,8 @@
   "project_slug": "dom_w_gnieznikach",
   "passed": true,
   "max_exterior_wall_deviation_cm": 1.2,
-  "mean_wall_deviation_cm": 1.0,
-  "min_contour_overlap_ratio": 0.938,
+  "mean_wall_deviation_cm": 1.04,
+  "min_contour_overlap_ratio": 0.934,
   "levels": [
     {
       "level_id": "parter",
@@ -12,8 +12,8 @@
       "scale_x_pt_per_m": 16.732,
       "scale_y_pt_per_m": 16.7321,
       "max_exterior_wall_deviation_cm": 1.2,
-      "mean_wall_deviation_cm": 0.96,
-      "wall_contour_overlap_ratio": 0.938,
+      "mean_wall_deviation_cm": 1.03,
+      "wall_contour_overlap_ratio": 0.934,
       "passed": true,
       "wall_metrics": [
         {
@@ -71,13 +71,31 @@
           "contour_overlap": 0.993
         },
         {
+          "wall_id": "w_p_wiatrolap_east",
+          "wall_type": "interior_loadbearing",
+          "orientation": "V",
+          "expected_coord_m": 2.36,
+          "detected_pdf_coord_m": 2.372,
+          "deviation_cm": 1.2,
+          "contour_overlap": 1.0
+        },
+        {
+          "wall_id": "w_p_under_stairs",
+          "wall_type": "interior_partition",
+          "orientation": "V",
+          "expected_coord_m": 2.36,
+          "detected_pdf_coord_m": 2.372,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.921
+        },
+        {
           "wall_id": "w_p_kotlownia_east",
           "wall_type": "interior_loadbearing",
           "orientation": "V",
           "expected_coord_m": 2.36,
           "detected_pdf_coord_m": 2.372,
           "deviation_cm": 1.2,
-          "contour_overlap": 0.809
+          "contour_overlap": 0.768
         },
         {
           "wall_id": "w_p_wiatrolap_north",
@@ -128,10 +146,10 @@
           "wall_id": "w_p_schody_north",
           "wall_type": "interior_loadbearing",
           "orientation": "H",
-          "expected_coord_m": 3.97,
-          "detected_pdf_coord_m": 3.976,
-          "deviation_cm": 0.62,
-          "contour_overlap": 1.0
+          "expected_coord_m": 4.1,
+          "detected_pdf_coord_m": 4.112,
+          "deviation_cm": 1.2,
+          "contour_overlap": 0.943
         }
       ]
     },

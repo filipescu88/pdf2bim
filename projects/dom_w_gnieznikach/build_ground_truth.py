@@ -87,25 +87,27 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
             {"id": "w_p_north", "level_id": "parter", "wall_type": "exterior", "start_xy": (10.30, 8.40), "end_xy": (0.00, 8.40), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
             {"id": "w_p_west", "level_id": "parter", "wall_type": "exterior", "start_xy": (0.00, 8.40), "end_xy": (0.00, 1.38), "alignment": "left", "priority": 3, "z_bottom": 0.0, "z_top": 3.08, "layers": ext_layers},
             # Parter interior walls
-            {"id": "w_p_kotlownia_east", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.36, 1.82), "end_xy": (2.36, 7.96), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": load_layers},
+            {"id": "w_p_wiatrolap_east", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.36, 1.82), "end_xy": (2.36, 3.02), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": load_layers},
+            {"id": "w_p_under_stairs", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (2.36, 3.02), "end_xy": (2.36, 4.10), "alignment": "right", "priority": 1, "z_bottom": 0.0, "z_top": 1.98, "layers": part_layers},
+            {"id": "w_p_kotlownia_east", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.36, 4.10), "end_xy": (2.36, 7.96), "alignment": "right", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": load_layers},
             {"id": "w_p_wiatrolap_north", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (0.44, 4.15), "end_xy": (2.36, 4.15), "alignment": "left", "priority": 1, "z_bottom": 0.0, "z_top": 2.74, "layers": part_layers},
             {"id": "w_p_stair_enclosure_south", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (1.52, 2.96), "end_xy": (2.36, 2.96), "alignment": "left", "priority": 1, "z_bottom": 0.0, "z_top": 3.02, "layers": part_layers},
             {"id": "w_p_stair_enclosure_west", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (1.52, 3.08), "end_xy": (1.52, 4.15), "alignment": "right", "priority": 1, "z_bottom": 0.0, "z_top": 3.02, "layers": part_layers},
             {"id": "w_p_lazienka_north", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (2.92, 1.68), "end_xy": (5.74, 1.68), "alignment": "left", "priority": 1, "z_bottom": 0.0, "z_top": 2.74, "layers": part_layers},
             {"id": "w_p_lazienka_east", "level_id": "parter", "wall_type": "interior_partition", "start_xy": (5.74, 0.44), "end_xy": (5.74, 1.80), "alignment": "right", "priority": 1, "z_bottom": 0.0, "z_top": 2.74, "layers": part_layers},
-            {"id": "w_p_schody_north", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.48, 3.97), "end_xy": (5.86, 3.97), "alignment": "left", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": load_layers},
+            {"id": "w_p_schody_north", "level_id": "parter", "wall_type": "interior_loadbearing", "start_xy": (2.48, 4.10), "end_xy": (5.84, 4.10), "alignment": "left", "priority": 2, "z_bottom": 0.0, "z_top": 2.74, "layers": load_layers},
             # Poddasze knee & gable walls
             {"id": "w_a_knee_south", "level_id": "poddasze", "wall_type": "knee_wall", "start_xy": (0.00, 0.00), "end_xy": (10.30, 0.00), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": 4.48, "clip_to_roof": True, "layers": ext_layers},
             {"id": "w_a_knee_north", "level_id": "poddasze", "wall_type": "knee_wall", "start_xy": (10.30, 8.40), "end_xy": (0.00, 8.40), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": 4.48, "clip_to_roof": True, "layers": ext_layers},
             {"id": "w_a_gable_east", "level_id": "poddasze", "wall_type": "gable_wall", "start_xy": (10.30, 0.00), "end_xy": (10.30, 8.40), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": ext_layers},
             {"id": "w_a_gable_west", "level_id": "poddasze", "wall_type": "gable_wall", "start_xy": (0.00, 8.40), "end_xy": (0.00, 0.00), "alignment": "left", "priority": 3, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": ext_layers},
-            # Poddasze interior partitions (complete room & stairwell enclosure)
-            {"id": "w_a_north_rooms_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (4.96, 5.23), "end_xy": (4.96, 7.96), "alignment": "right", "priority": 1, "z_bottom": 3.08, "z_top": 5.80, "clip_to_roof": True, "layers": part_layers},
-            {"id": "w_a_hol_north", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (0.44, 5.11), "end_xy": (6.94, 5.11), "alignment": "left", "priority": 1, "z_bottom": 3.08, "z_top": 5.80, "clip_to_roof": True, "layers": part_layers},
-            {"id": "w_a_pok2_pok3_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (6.94, 4.62), "end_xy": (9.86, 4.62), "alignment": "left", "priority": 1, "z_bottom": 3.08, "z_top": 5.80, "clip_to_roof": True, "layers": part_layers},
-            {"id": "w_a_hol_east", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (6.82, 0.44), "end_xy": (6.82, 5.11), "alignment": "right", "priority": 1, "z_bottom": 3.08, "z_top": 5.80, "clip_to_roof": True, "layers": part_layers},
-            {"id": "w_a_hol_south", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (0.44, 2.90), "end_xy": (6.82, 2.90), "alignment": "left", "priority": 1, "z_bottom": 3.08, "z_top": 5.80, "clip_to_roof": True, "layers": part_layers},
-            {"id": "w_a_sw_laz_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (4.22, 0.44), "end_xy": (4.22, 2.90), "alignment": "right", "priority": 1, "z_bottom": 3.08, "z_top": 5.80, "clip_to_roof": True, "layers": part_layers},
+            # Poddasze interior partitions (complete room & stairwell enclosure reaching sloped roof ceiling)
+            {"id": "w_a_north_rooms_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (4.96, 5.23), "end_xy": (4.96, 7.96), "alignment": "right", "priority": 1, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": part_layers},
+            {"id": "w_a_hol_north", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (0.44, 5.11), "end_xy": (6.94, 5.11), "alignment": "left", "priority": 1, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": part_layers},
+            {"id": "w_a_pok2_pok3_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (6.94, 4.62), "end_xy": (9.86, 4.62), "alignment": "left", "priority": 1, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": part_layers},
+            {"id": "w_a_hol_east", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (6.82, 0.44), "end_xy": (6.82, 5.11), "alignment": "right", "priority": 1, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": part_layers},
+            {"id": "w_a_hol_south", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (0.44, 2.90), "end_xy": (6.82, 2.90), "alignment": "left", "priority": 1, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": part_layers},
+            {"id": "w_a_sw_laz_div", "level_id": "poddasze", "wall_type": "interior_partition", "start_xy": (4.22, 0.44), "end_xy": (4.22, 2.90), "alignment": "right", "priority": 1, "z_bottom": 3.08, "z_top": z_ridge, "clip_to_roof": True, "layers": part_layers},
         ],
         "openings": {
             "windows": [
@@ -124,7 +126,7 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
                 {"id": "door_entrance", "wall_id": "w_p_south_entrance", "offset_along_wall": 0.78, "width": 1.00, "height": 2.30, "sill_z": 0.0, "hinge_side": "right", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_oak"},
                 {"id": "door_terrace_north", "wall_id": "w_p_north", "offset_along_wall": 5.60, "width": 1.10, "height": 2.30, "sill_z": 0.0, "hinge_side": "left", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_glass"},
                 {"id": "door_kotlownia", "wall_id": "w_p_wiatrolap_north", "offset_along_wall": 0.14, "width": 0.90, "height": 2.10, "sill_z": 0.0, "hinge_side": "left", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_oak"},
-                {"id": "door_wiatrolap_hol", "wall_id": "w_p_kotlownia_east", "offset_along_wall": 0.10, "width": 0.90, "height": 2.10, "sill_z": 0.0, "hinge_side": "left", "swing_dir": "out", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_oak"},
+                {"id": "door_wiatrolap_hol", "wall_id": "w_p_wiatrolap_east", "offset_along_wall": 0.10, "width": 0.90, "height": 2.10, "sill_z": 0.0, "hinge_side": "left", "swing_dir": "out", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_oak"},
                 {"id": "door_lazienka_parter", "wall_id": "w_p_lazienka_north", "offset_along_wall": 0.98, "width": 0.90, "height": 2.10, "sill_z": 0.0, "hinge_side": "left", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_oak"},
                 {"id": "door_attic_nw", "wall_id": "w_a_hol_north", "offset_along_wall": 3.08, "width": 0.90, "height": 2.10, "sill_z": 3.08, "hinge_side": "left", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_oak"},
                 {"id": "door_attic_ne", "wall_id": "w_a_hol_north", "offset_along_wall": 5.43, "width": 0.90, "height": 2.10, "sill_z": 3.08, "hinge_side": "right", "swing_dir": "in", "frame_material_id": "mat_frame_dark", "leaf_material_id": "mat_door_oak"},
@@ -222,7 +224,7 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
                 },
             ],
             "chimneys": [
-                {"id": "chimney_main", "bbox_xy": (2.22, 4.20, 2.90, 5.20), "z_bottom": 0.00, "z_top": 8.15, "material_id": "mat_wall_plaster"}
+                {"id": "chimney_main", "bbox_xy": (2.12, 5.23, 2.75, 5.80), "z_bottom": 0.00, "z_top": 8.15, "material_id": "mat_wall_plaster"}
             ],
         },
         "mep_sockets": [
@@ -233,6 +235,13 @@ def build_dom_w_gnieznikach_gt() -> SceneGraphV2:
             {"id": "mep_lazienka_podd_woda", "room_id": "poddasze_lazienka", "socket_type": "water_cold_hot", "position_xyz": (6.45, 1.80, 3.63), "material_id": "mat_mep"},
         ],
         "custom_elements": [
+            # Subfloor & thresholds (zero Z-fighting with room floors; eliminates doorway/transition gaps)
+            {"id": "subfloor_parter", "level_id": "parter", "bbox_xy": (0.10, 0.10, 10.20, 8.30), "z_bottom": -0.05, "z_top": -0.001, "material_id": "mat_floor_gres", "collidable": True},
+            {"id": "threshold_kuchnia_jadalnia", "level_id": "parter", "bbox_xy": (5.84, 3.92, 9.86, 4.16), "z_bottom": 0.00, "z_top": 0.019, "material_id": "mat_floor_gres", "collidable": True},
+            {"id": "subfloor_poddasze_north", "level_id": "poddasze", "bbox_xy": (0.10, 4.10, 10.20, 8.30), "z_bottom": 3.02, "z_top": 3.079, "material_id": "mat_floor_oak", "collidable": True},
+            {"id": "subfloor_poddasze_south", "level_id": "poddasze", "bbox_xy": (0.10, 0.10, 10.20, 3.02), "z_bottom": 3.02, "z_top": 3.079, "material_id": "mat_floor_oak", "collidable": True},
+            {"id": "subfloor_poddasze_east", "level_id": "poddasze", "bbox_xy": (5.28, 3.02, 10.20, 4.10), "z_bottom": 3.02, "z_top": 3.079, "material_id": "mat_floor_oak", "collidable": True},
+            {"id": "subfloor_poddasze_west", "level_id": "poddasze", "bbox_xy": (0.10, 3.02, 1.54, 4.10), "z_bottom": 3.02, "z_top": 3.079, "material_id": "mat_floor_oak", "collidable": True},
             # Entrance porch corner column, lintel beams & oak wood soffit ceiling
             {"id": "porch_column_sw", "level_id": "parter", "bbox_xy": (0.00, 0.00, 0.28, 0.28), "z_bottom": -0.02, "z_top": 2.31, "material_id": "mat_wall_plaster", "collidable": True},
             {"id": "porch_lintel_front", "level_id": "parter", "bbox_xy": (0.00, 0.00, 2.48, 0.35), "z_bottom": 2.31, "z_top": 3.08, "material_id": "mat_wall_plaster", "collidable": False},

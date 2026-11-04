@@ -1,7 +1,7 @@
 {
   "project_slug": "amor_woe1092",
   "passed": true,
-  "total_nodes": 267,
+  "total_nodes": 269,
   "checks": [
     {
       "invariant_id": 1,

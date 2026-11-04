@@ -616,6 +616,36 @@ def build_roof_and_mep(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                 )
             )
 
+        # Interior white gypsum ceiling liner on underside of roof plane (clipped inside exterior walls)
+        bx0, by0, bx1, by1 = sg.coordinate_system.structural_bbox_xy
+        int_clip = Polygon(rp.polygon_xy).intersection(box(bx0 + 0.05, by0 + 0.05, bx1 - 0.05, by1 - 0.05))
+        if not int_clip.is_empty and isinstance(int_clip, Polygon):
+            liner_coords = list(int_clip.exterior.coords)[:-1]
+            liner_plane = rp.model_copy(
+                update={
+                    "polygon_xy": liner_coords,
+                    "z_at_ridge": rp.z_at_ridge - rp.thickness + 0.002,
+                    "thickness": 0.025,
+                }
+            )
+            liner_mesh = extrude_sloped_roof_plane(liner_plane, cutout_polygons_xy=cutouts)
+            if liner_mesh is not None:
+                first_plaster = next((k for k in sg.materials if "plaster" in k or "wall" in k), rp.tile_material_id)
+                nodes.append(
+                    CompiledMeshNode(
+                        node_id=f"Sufit_Skos_{rp.id}",
+                        element_id=f"ceiling_liner_{rp.id}",
+                        category="ceiling_liner",
+                        level_id="poddasze",
+                        material_id=first_plaster,
+                        ue_mesh_name=f"SM_CeilingLiner_{rp.id}",
+                        ue_material_name=_ue_mat_name(sg, first_plaster),
+                        mesh=liner_mesh,
+                        collidable=False,
+                        extras={"element_id": f"ceiling_liner_{rp.id}", "category": "ceiling_liner", "level_id": "poddasze"},
+                    )
+                )
+
         # Horizontal soffit box at eave bounded strictly by rp.soffit_x_bounds (Invariant 6 / VR issue #1)
         if rp.soffit_x_bounds is not None:
             sx0, sx1 = rp.soffit_x_bounds
