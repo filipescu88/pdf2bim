@@ -219,43 +219,56 @@ def capture_interior(cam_loc, target_loc, fov, filename):
     actor_sub.destroy_actor(cap_actor)
     print("INT_CAPTURED_OK", f"{out_dir}/{filename}")
 
-# Shot 1: Upstairs Hall (West end of Hol x=0.95, y=4.60 -> X_ue=95, Y_ue=-460, Z_ue=555) looking East along hallway & stairwell
-capture_interior(
-    unreal.Vector(95.0, -460.0, 555.0),
-    unreal.Vector(680.0, -410.0, 520.0),
-    75.0,
-    "ue5_int1_poddasze_hol.png",
-)
+do_capture = True
+if do_capture:
+    # Shot 1: Upstairs Hall (West end of Hol x=0.95, y=4.60 -> X_ue=95, Y_ue=-460, Z_ue=555) looking East along hallway & stairwell
+    capture_interior(
+        unreal.Vector(95.0, -460.0, 555.0),
+        unreal.Vector(680.0, -410.0, 520.0),
+        75.0,
+        "ue5_int1_poddasze_hol.png",
+    )
 
-# Shot 2: Upstairs Furnished Room 2.3 Pokój NE / Gabinet (from SW door corner looking NE at Fab desk, chair, rug, credenza, armchair, plant & sloped ceiling)
-capture_interior(
-    unreal.Vector(575.0, -540.0, 555.0),
-    unreal.Vector(825.0, -675.0, 480.0),
-    78.0,
-    "ue5_int2_poddasze_rooms.png",
-)
+    # Shot 2: Upstairs Furnished Room 2.3 Pokój NE / Gabinet (from SW door corner looking NE at Fab desk, chair, rug, credenza, armchair, plant & sloped ceiling)
+    capture_interior(
+        unreal.Vector(575.0, -540.0, 555.0),
+        unreal.Vector(825.0, -675.0, 480.0),
+        78.0,
+        "ue5_int2_poddasze_rooms.png",
+    )
 
-# Shot 3: Ground Floor Furnished Salon + Jadalnia (looking across living room armchairs/rug/credenza & study/dining zone)
-capture_interior(
-    unreal.Vector(255.0, -535.0, 247.0),
-    unreal.Vector(720.0, -650.0, 185.0),
-    78.0,
-    "ue5_int3_parter_salon.png",
-)
+    # Shot 3: Ground Floor Furnished Salon + Jadalnia (looking across living room armchairs/rug/credenza & study/dining zone)
+    capture_interior(
+        unreal.Vector(255.0, -535.0, 247.0),
+        unreal.Vector(720.0, -650.0, 185.0),
+        78.0,
+        "ue5_int3_parter_salon.png",
+    )
 
-# Shot 4: Ground Floor Hall & Stairs (looking North-West at Stairs & under-stair wall)
-capture_interior(
-    unreal.Vector(540.0, -220.0, 247.0),
-    unreal.Vector(220.0, -380.0, 240.0),
-    75.0,
-    "ue5_int4_parter_schody.png",
-)
+    # Shot 4: Ground Floor Hall & Stairs (looking North-West at Stairs & under-stair wall)
+    capture_interior(
+        unreal.Vector(540.0, -220.0, 247.0),
+        unreal.Vector(220.0, -380.0, 240.0),
+        75.0,
+        "ue5_int4_parter_schody.png",
+    )
+
+try:
+    unreal.EditorAssetLibrary.save_directory("/Game/PDF2BIM", only_if_is_dirty=False, recursive=True)
+    unreal.EditorLoadingAndSavingUtils.save_map(world, "/Game/PDF2BIM/Dom1_Gniezniki_Map")
+    print("SAVED_MAP_OK /Game/PDF2BIM/Dom1_Gniezniki_Map")
+except Exception as e:
+    print("SAVE_WARN", e)
 """
 
 
 def main() -> int:
+    skip_cap = "--no-capture" in sys.argv
+    script_body = INSPECT_SCRIPT
+    if skip_cap:
+        script_body = script_body.replace("do_capture = True", "do_capture = False")
     p = Path("C:/Users/filip/pdf2bim_remote/ue_inspect_interior.py")
-    p.write_text(INSPECT_SCRIPT, encoding="utf-8")
+    p.write_text(script_body, encoding="utf-8")
 
     node = re.RemoteExecution()
     node.start()

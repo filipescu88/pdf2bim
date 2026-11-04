@@ -22,29 +22,26 @@ asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
 mel = unreal.MaterialEditingLibrary
 world = editor_sub.get_editor_world()
 
-# 0. Force Cinematic Scalability, Lumen GI + Reflections, TSR Anti-Aliasing, and SSAO in UE 5.8
+# 0. Force Epic Scalability (stable on D3D11 without TDR timeouts), Lumen GI + Reflections, TSR Anti-Aliasing, and SSAO in UE 5.8
 for cvar, val in [
     ("r.DynamicGlobalIlluminationMethod", 1),
     ("r.ReflectionMethod", 1),
     ("r.Lumen.DiffuseIndirect.Allow", 1),
     ("r.Lumen.Reflections.Allow", 1),
-    ("r.PostProcessAAQuality", 6),
+    ("r.PostProcessAAQuality", 4),
     ("r.AntiAliasingMethod", 4),
-    ("r.AmbientOcclusionLevels", 3),
-    ("r.SSR.Quality", 4),
+    ("r.AmbientOcclusionLevels", 2),
+    ("r.SSR.Quality", 3),
     ("r.ContactShadows", 1),
-    ("r.ShadowQuality", 5),
-    ("r.Streaming.PoolSize", 3000),
-    ("r.Streaming.FullyLoadUsedTextures", 1),
-    ("r.Streaming.UseFixedPoolSize", 1),
-    ("sg.AntiAliasingQuality", 4),
-    ("sg.ShadowQuality", 4),
-    ("sg.GlobalIlluminationQuality", 4),
-    ("sg.ReflectionQuality", 4),
-    ("sg.PostProcessQuality", 4),
-    ("sg.TextureQuality", 4),
-    ("sg.EffectsQuality", 4),
-    ("sg.ShadingQuality", 4),
+    ("r.ShadowQuality", 3),
+    ("sg.AntiAliasingQuality", 3),
+    ("sg.ShadowQuality", 3),
+    ("sg.GlobalIlluminationQuality", 3),
+    ("sg.ReflectionQuality", 3),
+    ("sg.PostProcessQuality", 3),
+    ("sg.TextureQuality", 3),
+    ("sg.EffectsQuality", 3),
+    ("sg.ShadingQuality", 3),
 ]:
     unreal.SystemLibrary.execute_console_command(world, f"{cvar} {val}")
 
@@ -105,7 +102,7 @@ def load_tex(stem, is_normal=False, is_linear=False):
     p = f"{tex_pkg}/{stem}"
     if unreal.EditorAssetLibrary.does_asset_exist(p):
         t = unreal.EditorAssetLibrary.load_asset(p)
-        if t:
+        if t and "facade_timber_cladding" in stem:
             try:
                 t.set_editor_property("never_stream", True)
             except Exception:
@@ -382,42 +379,48 @@ def capture_shot(cam_loc, target_loc, sun_rot, fov, out_dir, filename):
     print("CAPTURED_OK", f"{out_dir}/{filename}")
 
 out_dir = "C:/Users/filip/pdf2bim_remote"
+do_capture = not os.environ.get("PDF2BIM_SKIP_CAPTURE", "")
 
-# Shot 1: Front / South-East perspective
-capture_shot(
-    unreal.Vector(1880.0, 1140.0, 310.0),
-    unreal.Vector(490.0, -320.0, 365.0),
-    unreal.Rotator(roll=0.0, pitch=-22.0, yaw=-135.0),
-    48.0,
-    out_dir,
-    "ue5_shot1_front.png",
-)
+if do_capture:
+    # Shot 1: Front / South-East perspective
+    capture_shot(
+        unreal.Vector(1880.0, 1140.0, 310.0),
+        unreal.Vector(490.0, -320.0, 365.0),
+        unreal.Rotator(roll=0.0, pitch=-22.0, yaw=-135.0),
+        48.0,
+        out_dir,
+        "ue5_shot1_front.png",
+    )
 
-# Shot 2: Garden / North-East perspective (with Pitch=-22, Yaw=135 as requested)
-capture_shot(
-    unreal.Vector(1880.0, -2080.0, 320.0),
-    unreal.Vector(490.0, -560.0, 365.0),
-    unreal.Rotator(roll=0.0, pitch=-22.0, yaw=135.0),
-    48.0,
-    out_dir,
-    "ue5_shot2_garden.png",
-)
+    # Shot 2: Garden / North-East perspective (with Pitch=-22, Yaw=135 as requested)
+    capture_shot(
+        unreal.Vector(1880.0, -2080.0, 320.0),
+        unreal.Vector(490.0, -560.0, 365.0),
+        unreal.Rotator(roll=0.0, pitch=-22.0, yaw=135.0),
+        48.0,
+        out_dir,
+        "ue5_shot2_garden.png",
+    )
 
-# Shot 3: Close-up of 3D timber cladding planks at South-East corner
-capture_shot(
-    unreal.Vector(1310.0, 230.0, 215.0),
-    unreal.Vector(980.0, -110.0, 210.0),
-    unreal.Rotator(roll=0.0, pitch=-22.0, yaw=-135.0),
-    42.0,
-    out_dir,
-    "ue5_shot3_wood_closeup.png",
-)
+    # Shot 3: Close-up of 3D timber cladding planks at South-East corner
+    capture_shot(
+        unreal.Vector(1310.0, 230.0, 215.0),
+        unreal.Vector(980.0, -110.0, 210.0),
+        unreal.Rotator(roll=0.0, pitch=-22.0, yaw=-135.0),
+        42.0,
+        out_dir,
+        "ue5_shot3_wood_closeup.png",
+    )
 """
 
 
 def main() -> int:
+    skip_cap = "--no-capture" in sys.argv
+    script_body = CAPTURE_SCRIPT
+    if skip_cap:
+        script_body = script_body.replace("do_capture = not os.environ.get(\"PDF2BIM_SKIP_CAPTURE\", \"\")", "do_capture = False")
     p = Path("C:/Users/filip/pdf2bim_remote/ue_capture_sync.py")
-    p.write_text(CAPTURE_SCRIPT, encoding="utf-8")
+    p.write_text(script_body, encoding="utf-8")
 
     node = re.RemoteExecution()
     node.start()

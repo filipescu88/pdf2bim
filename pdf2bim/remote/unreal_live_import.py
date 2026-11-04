@@ -78,7 +78,7 @@ def load_tex(stem):
     path = f"{tex_dest}/{stem}"
     if unreal.EditorAssetLibrary.does_asset_exist(path):
         t = unreal.EditorAssetLibrary.load_asset(path)
-        if t:
+        if t and "facade_timber_cladding" in stem:
             try:
                 t.set_editor_property("never_stream", True)
             except Exception:
@@ -228,9 +228,13 @@ for a_data in assets:
                 sm_count += 1
 
 editor_sub.set_level_viewport_camera_info(
-    unreal.Vector(-520.0, -780.0, 460.0),
-    unreal.Rotator(0.0, -14.0, 44.0),
+    unreal.Vector(1650.0, 980.0, 310.0),
+    unreal.Rotator(0.0, -14.0, -135.0),
 )
+try:
+    unreal.EditorAssetLibrary.save_directory("/Game/PDF2BIM", only_if_is_dirty=False, recursive=True)
+except Exception:
+    pass
 print(f"SPAWN_PBR_DOM1_OK total_actors={sm_count}")
 """
 
