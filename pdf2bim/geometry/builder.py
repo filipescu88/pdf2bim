@@ -535,6 +535,43 @@ def build_stairs(sg: SceneGraphV2) -> list[CompiledMeshNode]:
                     )
                 )
 
+        for rail in stair.railings:
+            pts = rail.polyline_xy
+            rail_parts: list[trimesh.Trimesh] = []
+            for idx_seg in range(len(pts) - 1):
+                rx0, ry0 = pts[idx_seg]
+                rx1, ry1 = pts[idx_seg + 1]
+                rdx, rdy = rx1 - rx0, ry1 - ry0
+                rlen = math.hypot(rdx, rdy)
+                if rlen < 1e-3:
+                    continue
+                rnx, rny = (-rdy / rlen) * 0.015, (rdx / rlen) * 0.015
+                r_quad = [
+                    (rx0 - rnx, ry0 - rny),
+                    (rx1 - rnx, ry1 - rny),
+                    (rx1 + rnx, ry1 + rny),
+                    (rx0 + rnx, ry0 + rny),
+                ]
+                r_part = extrude_quad_prism(r_quad, rail.z_base, rail.z_base + rail.height)
+                if r_part is not None:
+                    rail_parts.append(r_part)
+            if rail_parts:
+                r_mesh = trimesh.util.concatenate(rail_parts)
+                nodes.append(
+                    CompiledMeshNode(
+                        node_id=f"Balustrada_{rail.id}",
+                        element_id=rail.id,
+                        category="stair_railing",
+                        level_id=stair.to_level_id,
+                        material_id=rail.material_id,
+                        ue_mesh_name=f"SM_StairRailing_{rail.id}",
+                        ue_material_name=_ue_mat_name(sg, rail.material_id),
+                        mesh=r_mesh,
+                        collidable=True,
+                        extras={"element_id": rail.id, "category": "stair_railing", "level_id": stair.to_level_id},
+                    )
+                )
+
     return nodes
 
 

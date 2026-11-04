@@ -1372,6 +1372,60 @@
       ]
     },
     {
+      "id": "w_p_stair_enclosure_south",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        1.52,
+        2.96
+      ],
+      "end_xy": [
+        2.36,
+        2.96
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 0.0,
+      "z_top": 3.02,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_stair_enclosure_west",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        1.52,
+        3.08
+      ],
+      "end_xy": [
+        1.52,
+        4.15
+      ],
+      "alignment": "right",
+      "priority": 1,
+      "z_bottom": 0.0,
+      "z_top": 3.02,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
       "id": "w_p_lazienka_north",
       "level_id": "parter",
       "wall_type": "interior_partition",
@@ -1380,7 +1434,7 @@
         1.68
       ],
       "end_xy": [
-        5.66,
+        5.74,
         1.68
       ],
       "alignment": "left",
@@ -1403,14 +1457,14 @@
       "level_id": "parter",
       "wall_type": "interior_partition",
       "start_xy": [
-        5.66,
+        5.74,
         0.44
       ],
       "end_xy": [
-        5.66,
-        1.68
+        5.74,
+        1.8
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 0.0,
       "z_top": 2.74,
@@ -1430,12 +1484,12 @@
       "level_id": "parter",
       "wall_type": "interior_loadbearing",
       "start_xy": [
-        2.6,
-        4.0
+        2.48,
+        3.97
       ],
       "end_xy": [
         5.86,
-        4.0
+        3.97
       ],
       "alignment": "left",
       "priority": 2,
@@ -1445,7 +1499,7 @@
       "layers": [
         {
           "role": "core",
-          "thickness": 0.12,
+          "thickness": 0.24,
           "material_id": "mat_wall_plaster",
           "z_bottom_offset": 0.0,
           "z_top_offset": 0.0
@@ -1628,10 +1682,10 @@
         4.96,
         7.96
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 3.08,
-      "z_top": 5.55,
+      "z_top": 5.8,
       "clip_to_roof": true,
       "layers": [
         {
@@ -1652,14 +1706,68 @@
         5.11
       ],
       "end_xy": [
-        7.05,
+        6.94,
         5.11
       ],
       "alignment": "left",
       "priority": 1,
       "z_bottom": 3.08,
-      "z_top": 5.55,
-      "clip_to_roof": false,
+      "z_top": 5.8,
+      "clip_to_roof": true,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_pok2_pok3_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        6.94,
+        4.62
+      ],
+      "end_xy": [
+        9.86,
+        4.62
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 3.08,
+      "z_top": 5.8,
+      "clip_to_roof": true,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_hol_east",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        6.82,
+        0.44
+      ],
+      "end_xy": [
+        6.82,
+        5.11
+      ],
+      "alignment": "right",
+      "priority": 1,
+      "z_bottom": 3.08,
+      "z_top": 5.8,
+      "clip_to_roof": true,
       "layers": [
         {
           "role": "core",
@@ -1676,17 +1784,17 @@
       "wall_type": "interior_partition",
       "start_xy": [
         0.44,
-        2.92
+        2.9
       ],
       "end_xy": [
-        7.05,
-        2.92
+        6.82,
+        2.9
       ],
       "alignment": "left",
       "priority": 1,
       "z_bottom": 3.08,
-      "z_top": 5.55,
-      "clip_to_roof": false,
+      "z_top": 5.8,
+      "clip_to_roof": true,
       "layers": [
         {
           "role": "core",
@@ -1702,44 +1810,17 @@
       "level_id": "poddasze",
       "wall_type": "interior_partition",
       "start_xy": [
-        4.09,
+        4.22,
         0.44
       ],
       "end_xy": [
-        4.09,
-        2.92
+        4.22,
+        2.9
       ],
-      "alignment": "left",
+      "alignment": "right",
       "priority": 1,
       "z_bottom": 3.08,
-      "z_top": 5.55,
-      "clip_to_roof": true,
-      "layers": [
-        {
-          "role": "core",
-          "thickness": 0.12,
-          "material_id": "mat_wall_plaster",
-          "z_bottom_offset": 0.0,
-          "z_top_offset": 0.0
-        }
-      ]
-    },
-    {
-      "id": "w_a_laz_se_div",
-      "level_id": "poddasze",
-      "wall_type": "interior_partition",
-      "start_xy": [
-        6.58,
-        0.44
-      ],
-      "end_xy": [
-        6.58,
-        2.92
-      ],
-      "alignment": "left",
-      "priority": 1,
-      "z_bottom": 3.08,
-      "z_top": 5.55,
+      "z_top": 5.8,
       "clip_to_roof": true,
       "layers": [
         {
@@ -1879,8 +1960,8 @@
       {
         "id": "door_entrance",
         "wall_id": "w_p_south_entrance",
-        "offset_along_wall": 0.65,
-        "width": 1.35,
+        "offset_along_wall": 0.78,
+        "width": 1.0,
         "height": 2.3,
         "sill_z": 0.0,
         "hinge_side": "right",
@@ -1905,7 +1986,7 @@
       {
         "id": "door_kotlownia",
         "wall_id": "w_p_wiatrolap_north",
-        "offset_along_wall": 0.35,
+        "offset_along_wall": 0.14,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 0.0,
@@ -1918,7 +1999,7 @@
       {
         "id": "door_wiatrolap_hol",
         "wall_id": "w_p_kotlownia_east",
-        "offset_along_wall": 0.25,
+        "offset_along_wall": 0.1,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 0.0,
@@ -1931,7 +2012,7 @@
       {
         "id": "door_lazienka_parter",
         "wall_id": "w_p_lazienka_north",
-        "offset_along_wall": 0.95,
+        "offset_along_wall": 0.98,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 0.0,
@@ -1944,7 +2025,7 @@
       {
         "id": "door_attic_nw",
         "wall_id": "w_a_hol_north",
-        "offset_along_wall": 3.1,
+        "offset_along_wall": 3.08,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 3.08,
@@ -1957,7 +2038,7 @@
       {
         "id": "door_attic_ne",
         "wall_id": "w_a_hol_north",
-        "offset_along_wall": 4.95,
+        "offset_along_wall": 5.43,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 3.08,
@@ -1970,7 +2051,7 @@
       {
         "id": "door_attic_sw",
         "wall_id": "w_a_hol_south",
-        "offset_along_wall": 0.6,
+        "offset_along_wall": 0.2,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 3.08,
@@ -1983,7 +2064,7 @@
       {
         "id": "door_attic_laz",
         "wall_id": "w_a_hol_south",
-        "offset_along_wall": 4.3,
+        "offset_along_wall": 4.95,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 3.08,
@@ -1995,8 +2076,8 @@
       },
       {
         "id": "door_attic_se",
-        "wall_id": "w_a_laz_se_div",
-        "offset_along_wall": 1.45,
+        "wall_id": "w_a_hol_east",
+        "offset_along_wall": 2.63,
         "width": 0.9,
         "height": 2.1,
         "sill_z": 3.08,
@@ -2098,16 +2179,16 @@
           1.8
         ],
         [
-          5.84,
+          5.74,
           1.8
         ],
         [
-          5.84,
-          3.14
+          5.74,
+          3.12
         ],
         [
           2.48,
-          3.14
+          3.12
         ]
       ],
       "pdf_usable_area_m2": 4.49,
@@ -2123,19 +2204,19 @@
       "polygon_xy": [
         [
           2.48,
-          3.14
+          3.12
         ],
         [
           5.84,
-          3.14
+          3.12
         ],
         [
           5.84,
-          4.11
+          4.09
         ],
         [
           2.48,
-          4.11
+          4.09
         ]
       ],
       "pdf_usable_area_m2": 3.26,
@@ -2151,11 +2232,11 @@
       "polygon_xy": [
         [
           2.48,
-          4.12
+          4.21
         ],
         [
           9.86,
-          4.12
+          4.21
         ],
         [
           9.86,
@@ -2210,11 +2291,11 @@
           0.44
         ],
         [
-          5.66,
+          5.74,
           0.44
         ],
         [
-          5.66,
+          5.74,
           1.68
         ],
         [
@@ -2235,11 +2316,11 @@
       "polygon_xy": [
         [
           0.44,
-          4.3
+          4.27
         ],
         [
           2.22,
-          4.3
+          4.27
         ],
         [
           2.22,
@@ -2263,19 +2344,35 @@
       "polygon_xy": [
         [
           0.44,
-          3.85
+          3.02
         ],
         [
-          7.05,
-          3.85
+          1.54,
+          3.02
         ],
         [
-          7.05,
-          5.21
+          1.54,
+          4.1
+        ],
+        [
+          5.28,
+          4.1
+        ],
+        [
+          5.28,
+          3.02
+        ],
+        [
+          6.82,
+          3.02
+        ],
+        [
+          6.82,
+          5.11
         ],
         [
           0.44,
-          5.21
+          5.11
         ]
       ],
       "pdf_usable_area_m2": 8.98,
@@ -2322,16 +2419,16 @@
           5.23
         ],
         [
-          7.05,
+          6.94,
           5.23
         ],
         [
-          7.05,
-          4.95
+          6.94,
+          4.74
         ],
         [
           9.86,
-          4.95
+          4.74
         ],
         [
           9.86,
@@ -2354,7 +2451,7 @@
       "name": "Pokój SE",
       "polygon_xy": [
         [
-          7.05,
+          6.94,
           0.44
         ],
         [
@@ -2363,11 +2460,11 @@
         ],
         [
           9.86,
-          4.68
+          4.62
         ],
         [
-          7.05,
-          4.68
+          6.94,
+          4.62
         ]
       ],
       "pdf_usable_area_m2": 10.58,
@@ -2382,20 +2479,20 @@
       "name": "Łazienka",
       "polygon_xy": [
         [
-          4.21,
+          4.34,
           0.44
         ],
         [
-          6.58,
+          6.82,
           0.44
         ],
         [
-          6.58,
-          2.93
+          6.82,
+          2.9
         ],
         [
-          4.21,
-          2.93
+          4.34,
+          2.9
         ]
       ],
       "pdf_usable_area_m2": 4.77,
@@ -2414,16 +2511,16 @@
           0.44
         ],
         [
-          4.09,
+          4.22,
           0.44
         ],
         [
-          4.09,
-          2.92
+          4.22,
+          2.9
         ],
         [
           0.44,
-          2.92
+          2.9
         ]
       ],
       "pdf_usable_area_m2": 7.31,
@@ -2460,20 +2557,20 @@
       "voids_xy": [
         [
           [
-            1.62,
-            2.92
+            1.54,
+            3.02
           ],
           [
-            5.86,
-            2.92
+            5.28,
+            3.02
           ],
           [
-            5.86,
-            3.85
+            5.28,
+            4.1
           ],
           [
-            1.62,
-            3.85
+            1.54,
+            4.1
           ]
         ]
       ]
@@ -2490,16 +2587,16 @@
         {
           "id": "flight_1",
           "bbox_xy": [
-            1.62,
-            2.92,
-            5.86,
-            3.85
+            1.54,
+            3.02,
+            5.28,
+            4.1
           ],
           "z_start": 0.0,
           "z_end": 3.08,
           "steps_count": 16,
           "riser_h": 0.1925,
-          "tread_d": 0.265,
+          "tread_d": 0.23375,
           "direction": "-X",
           "waist_slab_thickness": 0.16
         }
@@ -2510,12 +2607,16 @@
           "id": "railing_attic_hol",
           "polyline_xy": [
             [
-              1.62,
-              3.85
+              1.54,
+              4.1
             ],
             [
-              5.86,
-              3.85
+              5.28,
+              4.1
+            ],
+            [
+              5.28,
+              3.02
             ]
           ],
           "z_base": 3.08,

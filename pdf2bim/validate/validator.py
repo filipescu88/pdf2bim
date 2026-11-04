@@ -318,9 +318,21 @@ def validate_scene_graph_v2(sg: SceneGraphV2, area_rel_tol: float = 0.05) -> Val
                 )
         openings_per_wall.setdefault(w.id, []).append((op.id, s0, s1, z0, z1))
 
+    slab_void_polys = [Polygon(v) for sl in sg.slabs for v in sl.voids_xy if len(v) >= 3]
     for door in sg.openings.doors:
         host_wall = walls_by_id[door.wall_id]
         swing_poly = compute_door_swing_polygon(door, host_wall)
+        if door.sill_z >= 1.50:
+            for v_poly in slab_void_polys:
+                v_inter = swing_poly.intersection(v_poly)
+                if v_inter.area > 0.02:
+                    issues.append(
+                        ValidationIssue(
+                            code="DOOR_OVER_SLAB_VOID",
+                            element_id=door.id,
+                            message=f"Upper-floor door '{door.id}' overlaps stairwell/slab void by {v_inter.area:.3f} m2",
+                        )
+                    )
         for other_w in sg.walls:
             if other_w.id == host_wall.id or other_w.level_id != host_wall.level_id:
                 continue
