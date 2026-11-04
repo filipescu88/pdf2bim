@@ -1,0 +1,142 @@
+{
+  "project_slug": "dom_w_gnieznikach",
+  "passed": true,
+  "errors_count": 0,
+  "warnings_count": 0,
+  "checked_rooms": 13,
+  "checked_walls": 20,
+  "checked_openings": 22,
+  "room_audits": [
+    {
+      "room_id": "parter_wiatrolap",
+      "name": "1.1 Wiatrołap",
+      "floor_area_m2": 4.42,
+      "usable_area_pn_iso_m2": 4.42,
+      "pdf_usable_area_m2": 4.37,
+      "pdf_floor_area_m2": 4.42,
+      "rel_error_pct": 1.14,
+      "passed": true
+    },
+    {
+      "room_id": "parter_hol",
+      "name": "1.2 Hol",
+      "floor_area_m2": 4.5,
+      "usable_area_pn_iso_m2": 4.5,
+      "pdf_usable_area_m2": 4.49,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.22,
+      "passed": true
+    },
+    {
+      "room_id": "parter_schody",
+      "name": "1.3 Schody",
+      "floor_area_m2": 3.26,
+      "usable_area_pn_iso_m2": 3.26,
+      "pdf_usable_area_m2": 3.26,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "parter_salon_jadalnia",
+      "name": "1.4 Salon + Jadalnia",
+      "floor_area_m2": 28.34,
+      "usable_area_pn_iso_m2": 28.34,
+      "pdf_usable_area_m2": 28.26,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.28,
+      "passed": true
+    },
+    {
+      "room_id": "parter_kuchnia",
+      "name": "1.5 Kuchnia",
+      "floor_area_m2": 13.92,
+      "usable_area_pn_iso_m2": 13.92,
+      "pdf_usable_area_m2": 13.9,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.14,
+      "passed": true
+    },
+    {
+      "room_id": "parter_lazienka",
+      "name": "1.6 Łazienka",
+      "floor_area_m2": 3.4,
+      "usable_area_pn_iso_m2": 3.4,
+      "pdf_usable_area_m2": 3.39,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.29,
+      "passed": true
+    },
+    {
+      "room_id": "parter_kotlownia",
+      "name": "1.7 Kotłownia",
+      "floor_area_m2": 6.51,
+      "usable_area_pn_iso_m2": 6.51,
+      "pdf_usable_area_m2": 6.51,
+      "pdf_floor_area_m2": null,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_hol",
+      "name": "2.1 Hol",
+      "floor_area_m2": 8.99,
+      "usable_area_pn_iso_m2": 8.99,
+      "pdf_usable_area_m2": 8.98,
+      "pdf_floor_area_m2": 8.98,
+      "rel_error_pct": 0.11,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_pokoj_nw",
+      "name": "2.2 Pokój NW",
+      "floor_area_m2": 12.34,
+      "usable_area_pn_iso_m2": 10.21,
+      "pdf_usable_area_m2": 10.18,
+      "pdf_floor_area_m2": 12.34,
+      "rel_error_pct": 0.29,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_pokoj_ne",
+      "name": "2.3 Pokój NE",
+      "floor_area_m2": 13.84,
+      "usable_area_pn_iso_m2": 11.55,
+      "pdf_usable_area_m2": 11.68,
+      "pdf_floor_area_m2": 13.83,
+      "rel_error_pct": 1.11,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_pokoj_se",
+      "name": "2.4 Pokój SE",
+      "floor_area_m2": 11.91,
+      "usable_area_pn_iso_m2": 10.58,
+      "pdf_usable_area_m2": 10.58,
+      "pdf_floor_area_m2": 11.92,
+      "rel_error_pct": 0.0,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_lazienka",
+      "name": "2.5 Łazienka",
+      "floor_area_m2": 5.9,
+      "usable_area_pn_iso_m2": 4.78,
+      "pdf_usable_area_m2": 4.77,
+      "pdf_floor_area_m2": 5.9,
+      "rel_error_pct": 0.21,
+      "passed": true
+    },
+    {
+      "room_id": "poddasze_pokoj_sw",
+      "name": "2.6 Pokój SW",
+      "floor_area_m2": 9.05,
+      "usable_area_pn_iso_m2": 7.33,
+      "pdf_usable_area_m2": 7.31,
+      "pdf_floor_area_m2": 9.05,
+      "rel_error_pct": 0.27,
+      "passed": true
+    }
+  ],
+  "issues": []
+}

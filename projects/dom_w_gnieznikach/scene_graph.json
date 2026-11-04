@@ -1,0 +1,2672 @@
+{
+  "schema_version": "2.0.0",
+  "project_slug": "dom_w_gnieznikach",
+  "project_name": "Dom w gnieźnikach (E) — Archon",
+  "units": "m",
+  "settings": {
+    "include_furniture": false,
+    "target_engine": "unreal_engine",
+    "is_ground_truth_reference": true
+  },
+  "coordinate_system": {
+    "x_axis": "plan_right",
+    "y_axis": "plan_up",
+    "z_axis": "up",
+    "origin_definition": "bottom_left_aabb_structural_masonry_parter_z0_finished_floor",
+    "structural_bbox_xy": [
+      0.0,
+      0.0,
+      10.3,
+      8.4
+    ]
+  },
+  "materials": {
+    "mat_wall_plaster": {
+      "id": "mat_wall_plaster",
+      "ue_name": "M_Wall_Plaster_White",
+      "base_color_rgb": [
+        0.94,
+        0.94,
+        0.92
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_wall_core": {
+      "id": "mat_wall_core",
+      "ue_name": "M_Wall_Ceramic_Block",
+      "base_color_rgb": [
+        0.78,
+        0.45,
+        0.32
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_insulation": {
+      "id": "mat_insulation",
+      "ue_name": "M_Wall_Insulation_EPS",
+      "base_color_rgb": [
+        0.92,
+        0.92,
+        0.88
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_facade_wood": {
+      "id": "mat_facade_wood",
+      "ue_name": "M_Facade_Cladding_Oak",
+      "base_color_rgb": [
+        0.58,
+        0.39,
+        0.24
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_floor_oak": {
+      "id": "mat_floor_oak",
+      "ue_name": "M_Floor_Parquet_Oak",
+      "base_color_rgb": [
+        0.68,
+        0.5,
+        0.34
+      ],
+      "roughness": 0.35,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_floor_gres": {
+      "id": "mat_floor_gres",
+      "ue_name": "M_Floor_Tile_Gres",
+      "base_color_rgb": [
+        0.82,
+        0.81,
+        0.79
+      ],
+      "roughness": 0.25,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_slab_concrete": {
+      "id": "mat_slab_concrete",
+      "ue_name": "M_Structure_Concrete",
+      "base_color_rgb": [
+        0.65,
+        0.66,
+        0.67
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_terrace_concrete": {
+      "id": "mat_terrace_concrete",
+      "ue_name": "M_Terrace_Paver_Grey",
+      "base_color_rgb": [
+        0.55,
+        0.56,
+        0.58
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_frame_dark": {
+      "id": "mat_frame_dark",
+      "ue_name": "M_Window_Frame_Anthracite",
+      "base_color_rgb": [
+        0.16,
+        0.17,
+        0.19
+      ],
+      "roughness": 0.3,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_door_oak": {
+      "id": "mat_door_oak",
+      "ue_name": "M_Door_Veneer_Oak",
+      "base_color_rgb": [
+        0.62,
+        0.44,
+        0.28
+      ],
+      "roughness": 0.4,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_glass": {
+      "id": "mat_glass",
+      "ue_name": "M_Glass_Clear",
+      "base_color_rgb": [
+        0.88,
+        0.95,
+        0.98
+      ],
+      "roughness": 0.05,
+      "metallic": 0.0,
+      "opacity": 0.2
+    },
+    "mat_roof_tile": {
+      "id": "mat_roof_tile",
+      "ue_name": "M_Roof_Tile_Anthracite",
+      "base_color_rgb": [
+        0.18,
+        0.19,
+        0.21
+      ],
+      "roughness": 0.45,
+      "metallic": 0.0,
+      "opacity": 1.0
+    },
+    "mat_mep": {
+      "id": "mat_mep",
+      "ue_name": "M_MEP_Socket_Marker",
+      "base_color_rgb": [
+        0.85,
+        0.2,
+        0.15
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "opacity": 1.0
+    }
+  },
+  "site": {
+    "plot_id": "585/8",
+    "transform": {
+      "origin_easting": 7480804.02,
+      "origin_northing": 5952855.47,
+      "origin_elevation_masl": 143.66,
+      "rotation_to_north_deg": -21.79
+    },
+    "boundary_polygon_xy": [
+      [
+        48.732,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -1.949,
+        21.553
+      ],
+      [
+        43.729,
+        19.652
+      ]
+    ],
+    "elevation_points_xyz": [
+      [
+        58.249,
+        -28.725,
+        143.2
+      ],
+      [
+        44.797,
+        -3.37,
+        143.5
+      ],
+      [
+        49.221,
+        -1.767,
+        143.6
+      ],
+      [
+        35.427,
+        43.368,
+        143.6
+      ],
+      [
+        33.411,
+        51.066,
+        143.6
+      ],
+      [
+        75.195,
+        -9.661,
+        144.9
+      ],
+      [
+        55.223,
+        39.275,
+        142.9
+      ],
+      [
+        -28.335,
+        8.186,
+        143.1
+      ],
+      [
+        -26.752,
+        35.512,
+        143.7
+      ],
+      [
+        52.091,
+        -26.163,
+        142.9
+      ],
+      [
+        41.029,
+        -16.042,
+        142.7
+      ],
+      [
+        -24.814,
+        37.62,
+        144.5
+      ],
+      [
+        -29.18,
+        41.452,
+        143.8
+      ],
+      [
+        24.146,
+        -30.004,
+        142.9
+      ],
+      [
+        -22.638,
+        30.362,
+        144.0
+      ],
+      [
+        -27.345,
+        48.998,
+        144.1
+      ],
+      [
+        30.193,
+        34.052,
+        143.5
+      ],
+      [
+        24.092,
+        51.483,
+        143.6
+      ],
+      [
+        5.903,
+        42.528,
+        143.6
+      ],
+      [
+        25.452,
+        -15.516,
+        143.5
+      ],
+      [
+        14.237,
+        -18.873,
+        144.2
+      ],
+      [
+        2.68,
+        -20.184,
+        144.7
+      ],
+      [
+        -1.834,
+        -0.056,
+        143.8
+      ],
+      [
+        23.683,
+        -4.024,
+        143.5
+      ],
+      [
+        12.776,
+        -8.049,
+        143.9
+      ],
+      [
+        45.364,
+        -14.27,
+        143.0
+      ],
+      [
+        -17.369,
+        50.22,
+        143.6
+      ],
+      [
+        -16.309,
+        51.362,
+        143.7
+      ],
+      [
+        -20.518,
+        48.596,
+        144.1
+      ],
+      [
+        -23.517,
+        21.771,
+        143.6
+      ],
+      [
+        -24.833,
+        -19.708,
+        144.3
+      ],
+      [
+        49.267,
+        37.383,
+        143.3
+      ],
+      [
+        39.863,
+        24.159,
+        143.5
+      ],
+      [
+        25.628,
+        25.585,
+        143.6
+      ],
+      [
+        24.038,
+        23.851,
+        143.5
+      ],
+      [
+        25.898,
+        20.846,
+        143.3
+      ],
+      [
+        19.96,
+        22.261,
+        143.6
+      ],
+      [
+        4.046,
+        28.44,
+        143.8
+      ],
+      [
+        33.877,
+        16.504,
+        143.1
+      ],
+      [
+        35.646,
+        7.838,
+        143.0
+      ],
+      [
+        39.712,
+        17.477,
+        143.2
+      ],
+      [
+        54.159,
+        15.622,
+        143.8
+      ],
+      [
+        45.028,
+        1.6,
+        143.3
+      ],
+      [
+        62.411,
+        -11.983,
+        144.3
+      ],
+      [
+        58.603,
+        1.417,
+        144.3
+      ],
+      [
+        51.191,
+        -21.953,
+        143.1
+      ],
+      [
+        54.527,
+        -26.849,
+        143.2
+      ],
+      [
+        69.584,
+        -21.464,
+        144.3
+      ],
+      [
+        70.783,
+        -17.98,
+        144.6
+      ],
+      [
+        69.617,
+        -10.901,
+        144.7
+      ],
+      [
+        73.563,
+        -10.217,
+        144.9
+      ],
+      [
+        75.024,
+        -24.263,
+        144.4
+      ],
+      [
+        56.667,
+        -25.831,
+        143.5
+      ],
+      [
+        58.913,
+        -25.393,
+        144.0
+      ],
+      [
+        43.595,
+        20.019,
+        143.2
+      ],
+      [
+        41.112,
+        21.463,
+        143.6
+      ],
+      [
+        68.902,
+        -28.396,
+        144.1
+      ],
+      [
+        66.15,
+        -28.566,
+        144.1
+      ],
+      [
+        66.762,
+        -27.896,
+        143.7
+      ],
+      [
+        59.537,
+        -3.63,
+        144.2
+      ],
+      [
+        55.848,
+        -3.717,
+        144.0
+      ],
+      [
+        56.724,
+        -3.033,
+        143.8
+      ],
+      [
+        55.779,
+        10.785,
+        143.8
+      ],
+      [
+        52.27,
+        10.045,
+        143.8
+      ],
+      [
+        53.102,
+        10.724,
+        143.5
+      ],
+      [
+        52.62,
+        20.071,
+        143.3
+      ],
+      [
+        6.651,
+        22.779,
+        143.7
+      ],
+      [
+        35.976,
+        26.8,
+        143.5
+      ],
+      [
+        32.346,
+        1.252,
+        143.0
+      ],
+      [
+        19.669,
+        1.356,
+        143.5
+      ],
+      [
+        7.741,
+        1.342,
+        143.7
+      ],
+      [
+        -0.086,
+        2.156,
+        143.7
+      ],
+      [
+        -0.917,
+        18.772,
+        143.7
+      ],
+      [
+        12.997,
+        19.93,
+        143.6
+      ],
+      [
+        11.043,
+        9.09,
+        143.6
+      ],
+      [
+        23.669,
+        9.234,
+        143.2
+      ],
+      [
+        23.945,
+        19.731,
+        143.2
+      ],
+      [
+        34.454,
+        20.183,
+        143.1
+      ],
+      [
+        31.883,
+        10.527,
+        143.0
+      ],
+      [
+        42.057,
+        11.274,
+        143.3
+      ],
+      [
+        -0.952,
+        14.133,
+        143.6
+      ],
+      [
+        -0.069,
+        8.934,
+        143.6
+      ]
+    ],
+    "wz_constraints": {
+      "building_line_y_min": 6.0,
+      "max_ridge_height_m": 9.0,
+      "roof_slope_deg_range": [
+        30.0,
+        45.0
+      ],
+      "min_biologically_active_ratio": 0.5
+    },
+    "neighbors": [
+      {
+        "id": "neighbor_01",
+        "footprint_xy": [
+          [
+            79.862,
+            0.501
+          ],
+          [
+            79.996,
+            -1.642
+          ],
+          [
+            73.46,
+            -2.206
+          ],
+          [
+            73.329,
+            -0.108
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_02",
+        "footprint_xy": [
+          [
+            79.862,
+            0.501
+          ],
+          [
+            73.329,
+            -0.108
+          ],
+          [
+            73.055,
+            3.922
+          ],
+          [
+            74.259,
+            4.022
+          ],
+          [
+            77.07,
+            4.266
+          ],
+          [
+            79.601,
+            4.482
+          ],
+          [
+            79.622,
+            4.237
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_03",
+        "footprint_xy": [
+          [
+            -12.042,
+            37.521
+          ],
+          [
+            -11.743,
+            33.449
+          ],
+          [
+            -21.477,
+            32.752
+          ],
+          [
+            -21.804,
+            36.836
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_04",
+        "footprint_xy": [
+          [
+            27.013,
+            -1.311
+          ],
+          [
+            35.49,
+            -1.308
+          ],
+          [
+            35.491,
+            -5.077
+          ],
+          [
+            27.02,
+            -4.986
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_05",
+        "footprint_xy": [
+          [
+            27.02,
+            -4.986
+          ],
+          [
+            35.491,
+            -5.077
+          ],
+          [
+            35.608,
+            -5.081
+          ],
+          [
+            35.614,
+            -14.388
+          ],
+          [
+            25.709,
+            -14.381
+          ],
+          [
+            25.699,
+            -4.975
+          ]
+        ],
+        "eave_height_m": 4.2,
+        "ridge_height_m": 7.2,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_06",
+        "footprint_xy": [
+          [
+            79.862,
+            0.501
+          ],
+          [
+            79.622,
+            4.237
+          ],
+          [
+            83.614,
+            4.418
+          ],
+          [
+            83.893,
+            0.752
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_07",
+        "footprint_xy": [
+          [
+            -7.063,
+            6.119
+          ],
+          [
+            -6.753,
+            6.114
+          ],
+          [
+            -6.772,
+            5.475
+          ],
+          [
+            -7.108,
+            5.469
+          ],
+          [
+            -7.17,
+            3.534
+          ],
+          [
+            -17.64,
+            3.907
+          ],
+          [
+            -17.3,
+            14.186
+          ],
+          [
+            -6.82,
+            13.84
+          ]
+        ],
+        "eave_height_m": 4.2,
+        "ridge_height_m": 7.2,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_08",
+        "footprint_xy": [
+          [
+            -15.933,
+            -24.205
+          ],
+          [
+            -22.724,
+            -24.139
+          ],
+          [
+            -22.699,
+            -20.089
+          ],
+          [
+            -15.893,
+            -20.172
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_09",
+        "footprint_xy": [
+          [
+            -4.342,
+            -24.035
+          ],
+          [
+            -10.385,
+            -23.688
+          ],
+          [
+            -10.118,
+            -19.411
+          ],
+          [
+            -4.074,
+            -19.727
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_10",
+        "footprint_xy": [
+          [
+            0.69,
+            48.951
+          ],
+          [
+            9.746,
+            50.188
+          ],
+          [
+            10.308,
+            46.097
+          ],
+          [
+            1.224,
+            44.818
+          ]
+        ],
+        "eave_height_m": 3.2,
+        "ridge_height_m": 4.8,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_11",
+        "footprint_xy": [
+          [
+            71.045,
+            19.286
+          ],
+          [
+            78.931,
+            19.859
+          ],
+          [
+            79.484,
+            12.11
+          ],
+          [
+            71.644,
+            11.572
+          ],
+          [
+            71.503,
+            13.75
+          ],
+          [
+            69.449,
+            13.57
+          ],
+          [
+            69.224,
+            16.804
+          ],
+          [
+            71.231,
+            16.842
+          ]
+        ],
+        "eave_height_m": 4.2,
+        "ridge_height_m": 7.2,
+        "roof_type": "gable"
+      },
+      {
+        "id": "neighbor_12",
+        "footprint_xy": [
+          [
+            27.489,
+            44.517
+          ],
+          [
+            28.109,
+            44.667
+          ],
+          [
+            28.607,
+            42.465
+          ],
+          [
+            29.057,
+            42.565
+          ],
+          [
+            30.383,
+            37.049
+          ],
+          [
+            29.943,
+            36.944
+          ],
+          [
+            30.477,
+            34.75
+          ],
+          [
+            21.772,
+            32.64
+          ],
+          [
+            19.371,
+            42.474
+          ],
+          [
+            19.959,
+            42.627
+          ],
+          [
+            18.478,
+            48.916
+          ],
+          [
+            25.978,
+            50.732
+          ]
+        ],
+        "eave_height_m": 4.2,
+        "ridge_height_m": 7.2,
+        "roof_type": "gable"
+      }
+    ],
+    "terraces": [
+      {
+        "id": "terrace_north_garden",
+        "polygon_xy": [
+          [
+            2.48,
+            8.4
+          ],
+          [
+            10.3,
+            8.4
+          ],
+          [
+            10.3,
+            11.9
+          ],
+          [
+            2.48,
+            11.9
+          ]
+        ],
+        "z_bottom": -0.36,
+        "z_top": -0.02,
+        "material_id": "mat_terrace_concrete"
+      },
+      {
+        "id": "podium_entrance_sw",
+        "polygon_xy": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            2.48,
+            0.0
+          ],
+          [
+            2.48,
+            1.38
+          ],
+          [
+            0.0,
+            1.38
+          ]
+        ],
+        "z_bottom": -0.36,
+        "z_top": -0.02,
+        "material_id": "mat_terrace_concrete"
+      }
+    ]
+  },
+  "levels": [
+    {
+      "id": "parter",
+      "name": "Parter",
+      "floor_index": 0,
+      "z_floor": 0.0,
+      "z_ceiling": 2.74,
+      "slab_thickness": 0.28,
+      "knee_wall_height_m": null
+    },
+    {
+      "id": "poddasze",
+      "name": "Poddasze",
+      "floor_index": 1,
+      "z_floor": 3.08,
+      "z_ceiling": 5.55,
+      "slab_thickness": 0.0,
+      "knee_wall_height_m": 1.4
+    }
+  ],
+  "walls": [
+    {
+      "id": "w_p_south_main",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "start_xy": [
+        2.48,
+        0.0
+      ],
+      "end_xy": [
+        10.3,
+        0.0
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_facade_wood",
+          "z_bottom_offset": 0.122,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_south_recess_v",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "start_xy": [
+        2.48,
+        0.0
+      ],
+      "end_xy": [
+        2.48,
+        1.38
+      ],
+      "alignment": "right",
+      "priority": 2,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_south_entrance",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "start_xy": [
+        0.0,
+        1.38
+      ],
+      "end_xy": [
+        2.48,
+        1.38
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_east",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "start_xy": [
+        10.3,
+        0.0
+      ],
+      "end_xy": [
+        10.3,
+        8.4
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_facade_wood",
+          "z_bottom_offset": 0.122,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_north",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "start_xy": [
+        10.3,
+        8.4
+      ],
+      "end_xy": [
+        0.0,
+        8.4
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_west",
+      "level_id": "parter",
+      "wall_type": "exterior",
+      "start_xy": [
+        0.0,
+        8.4
+      ],
+      "end_xy": [
+        0.0,
+        1.38
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_kotlownia_east",
+      "level_id": "parter",
+      "wall_type": "interior_loadbearing",
+      "start_xy": [
+        2.36,
+        1.82
+      ],
+      "end_xy": [
+        2.36,
+        7.96
+      ],
+      "alignment": "right",
+      "priority": 2,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_wiatrolap_north",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        0.44,
+        4.15
+      ],
+      "end_xy": [
+        2.36,
+        4.15
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_lazienka_north",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        2.92,
+        1.68
+      ],
+      "end_xy": [
+        5.66,
+        1.68
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_lazienka_east",
+      "level_id": "parter",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        5.66,
+        0.44
+      ],
+      "end_xy": [
+        5.66,
+        1.68
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_p_schody_north",
+      "level_id": "parter",
+      "wall_type": "interior_loadbearing",
+      "start_xy": [
+        2.6,
+        4.0
+      ],
+      "end_xy": [
+        5.86,
+        4.0
+      ],
+      "alignment": "left",
+      "priority": 2,
+      "z_bottom": 0.0,
+      "z_top": 2.74,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_knee_south",
+      "level_id": "poddasze",
+      "wall_type": "knee_wall",
+      "start_xy": [
+        0.0,
+        0.0
+      ],
+      "end_xy": [
+        10.3,
+        0.0
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 3.08,
+      "z_top": 4.48,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_knee_north",
+      "level_id": "poddasze",
+      "wall_type": "knee_wall",
+      "start_xy": [
+        10.3,
+        8.4
+      ],
+      "end_xy": [
+        0.0,
+        8.4
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 3.08,
+      "z_top": 4.48,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_gable_east",
+      "level_id": "poddasze",
+      "wall_type": "gable_wall",
+      "start_xy": [
+        10.3,
+        0.0
+      ],
+      "end_xy": [
+        10.3,
+        8.4
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 3.08,
+      "z_top": 7.915,
+      "clip_to_roof": true,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_gable_west",
+      "level_id": "poddasze",
+      "wall_type": "gable_wall",
+      "start_xy": [
+        0.0,
+        8.4
+      ],
+      "end_xy": [
+        0.0,
+        0.0
+      ],
+      "alignment": "left",
+      "priority": 3,
+      "z_bottom": 3.08,
+      "z_top": 7.915,
+      "clip_to_roof": true,
+      "layers": [
+        {
+          "role": "finish_ext",
+          "thickness": 0.02,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "insulation",
+          "thickness": 0.18,
+          "material_id": "mat_insulation",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        },
+        {
+          "role": "core",
+          "thickness": 0.24,
+          "material_id": "mat_wall_core",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_north_rooms_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        4.96,
+        5.23
+      ],
+      "end_xy": [
+        4.96,
+        7.96
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 3.08,
+      "z_top": 5.55,
+      "clip_to_roof": true,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_hol_north",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        0.44,
+        5.11
+      ],
+      "end_xy": [
+        7.05,
+        5.11
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 3.08,
+      "z_top": 5.55,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_hol_south",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        0.44,
+        2.92
+      ],
+      "end_xy": [
+        7.05,
+        2.92
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 3.08,
+      "z_top": 5.55,
+      "clip_to_roof": false,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_sw_laz_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        4.09,
+        0.44
+      ],
+      "end_xy": [
+        4.09,
+        2.92
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 3.08,
+      "z_top": 5.55,
+      "clip_to_roof": true,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    },
+    {
+      "id": "w_a_laz_se_div",
+      "level_id": "poddasze",
+      "wall_type": "interior_partition",
+      "start_xy": [
+        6.58,
+        0.44
+      ],
+      "end_xy": [
+        6.58,
+        2.92
+      ],
+      "alignment": "left",
+      "priority": 1,
+      "z_bottom": 3.08,
+      "z_top": 5.55,
+      "clip_to_roof": true,
+      "layers": [
+        {
+          "role": "core",
+          "thickness": 0.12,
+          "material_id": "mat_wall_plaster",
+          "z_bottom_offset": 0.0,
+          "z_top_offset": 0.0
+        }
+      ]
+    }
+  ],
+  "openings": {
+    "windows": [
+      {
+        "id": "win_p_kuchnia_south",
+        "wall_id": "w_p_south_main",
+        "offset_along_wall": 3.9,
+        "width": 2.3,
+        "height": 1.45,
+        "sill_z": 0.85,
+        "is_french_balcony": false,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      },
+      {
+        "id": "win_p_lazienka_south",
+        "wall_id": "w_p_south_main",
+        "offset_along_wall": 2.2,
+        "width": 0.7,
+        "height": 1.45,
+        "sill_z": 0.85,
+        "is_french_balcony": false,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      },
+      {
+        "id": "win_p_jadalnia_east",
+        "wall_id": "w_p_east",
+        "offset_along_wall": 4.5,
+        "width": 2.4,
+        "height": 2.3,
+        "sill_z": 0.0,
+        "is_french_balcony": false,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      },
+      {
+        "id": "win_p_salon_north",
+        "wall_id": "w_p_north",
+        "offset_along_wall": 0.9,
+        "width": 3.6,
+        "height": 2.3,
+        "sill_z": 0.0,
+        "is_french_balcony": false,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      },
+      {
+        "id": "win_a_east_se",
+        "wall_id": "w_a_gable_east",
+        "offset_along_wall": 1.2,
+        "width": 1.5,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "is_french_balcony": true,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      },
+      {
+        "id": "win_a_east_ne",
+        "wall_id": "w_a_gable_east",
+        "offset_along_wall": 5.1,
+        "width": 1.5,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "is_french_balcony": true,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      },
+      {
+        "id": "win_a_west_nw",
+        "wall_id": "w_a_gable_west",
+        "offset_along_wall": 1.4,
+        "width": 1.5,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "is_french_balcony": true,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      },
+      {
+        "id": "win_a_west_sw",
+        "wall_id": "w_a_gable_west",
+        "offset_along_wall": 5.5,
+        "width": 1.5,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "is_french_balcony": true,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass",
+        "sill_material_id": null
+      }
+    ],
+    "doors": [
+      {
+        "id": "door_entrance",
+        "wall_id": "w_p_south_entrance",
+        "offset_along_wall": 0.65,
+        "width": 1.35,
+        "height": 2.3,
+        "sill_z": 0.0,
+        "hinge_side": "right",
+        "swing_dir": "in",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_terrace_north",
+        "wall_id": "w_p_north",
+        "offset_along_wall": 5.6,
+        "width": 1.1,
+        "height": 2.3,
+        "sill_z": 0.0,
+        "hinge_side": "left",
+        "swing_dir": "in",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_glass"
+      },
+      {
+        "id": "door_kotlownia",
+        "wall_id": "w_p_wiatrolap_north",
+        "offset_along_wall": 0.35,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 0.0,
+        "hinge_side": "left",
+        "swing_dir": "in",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_wiatrolap_hol",
+        "wall_id": "w_p_kotlownia_east",
+        "offset_along_wall": 0.25,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 0.0,
+        "hinge_side": "left",
+        "swing_dir": "out",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_lazienka_parter",
+        "wall_id": "w_p_lazienka_north",
+        "offset_along_wall": 0.95,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 0.0,
+        "hinge_side": "left",
+        "swing_dir": "in",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_attic_nw",
+        "wall_id": "w_a_hol_north",
+        "offset_along_wall": 3.1,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "hinge_side": "left",
+        "swing_dir": "in",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_attic_ne",
+        "wall_id": "w_a_hol_north",
+        "offset_along_wall": 4.95,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "hinge_side": "right",
+        "swing_dir": "in",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_attic_sw",
+        "wall_id": "w_a_hol_south",
+        "offset_along_wall": 0.6,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "hinge_side": "left",
+        "swing_dir": "out",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_attic_laz",
+        "wall_id": "w_a_hol_south",
+        "offset_along_wall": 4.3,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "hinge_side": "left",
+        "swing_dir": "out",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      },
+      {
+        "id": "door_attic_se",
+        "wall_id": "w_a_laz_se_div",
+        "offset_along_wall": 1.45,
+        "width": 0.9,
+        "height": 2.1,
+        "sill_z": 3.08,
+        "hinge_side": "right",
+        "swing_dir": "out",
+        "open_angle_deg": 90.0,
+        "frame_material_id": "mat_frame_dark",
+        "leaf_material_id": "mat_door_oak"
+      }
+    ],
+    "roof_windows": [
+      {
+        "id": "rw_north_1",
+        "roof_plane_id": "rp_north",
+        "center_xy": [
+          2.6,
+          6.8
+        ],
+        "width": 0.78,
+        "length_along_slope": 1.4,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass"
+      },
+      {
+        "id": "rw_north_2",
+        "roof_plane_id": "rp_north",
+        "center_xy": [
+          7.4,
+          6.8
+        ],
+        "width": 0.78,
+        "length_along_slope": 1.4,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass"
+      },
+      {
+        "id": "rw_south_1",
+        "roof_plane_id": "rp_south",
+        "center_xy": [
+          2.3,
+          1.6
+        ],
+        "width": 0.78,
+        "length_along_slope": 1.4,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass"
+      },
+      {
+        "id": "rw_south_2",
+        "roof_plane_id": "rp_south",
+        "center_xy": [
+          8.2,
+          1.6
+        ],
+        "width": 0.78,
+        "length_along_slope": 1.4,
+        "frame_material_id": "mat_frame_dark",
+        "glass_material_id": "mat_glass"
+      }
+    ]
+  },
+  "rooms": [
+    {
+      "id": "parter_wiatrolap",
+      "level_id": "parter",
+      "code": "1.1",
+      "name": "Wiatrołap",
+      "polygon_xy": [
+        [
+          0.44,
+          1.82
+        ],
+        [
+          2.36,
+          1.82
+        ],
+        [
+          2.36,
+          4.12
+        ],
+        [
+          0.44,
+          4.12
+        ]
+      ],
+      "pdf_usable_area_m2": 4.37,
+      "pdf_floor_area_m2": 4.42,
+      "floor_material_id": "mat_floor_gres",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "parter_hol",
+      "level_id": "parter",
+      "code": "1.2",
+      "name": "Hol",
+      "polygon_xy": [
+        [
+          2.48,
+          1.8
+        ],
+        [
+          5.84,
+          1.8
+        ],
+        [
+          5.84,
+          3.14
+        ],
+        [
+          2.48,
+          3.14
+        ]
+      ],
+      "pdf_usable_area_m2": 4.49,
+      "pdf_floor_area_m2": null,
+      "floor_material_id": "mat_floor_gres",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "parter_schody",
+      "level_id": "parter",
+      "code": "1.3",
+      "name": "Schody",
+      "polygon_xy": [
+        [
+          2.48,
+          3.14
+        ],
+        [
+          5.84,
+          3.14
+        ],
+        [
+          5.84,
+          4.11
+        ],
+        [
+          2.48,
+          4.11
+        ]
+      ],
+      "pdf_usable_area_m2": 3.26,
+      "pdf_floor_area_m2": null,
+      "floor_material_id": "mat_floor_oak",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "parter_salon_jadalnia",
+      "level_id": "parter",
+      "code": "1.4",
+      "name": "Salon + Jadalnia",
+      "polygon_xy": [
+        [
+          2.48,
+          4.12
+        ],
+        [
+          9.86,
+          4.12
+        ],
+        [
+          9.86,
+          7.96
+        ],
+        [
+          2.48,
+          7.96
+        ]
+      ],
+      "pdf_usable_area_m2": 28.26,
+      "pdf_floor_area_m2": null,
+      "floor_material_id": "mat_floor_oak",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "parter_kuchnia",
+      "level_id": "parter",
+      "code": "1.5",
+      "name": "Kuchnia",
+      "polygon_xy": [
+        [
+          5.86,
+          0.44
+        ],
+        [
+          9.86,
+          0.44
+        ],
+        [
+          9.86,
+          3.92
+        ],
+        [
+          5.86,
+          3.92
+        ]
+      ],
+      "pdf_usable_area_m2": 13.9,
+      "pdf_floor_area_m2": null,
+      "floor_material_id": "mat_floor_gres",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "parter_lazienka",
+      "level_id": "parter",
+      "code": "1.6",
+      "name": "Łazienka",
+      "polygon_xy": [
+        [
+          2.92,
+          0.44
+        ],
+        [
+          5.66,
+          0.44
+        ],
+        [
+          5.66,
+          1.68
+        ],
+        [
+          2.92,
+          1.68
+        ]
+      ],
+      "pdf_usable_area_m2": 3.39,
+      "pdf_floor_area_m2": null,
+      "floor_material_id": "mat_floor_gres",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "parter_kotlownia",
+      "level_id": "parter",
+      "code": "1.7",
+      "name": "Kotłownia",
+      "polygon_xy": [
+        [
+          0.44,
+          4.3
+        ],
+        [
+          2.22,
+          4.3
+        ],
+        [
+          2.22,
+          7.96
+        ],
+        [
+          0.44,
+          7.96
+        ]
+      ],
+      "pdf_usable_area_m2": 6.51,
+      "pdf_floor_area_m2": null,
+      "floor_material_id": "mat_floor_gres",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "poddasze_hol",
+      "level_id": "poddasze",
+      "code": "2.1",
+      "name": "Hol",
+      "polygon_xy": [
+        [
+          0.44,
+          3.85
+        ],
+        [
+          7.05,
+          3.85
+        ],
+        [
+          7.05,
+          5.21
+        ],
+        [
+          0.44,
+          5.21
+        ]
+      ],
+      "pdf_usable_area_m2": 8.98,
+      "pdf_floor_area_m2": 8.98,
+      "floor_material_id": "mat_floor_oak",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "poddasze_pokoj_nw",
+      "level_id": "poddasze",
+      "code": "2.2",
+      "name": "Pokój NW",
+      "polygon_xy": [
+        [
+          0.44,
+          5.23
+        ],
+        [
+          4.96,
+          5.23
+        ],
+        [
+          4.96,
+          7.96
+        ],
+        [
+          0.44,
+          7.96
+        ]
+      ],
+      "pdf_usable_area_m2": 10.18,
+      "pdf_floor_area_m2": 12.34,
+      "floor_material_id": "mat_floor_oak",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "poddasze_pokoj_ne",
+      "level_id": "poddasze",
+      "code": "2.3",
+      "name": "Pokój NE",
+      "polygon_xy": [
+        [
+          5.08,
+          5.23
+        ],
+        [
+          7.05,
+          5.23
+        ],
+        [
+          7.05,
+          4.95
+        ],
+        [
+          9.86,
+          4.95
+        ],
+        [
+          9.86,
+          7.96
+        ],
+        [
+          5.08,
+          7.96
+        ]
+      ],
+      "pdf_usable_area_m2": 11.68,
+      "pdf_floor_area_m2": 13.83,
+      "floor_material_id": "mat_floor_oak",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "poddasze_pokoj_se",
+      "level_id": "poddasze",
+      "code": "2.4",
+      "name": "Pokój SE",
+      "polygon_xy": [
+        [
+          7.05,
+          0.44
+        ],
+        [
+          9.86,
+          0.44
+        ],
+        [
+          9.86,
+          4.68
+        ],
+        [
+          7.05,
+          4.68
+        ]
+      ],
+      "pdf_usable_area_m2": 10.58,
+      "pdf_floor_area_m2": 11.92,
+      "floor_material_id": "mat_floor_oak",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "poddasze_lazienka",
+      "level_id": "poddasze",
+      "code": "2.5",
+      "name": "Łazienka",
+      "polygon_xy": [
+        [
+          4.21,
+          0.44
+        ],
+        [
+          6.58,
+          0.44
+        ],
+        [
+          6.58,
+          2.93
+        ],
+        [
+          4.21,
+          2.93
+        ]
+      ],
+      "pdf_usable_area_m2": 4.77,
+      "pdf_floor_area_m2": 5.9,
+      "floor_material_id": "mat_floor_gres",
+      "floor_thickness": 0.02
+    },
+    {
+      "id": "poddasze_pokoj_sw",
+      "level_id": "poddasze",
+      "code": "2.6",
+      "name": "Pokój SW",
+      "polygon_xy": [
+        [
+          0.44,
+          0.44
+        ],
+        [
+          4.09,
+          0.44
+        ],
+        [
+          4.09,
+          2.92
+        ],
+        [
+          0.44,
+          2.92
+        ]
+      ],
+      "pdf_usable_area_m2": 7.31,
+      "pdf_floor_area_m2": 9.05,
+      "floor_material_id": "mat_floor_oak",
+      "floor_thickness": 0.02
+    }
+  ],
+  "slabs": [
+    {
+      "id": "slab_parter_ceiling",
+      "level_id": "parter",
+      "polygon_xy": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          10.3,
+          0.0
+        ],
+        [
+          10.3,
+          8.4
+        ],
+        [
+          0.0,
+          8.4
+        ]
+      ],
+      "z_bottom": 2.74,
+      "z_top": 3.02,
+      "material_id": "mat_slab_concrete",
+      "voids_xy": [
+        [
+          [
+            1.62,
+            2.92
+          ],
+          [
+            5.86,
+            2.92
+          ],
+          [
+            5.86,
+            3.85
+          ],
+          [
+            1.62,
+            3.85
+          ]
+        ]
+      ]
+    }
+  ],
+  "stairs": [
+    {
+      "id": "stairs_main",
+      "from_level_id": "parter",
+      "to_level_id": "poddasze",
+      "stair_type": "straight",
+      "material_id": "mat_floor_oak",
+      "flights": [
+        {
+          "id": "flight_1",
+          "bbox_xy": [
+            1.62,
+            2.92,
+            5.86,
+            3.85
+          ],
+          "z_start": 0.0,
+          "z_end": 3.08,
+          "steps_count": 16,
+          "riser_h": 0.1925,
+          "tread_d": 0.265,
+          "direction": "-X",
+          "waist_slab_thickness": 0.16
+        }
+      ],
+      "landings": [],
+      "railings": [
+        {
+          "id": "railing_attic_hol",
+          "polyline_xy": [
+            [
+              1.62,
+              3.85
+            ],
+            [
+              5.86,
+              3.85
+            ]
+          ],
+          "z_base": 3.08,
+          "height": 1.05,
+          "material_id": "mat_glass"
+        }
+      ]
+    }
+  ],
+  "roof": {
+    "roof_type": "gable",
+    "knee_wall_height_m": 1.4,
+    "overhang_m": 0.65,
+    "planes": [
+      {
+        "id": "rp_south",
+        "polygon_xy": [
+          [
+            -0.65,
+            -0.65
+          ],
+          [
+            10.95,
+            -0.65
+          ],
+          [
+            10.95,
+            4.2
+          ],
+          [
+            -0.65,
+            4.2
+          ]
+        ],
+        "ridge_line_xy": [
+          [
+            0.0,
+            4.2
+          ],
+          [
+            10.3,
+            4.2
+          ]
+        ],
+        "slope_deg": 40.0,
+        "z_at_ridge": 7.915,
+        "downslope_dir_xy": [
+          0.0,
+          -1.0
+        ],
+        "thickness": 0.28,
+        "tile_material_id": "mat_roof_tile",
+        "soffit_material_id": "mat_facade_wood",
+        "soffit_x_bounds": [
+          0.0,
+          10.3
+        ]
+      },
+      {
+        "id": "rp_north",
+        "polygon_xy": [
+          [
+            -0.65,
+            4.2
+          ],
+          [
+            10.95,
+            4.2
+          ],
+          [
+            10.95,
+            9.05
+          ],
+          [
+            -0.65,
+            9.05
+          ]
+        ],
+        "ridge_line_xy": [
+          [
+            0.0,
+            4.2
+          ],
+          [
+            10.3,
+            4.2
+          ]
+        ],
+        "slope_deg": 40.0,
+        "z_at_ridge": 7.915,
+        "downslope_dir_xy": [
+          0.0,
+          1.0
+        ],
+        "thickness": 0.28,
+        "tile_material_id": "mat_roof_tile",
+        "soffit_material_id": "mat_facade_wood",
+        "soffit_x_bounds": [
+          0.0,
+          10.3
+        ]
+      }
+    ],
+    "chimneys": [
+      {
+        "id": "chimney_main",
+        "bbox_xy": [
+          2.22,
+          4.2,
+          2.9,
+          5.2
+        ],
+        "z_bottom": 0.0,
+        "z_top": 8.15,
+        "material_id": "mat_wall_plaster"
+      }
+    ]
+  },
+  "mep_sockets": [
+    {
+      "id": "mep_kuchnia_woda_kan",
+      "room_id": "parter_kuchnia",
+      "socket_type": "water_cold_hot",
+      "position_xyz": [
+        7.8,
+        0.5,
+        0.55
+      ],
+      "material_id": "mat_mep"
+    },
+    {
+      "id": "mep_kuchnia_400v",
+      "room_id": "parter_kuchnia",
+      "socket_type": "power_400v",
+      "position_xyz": [
+        9.75,
+        1.8,
+        0.35
+      ],
+      "material_id": "mat_mep"
+    },
+    {
+      "id": "mep_lazienka_parter_woda",
+      "room_id": "parter_lazienka",
+      "socket_type": "water_cold_hot",
+      "position_xyz": [
+        4.4,
+        0.5,
+        0.55
+      ],
+      "material_id": "mat_mep"
+    },
+    {
+      "id": "mep_kotlownia_gaz",
+      "room_id": "parter_kotlownia",
+      "socket_type": "gas",
+      "position_xyz": [
+        0.5,
+        7.5,
+        1.4
+      ],
+      "material_id": "mat_mep"
+    },
+    {
+      "id": "mep_lazienka_podd_woda",
+      "room_id": "poddasze_lazienka",
+      "socket_type": "water_cold_hot",
+      "position_xyz": [
+        6.45,
+        1.8,
+        3.63
+      ],
+      "material_id": "mat_mep"
+    }
+  ],
+  "custom_elements": [],
+  "furniture": []
+}
