@@ -71,7 +71,8 @@ for a in actor_sub.get_all_level_actors():
     elif "ExponentialHeightFog" in cls or "ExponentialHeightFog" in lbl:
         exp_fog = a
     elif lbl == "PDF2BIM_Dom1_SM_Garden_Lawn":
-        a.set_actor_scale3d(unreal.Vector(4.0, 4.0, 1.0))
+        a.set_actor_hidden_in_game(True)
+        a.set_is_temporarily_hidden_in_editor(True)
 
 # 2. Import any missing 2K Normal/Roughness textures and build UE5 Master Materials
 import os
@@ -85,7 +86,7 @@ if os.path.isdir(tex_disk_dir):
         if not fn.lower().endswith(".jpg"):
             continue
         stem = os.path.splitext(fn)[0]
-        if any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite")) or not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
+        if any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite", "lawn_turf_2k", "lawn_blades_atlas", "grass_medium_01_diff")) or not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
             t = unreal.AssetImportTask()
             t.set_editor_property("filename", f"{tex_disk_dir}/{fn}")
             t.set_editor_property("destination_path", tex_pkg)
@@ -226,7 +227,7 @@ pbr_defs = {
     "M_Structure_Concrete": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.02, 1.03, 1.03), True, 0.98, 0.0, 0.24, 2.4),
     "M_Terrace_Paver_Grey": ("concrete_pavers_02_diffuse", "concrete_pavers_02_nor_gl", "concrete_pavers_02_rough", (0.76, 0.77, 0.79), False, 0.72, 0.0, 0.48, 2.5),
     "M_WalkwayPavers": ("concrete_pavers_02_diffuse", "concrete_pavers_02_nor_gl", "concrete_pavers_02_rough", (0.72, 0.73, 0.75), False, 0.75, 0.0, 0.45, 2.5),
-    "M_ParcelGrass": ("lawn_grass_diffuse", "leafy_grass_nor_gl", "leafy_grass_rough", (0.68, 0.84, 0.58), False, 0.90, 0.0, 0.25, 28.0),
+    "M_ParcelGrass": ("lawn_turf_2k_diffuse", "lawn_turf_2k_nor_gl", "lawn_turf_2k_rough", (0.84, 0.96, 0.76), False, 0.86, 0.0, 0.24, 3.4),
     "M_Hedge_Boxwood": ("hedge_boxwood_diffuse", "hedge_boxwood_nor_gl", "hedge_boxwood_rough", (0.62, 0.78, 0.55), False, 0.85, 0.0, 0.30, 3.2),
     "M_Window_Frame_Anthracite": (None, None, None, (0.045, 0.050, 0.058), False, 0.28, 0.45, 0.70, 1.0),
     "M_Gravel_Pebbles": ("gravel_pebbles_diffuse", "gravel_pebbles_nor_gl", "gravel_pebbles_rough", (0.86, 0.85, 0.83), False, 0.86, 0.0, 0.32, 1.8),
@@ -490,7 +491,8 @@ masked_foliage_defs = {
     "M_Foliage_Tree_Leaves": ("tree_small_02_leaves_diff_1k", "tree_small_02_leaves_nor_gl_1k", "tree_small_02_leaves_alpha_1k", (0.86, 1.08, 0.74), 0.46, 0.24),
     "M_Foliage_Shrub_02": ("shrub_02_diff_1k", "shrub_02_nor_gl_1k", "shrub_02_alpha_1k", (0.76, 1.18, 0.68), 0.50, 0.12),
     "M_Foliage_Shrub_01": ("shrub_01_diff_1k", "shrub_01_nor_gl_1k", "shrub_01_alpha_1k", (0.82, 1.08, 0.72), 0.48, 0.22),
-    "M_Foliage_Grass_01": ("grass_medium_01_diff_1k", "grass_medium_01_nor_gl_1k", "grass_medium_01_alpha_1k", (0.84, 1.08, 0.72), 0.54, 0.20),
+    "M_Foliage_Grass_01": ("grass_medium_01_diff_1k", "grass_medium_01_nor_gl_1k", "grass_medium_01_alpha_1k", (0.88, 1.04, 0.80), 0.52, 0.20),
+    "M_Foliage_Lawn_Blades": ("lawn_blades_atlas_diff", "lawn_blades_atlas_nor_gl", "lawn_blades_atlas_alpha", (0.88, 1.04, 0.80), 0.48, 0.22),
     "M_Foliage_Plant_Leaves": ("potted_plant_01_leaves_diff_1k", "potted_plant_01_leaves_nor_gl_1k", "potted_plant_01_leaves_alpha_1k", (0.88, 1.06, 0.80), 0.40, 0.28),
 }
 
@@ -550,7 +552,7 @@ for mf_name, (d_s, n_s, a_s, f_tint, f_rough, f_clip) in masked_foliage_defs.ite
 
 fol_pkg = "/Game/PDF2BIM/Foliage"
 fol_fbx = "C:/Users/filip/pdf2bim_remote/foliage/foliage_and_env.fbx"
-if os.path.exists(fol_fbx) and (os.environ.get("PDF2BIM_REIMPORT_FOLIAGE") or not unreal.EditorAssetLibrary.does_asset_exist(f"{fol_pkg}/SM_Tree_Small_02")):
+if os.path.exists(fol_fbx) and (os.environ.get("PDF2BIM_REIMPORT_FOLIAGE", "1") == "1" or not unreal.EditorAssetLibrary.does_asset_exist(f"{fol_pkg}/SM_Lawn_Turf_Carpet_3D")):
     if unreal.EditorAssetLibrary.does_directory_exist(fol_pkg):
         unreal.EditorAssetLibrary.delete_directory(fol_pkg)
     fbx_ui_f = unreal.FbxImportUI()
@@ -573,6 +575,8 @@ if os.path.exists(fol_fbx) and (os.environ.get("PDF2BIM_REIMPORT_FOLIAGE") or no
 fol_meshes = {}
 fol_mat_slots = {
     "SM_Env_SkyDome": ["M_Env_Panorama_Sky"],
+    "SM_Terrain_Undulating_Lawn": ["M_ParcelGrass"],
+    "SM_Lawn_Turf_Carpet_3D": ["M_ParcelGrass"],
     "SM_Garden_Terrace": ["M_Terrace_Paver_Grey"],
     "SM_Gravel_Drainage_Strip": ["M_Gravel_Pebbles"],
     "SM_Gravel_Curb": ["M_Window_Frame_Anthracite"],
@@ -607,11 +611,46 @@ for sm_name, slot_mats in fol_mat_slots.items():
                     sm_obj.set_material(s_idx, built_mats[m_key])
             fol_meshes[sm_name] = sm_obj
 
+import math as _math
+_hs_rects = [
+    (-0.60, -0.60, 10.90, 9.00),
+    (-0.05, -0.65, 2.52, 0.05),
+    (0.40, -7.55, 2.30, 0.00),
+    (2.06, 8.38, 11.68, 11.33),
+    (10.28, 3.02, 11.68, 8.45),
+]
+def ue_terrain_z(x_ue, y_ue):
+    x = x_ue / 100.0
+    y = -y_ue / 100.0
+    dmin = 999.0
+    for (rx0, ry0, rx1, ry1) in _hs_rects:
+        d = _math.hypot(max(rx0 - x, 0.0, x - rx1), max(ry0 - y, 0.0, y - ry1))
+        if d < dmin:
+            dmin = d
+    z_base = -0.242
+    if dmin <= 0.08:
+        zb = z_base
+    else:
+        t = min(1.0, (dmin - 0.08) / 1.65)
+        blend = t * t * (3.0 - 2.0 * t)
+        w1 = 0.115 * _math.sin(0.55 * x + 0.42 * y + 0.4) * _math.cos(0.48 * y - 0.28 * x)
+        w2 = 0.075 * _math.sin(1.18 * x - 0.88 * y + 1.2)
+        w3 = 0.045 * _math.cos(1.90 * x + 1.70 * y - 0.7)
+        m1 = 0.16 * _math.exp(-((x - 8.2) ** 2 + (y + 3.1) ** 2) / 9.0)
+        m2 = 0.18 * _math.exp(-((x - 13.4) ** 2 + (y - 5.2) ** 2) / 10.0)
+        m3 = 0.19 * _math.exp(-((x - 6.8) ** 2 + (y - 14.0) ** 2) / 11.5)
+        m4 = 0.14 * _math.exp(-((x + 2.2) ** 2 + (y + 3.5) ** 2) / 8.0)
+        zb = z_base + blend * (w1 + w2 + w3 + m1 + m2 + m3 + m4)
+    return 92.0 + zb * 100.0 - 1.2
+
 def spawn_fol(sm_name, label, loc_xyz, yaw_deg=0.0, scale_xyz=(1.0, 1.0, 1.0), cast_shadow=True):
     sm_obj = fol_meshes.get(sm_name)
     if not sm_obj:
         return None
-    act = actor_sub.spawn_actor_from_object(sm_obj, unreal.Vector(*loc_xyz), unreal.Rotator(0.0, 0.0, yaw_deg))
+    lx, ly, lz = loc_xyz
+    if lz < 80.0 and (lx != 0.0 or ly != 0.0):
+        lz = ue_terrain_z(lx, ly)
+    act = actor_sub.spawn_actor_from_object(sm_obj, unreal.Vector(lx, ly, lz), unreal.Rotator(0.0, 0.0, yaw_deg))
     if act:
         act.set_actor_scale3d(unreal.Vector(*scale_xyz))
         act.set_actor_label(label)
@@ -625,8 +664,10 @@ def spawn_fol(sm_name, label, loc_xyz, yaw_deg=0.0, scale_xyz=(1.0, 1.0, 1.0), c
             smc.set_editor_property("cast_shadow", False)
     return act
 
-# A) Spawn 360 SkyDome (no shadow casting!), Garden Terrace, Gravel Strip & Curb at base_loc (0, 0, 92)
+# A) Spawn 360 SkyDome, Undulating 3D Terrain, 3D Lawn Blade Carpet, Garden Terrace, Gravel Strip & Curb at base_loc (0, 0, 92)
 spawn_fol("SM_Env_SkyDome", "PDF2BIM_Env_SkyDome_360", (0.0, 0.0, 92.0), 0.0, (1.0, 1.0, 1.0), cast_shadow=False)
+spawn_fol("SM_Terrain_Undulating_Lawn", "PDF2BIM_Env_Terrain_Undulating_Lawn", (0.0, 0.0, 92.0))
+spawn_fol("SM_Lawn_Turf_Carpet_3D", "PDF2BIM_Env_Lawn_Turf_Carpet_3D", (0.0, 0.0, 92.0), 0.0, (1.0, 1.0, 1.0), cast_shadow=False)
 spawn_fol("SM_Garden_Terrace", "PDF2BIM_Env_Garden_Terrace", (0.0, 0.0, 92.0))
 spawn_fol("SM_Gravel_Drainage_Strip", "PDF2BIM_Env_Gravel_Strip", (0.0, 0.0, 92.0))
 spawn_fol("SM_Gravel_Curb", "PDF2BIM_Env_Gravel_Curb", (0.0, 0.0, 92.0))
@@ -711,14 +752,18 @@ for p_id, p_xyz, p_yaw, p_sc in pot_placements:
     spawn_fol("SM_Potted_Plant_01", f"PDF2BIM_Fol_{p_id}", p_xyz, p_yaw, p_sc)
 
 grass_coords = [
-    (480.0, 280.0, 15.0), (820.0, 290.0, 75.0), (1180.0, 310.0, 135.0), (1460.0, 340.0, 210.0),
-    (460.0, 560.0, 45.0), (790.0, 580.0, 165.0), (1160.0, 560.0, 255.0), (1440.0, 610.0, 95.0),
-    (-190.0, 520.0, 125.0), (1340.0, -120.0, 35.0), (1380.0, -540.0, 155.0), (1360.0, -1240.0, 85.0),
-    (1020.0, -1320.0, 195.0), (660.0, -1340.0, 25.0), (310.0, -1320.0, 115.0), (-60.0, -1300.0, 225.0),
-    (1180.0, -1580.0, 65.0), (810.0, -1600.0, 175.0), (440.0, -1580.0, 285.0), (60.0, -1560.0, 145.0),
+    (420.0, 220.0, 15.0), (680.0, 230.0, 75.0), (940.0, 240.0, 135.0), (1200.0, 260.0, 210.0), (1440.0, 280.0, 35.0),
+    (440.0, 440.0, 45.0), (710.0, 460.0, 165.0), (980.0, 450.0, 255.0), (1240.0, 470.0, 95.0), (1480.0, 490.0, 185.0),
+    (460.0, 680.0, 115.0), (760.0, 700.0, 225.0), (1060.0, 690.0, 55.0), (1340.0, 710.0, 145.0), (1560.0, 730.0, 275.0),
+    (-190.0, 420.0, 125.0), (-160.0, 680.0, 215.0), (1320.0, -40.0, 35.0), (1520.0, -80.0, 125.0),
+    (1340.0, -340.0, 155.0), (1540.0, -420.0, 245.0), (1340.0, -720.0, 65.0), (1520.0, -980.0, 175.0),
+    (1360.0, -1240.0, 85.0), (1100.0, -1260.0, 195.0), (840.0, -1280.0, 25.0), (580.0, -1270.0, 115.0),
+    (310.0, -1280.0, 205.0), (40.0, -1260.0, 295.0), (-220.0, -1240.0, 45.0),
+    (1320.0, -1540.0, 135.0), (1020.0, -1560.0, 65.0), (720.0, -1580.0, 175.0), (420.0, -1560.0, 285.0),
+    (120.0, -1540.0, 145.0), (-180.0, -1520.0, 235.0),
 ]
 for g_idx, (gx, gy, gyaw) in enumerate(grass_coords):
-    spawn_fol("SM_Grass_Patch_3D", f"PDF2BIM_Fol_GrassPatch_{g_idx+1:02d}", (gx, gy, 66.5), gyaw, (1.15, 1.15, 1.35))
+    spawn_fol("SM_Grass_Patch_3D", f"PDF2BIM_Fol_GrassPatch_{g_idx+1:02d}", (gx, gy, 66.5), gyaw, (1.15, 1.15, 1.15))
 
 ppv = actor_sub.spawn_actor_from_class(unreal.PostProcessVolume, unreal.Vector(500.0, -420.0, 250.0), unreal.Rotator(0.0, 0.0, 0.0))
 if ppv:

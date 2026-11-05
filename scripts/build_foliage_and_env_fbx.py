@@ -80,12 +80,12 @@ if boulder_lod3:
 
 
 # ---------------------------------------------------------------------------
-# 2. Load & build SM_Grass_Patch_3D (3.0m x 3.0m scattered 3D meadow tufts)
+# 2. Load & build SM_Grass_Patch_3D (2.6m x 2.6m dense 3D meadow clumps & tufts)
 # ---------------------------------------------------------------------------
 grass_objs = import_fbx_objects("grass_medium_01_1k.fbx")
 tuft_templates = []
 for o in grass_objs:
-    if any(k in o.name for k in ("mid_a", "mid_b", "mid_c", "small_a", "small_b", "tall_a", "tall_b", "tall_c")):
+    if any(k in o.name for k in ("large_a", "large_b", "large_c", "mid_a", "mid_b", "mid_c", "small_a", "small_b")):
         recenter_mesh_bottom(o)
         tuft_templates.append(o)
     else:
@@ -93,15 +93,15 @@ for o in grass_objs:
 
 rng = random.Random(101)
 bm_grass = bmesh.new()
-for idx in range(26):
+for idx in range(34):
     tpl = tuft_templates[idx % len(tuft_templates)]
     bm_tmp = bmesh.new()
     bm_tmp.from_mesh(tpl.data)
     angle = rng.uniform(0.0, math.tau)
-    sc_xy = rng.uniform(1.15, 1.65)
-    sc_z = rng.uniform(1.25, 1.85)
-    ox = rng.uniform(-1.35, 1.35)
-    oy = rng.uniform(-1.35, 1.35)
+    sc_xy = rng.uniform(1.30, 1.85)
+    sc_z = rng.uniform(0.95, 1.45)
+    ox = rng.uniform(-1.15, 1.15)
+    oy = rng.uniform(-1.15, 1.15)
     rot_mat = Euler((0.0, 0.0, angle), "XYZ").to_matrix().to_4x4()
     scale_mat = Matrix.Diagonal((sc_xy, sc_xy, sc_z, 1.0))
     xform = Matrix.Translation((ox, oy, 0.0)) @ rot_mat @ scale_mat
@@ -415,6 +415,150 @@ curb_boxes = [
     (-0.52, 8.92, 2.10, 8.98, -0.25, -0.205),
 ]
 build_multi_box_mesh("SM_Gravel_Curb", curb_boxes, "M_Window_Frame_Anthracite", (0.12, 0.13, 0.15), uv_scale=0.5)
+
+
+# ---------------------------------------------------------------------------
+# 8. Build Undulating 3D Terrain (SM_Terrain_Undulating_Lawn) & Dense 3D Grass Carpet (SM_Lawn_Turf_Carpet_3D)
+# ---------------------------------------------------------------------------
+hardscape_rects = [
+    (-0.60, -0.60, 10.90, 9.00),   # House + Gravel Strip + Curb
+    (-0.05, -0.65, 2.52, 0.05),    # Entrance Steps
+    (0.40, -7.55, 2.30, 0.00),     # Entrance Walkway
+    (2.06, 8.38, 11.68, 11.33),    # North Garden Terrace + Step
+    (10.28, 3.02, 11.68, 8.45),    # East Garden Terrace + Step
+]
+
+
+def dist_to_hardscape(x, y):
+    dmin = 999.0
+    for (rx0, ry0, rx1, ry1) in hardscape_rects:
+        dx = max(rx0 - x, 0.0, x - rx1)
+        dy = max(ry0 - y, 0.0, y - ry1)
+        d = math.hypot(dx, dy)
+        if d < dmin:
+            dmin = d
+    return dmin
+
+
+def terrain_z(x, y):
+    z_base = -0.242
+    d = dist_to_hardscape(x, y)
+    if d <= 0.08:
+        return z_base
+    t = min(1.0, (d - 0.08) / 1.65)
+    blend = t * t * (3.0 - 2.0 * t)
+    # Multi-scale natural lawn undulations (visible gentle rolling swells & dips of -12cm to +32cm)
+    w1 = 0.115 * math.sin(0.55 * x + 0.42 * y + 0.4) * math.cos(0.48 * y - 0.28 * x)
+    w2 = 0.075 * math.sin(1.18 * x - 0.88 * y + 1.2)
+    w3 = 0.045 * math.cos(1.90 * x + 1.70 * y - 0.7)
+    # Gentle natural garden mounds in front yard (x=8.2, y=-3.2), East lawn (x=13.4, y=5.2), and North garden (x=6.8, y=14.0)
+    m1 = 0.16 * math.exp(-((x - 8.2) ** 2 + (y + 3.1) ** 2) / 9.0)
+    m2 = 0.18 * math.exp(-((x - 13.4) ** 2 + (y - 5.2) ** 2) / 10.0)
+    m3 = 0.19 * math.exp(-((x - 6.8) ** 2 + (y - 14.0) ** 2) / 11.5)
+    m4 = 0.14 * math.exp(-((x + 2.2) ** 2 + (y + 3.5) ** 2) / 8.0)
+    return z_base + blend * (w1 + w2 + w3 + m1 + m2 + m3 + m4)
+
+
+bm_terr = bmesh.new()
+# Non-uniform grid: high density in [-18..+28m] around the house, extending out to [-92..+98m] past the 85m SkyDome
+xs_terr = [-92.0 + 74.0 * (i / 10) for i in range(10)] + [-18.0 + 46.0 * (i / 140) for i in range(141)] + [28.0 + 70.0 * (i / 10) for i in range(1, 11)]
+ys_terr = [-92.0 + 74.0 * (j / 10) for j in range(10)] + [-18.0 + 46.0 * (j / 140) for j in range(141)] + [28.0 + 70.0 * (j / 10) for j in range(1, 11)]
+
+t_grid = []
+for y in ys_terr:
+    row = []
+    for x in xs_terr:
+        row.append(bm_terr.verts.new((x, y, terrain_z(x, y))))
+    t_grid.append(row)
+
+uv_terr = bm_terr.loops.layers.uv.verify()
+for iy in range(len(ys_terr) - 1):
+    for ix in range(len(xs_terr) - 1):
+        v00 = t_grid[iy][ix]
+        v10 = t_grid[iy][ix + 1]
+        v11 = t_grid[iy + 1][ix + 1]
+        v01 = t_grid[iy + 1][ix]
+        fc = bm_terr.faces.new((v00, v10, v11, v01))
+        fc.smooth = True
+        for lp in fc.loops:
+            co = lp.vert.co
+            lp[uv_terr].uv = (co.x * 0.45, co.y * 0.45)
+
+bm_terr.normal_update()
+me_terr = bpy.data.meshes.new("SM_Terrain_Undulating_Lawn")
+bm_terr.to_mesh(me_terr)
+bm_terr.free()
+obj_terr = bpy.data.objects.new("SM_Terrain_Undulating_Lawn", me_terr)
+main_col.objects.link(obj_terr)
+me_terr.materials.append(get_or_make_mat("M_ParcelGrass", (0.26, 0.46, 0.18)))
+print("Prepared SM_Terrain_Undulating_Lawn polys=", len(me_terr.polygons))
+
+# Build Dense 3D Curved Grass Blade Carpet (SM_Lawn_Turf_Carpet_3D) — 100% true 3D tapered blades, ZERO rectangular cards
+bm_carpet = bmesh.new()
+uv_carpet = bm_carpet.loops.layers.uv.verify()
+rng_c = random.Random(202611)
+
+step_g = 0.24
+gx_vals = [(-4.8 + i * step_g) for i in range(int((16.0 - (-4.8)) / step_g))]
+gy_vals = [(-7.2 + j * step_g) for j in range(int((17.2 - (-7.2)) / step_g))]
+
+clump_count = 0
+for gx_base in gx_vals:
+    for gy_base in gy_vals:
+        cx = gx_base + rng_c.uniform(-0.10, 0.10)
+        cy = gy_base + rng_c.uniform(-0.10, 0.10)
+        d_hs = dist_to_hardscape(cx, cy)
+        if d_hs < 0.02:
+            continue
+        if d_hs > 8.0 and rng_c.random() < 0.45:
+            continue
+        cz = terrain_z(cx, cy) - 0.006
+        h_scale = min(1.0, 0.55 + d_hs * 0.50)
+        # 9 true 3D curved, tapered grass blades per tuft fanning out organically
+        n_blades = 9
+        base_rot = rng_c.uniform(0.0, math.tau)
+        for b_i in range(n_blades):
+            ang = base_rot + b_i * (math.tau / n_blades) + rng_c.uniform(-0.25, 0.25)
+            ca, sa = math.cos(ang), math.sin(ang)
+            # Radial offset from tuft center
+            r0 = rng_c.uniform(0.01, 0.09)
+            bx = cx + ca * r0
+            by = cy + sa * r0
+            # Blade width perpendicular to radial direction
+            w0 = rng_c.uniform(0.009, 0.015)
+            px, py = -sa * w0, ca * w0
+            h_b = rng_c.uniform(0.055, 0.135) * h_scale
+            arch = rng_c.uniform(0.035, 0.095) * h_scale
+            # Midpoint & tip of curved 3D blade
+            mx = bx + ca * (arch * 0.45)
+            my = by + sa * (arch * 0.45)
+            mz = cz + h_b * 0.55
+            tx = bx + ca * arch
+            ty = by + sa * arch
+            tz = cz + h_b
+            vb0 = bm_carpet.verts.new((bx - px, by - py, cz))
+            vb1 = bm_carpet.verts.new((bx + px, by + py, cz))
+            vm0 = bm_carpet.verts.new((mx - px * 0.55, my - py * 0.55, mz))
+            vm1 = bm_carpet.verts.new((mx + px * 0.55, my + py * 0.55, mz))
+            vtip = bm_carpet.verts.new((tx, ty, tz))
+            f1 = bm_carpet.faces.new((vb0, vb1, vm1, vm0))
+            f2 = bm_carpet.faces.new((vm0, vm1, vtip))
+            f1.smooth = True
+            f2.smooth = True
+            for lp in f1.loops:
+                lp[uv_carpet].uv = (lp.vert.co.x * 0.45, lp.vert.co.y * 0.45)
+            for lp in f2.loops:
+                lp[uv_carpet].uv = (lp.vert.co.x * 0.45, lp.vert.co.y * 0.45)
+        clump_count += 1
+
+bm_carpet.normal_update()
+me_carpet = bpy.data.meshes.new("SM_Lawn_Turf_Carpet_3D")
+bm_carpet.to_mesh(me_carpet)
+bm_carpet.free()
+obj_carpet = bpy.data.objects.new("SM_Lawn_Turf_Carpet_3D", me_carpet)
+main_col.objects.link(obj_carpet)
+me_carpet.materials.append(get_or_make_mat("M_ParcelGrass", (0.28, 0.48, 0.18)))
+print("Prepared SM_Lawn_Turf_Carpet_3D clumps=", clump_count, "polys=", len(me_carpet.polygons))
 
 
 # ---------------------------------------------------------------------------
