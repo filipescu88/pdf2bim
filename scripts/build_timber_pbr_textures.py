@@ -13,7 +13,7 @@ from PIL import Image, ImageFilter
 TEX_SRC_DIR = Path("/home/hermes/blender-vast-ai/textures")
 OUT_DIRS = [
     Path("/home/hermes/blender-vast-ai/textures"),
-    Path("/home/hermes/pdf-to-bim-unreal-pipeline/web_vr/textures"),
+    Path("/home/hermes/pdf2bim/web_vr/textures"),
 ]
 
 

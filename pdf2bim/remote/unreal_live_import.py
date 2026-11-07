@@ -61,6 +61,7 @@ tex_files = [
     "roof_tiles_anthracite_diffuse.jpg",
     "roof_tiles_anthracite_nor_gl.jpg",
     "roof_tiles_anthracite_rough.jpg",
+    "roof_tiles_red_diffuse.jpg",
     "concrete_tiles_diffuse.jpg",
     "concrete_tiles_nor_gl.jpg",
     "concrete_tiles_rough.jpg",
@@ -123,7 +124,7 @@ pbr_recipes = {
     "M_Wall_Plaster_White": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), 0.98, 0.0, 2.4),
     "M_Wall_Ceramic_Block": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), 0.98, 0.0, 2.4),
     "M_Wall_Insulation_EPS": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.03, 1.04, 1.04), 0.98, 0.0, 2.4),
-    "M_Roof_Tile_Anthracite": ("roof_tiles_anthracite_diffuse", "roof_tiles_anthracite_nor_gl", "roof_tiles_anthracite_rough", (0.98, 0.98, 1.00), 1.0, 0.0, 0.42),
+    "M_Roof_Tile_Anthracite": ("roof_tiles_red_diffuse", "roof_tiles_anthracite_nor_gl", "roof_tiles_anthracite_rough", (1.02, 0.96, 0.94), 1.0, 0.0, 0.42),
     "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse", "facade_timber_cladding_nor_gl", "facade_timber_cladding_rough", (0.98, 0.98, 0.98), 0.78, 0.0, 1.0),
     "M_Door_Veneer_Oak": ("laminate_floor_02_diffuse", None, None, (0.52, 0.33, 0.18), 0.42, 0.0, 1.2),
     "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", None, None, (0.64, 0.47, 0.30), 0.40, 0.0, 1.5),
@@ -182,7 +183,7 @@ for a_data in assets:
         if rkey == "M_Roof_Tile_Anthracite":
             mul = mel.create_material_expression(mat, unreal.MaterialExpressionMultiply, -150, -180)
             c_tint = mel.create_material_expression(mat, unreal.MaterialExpressionConstant3Vector, -380, -320)
-            c_tint.set_editor_property("constant", unreal.LinearColor(0.18, 0.19, 0.22, 1.0))
+            c_tint.set_editor_property("constant", unreal.LinearColor(1.02, 0.96, 0.94, 1.0))
             mel.connect_material_expressions(ts_diff, "RGB", mul, "A")
             mel.connect_material_expressions(c_tint, "", mul, "B")
             mel.connect_material_property(mul, "", unreal.MaterialProperty.MP_BASE_COLOR)

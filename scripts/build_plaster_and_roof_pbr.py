@@ -278,8 +278,18 @@ def build_roof_tiles_anthracite() -> None:
     Image.fromarray((roof_rough * 255.0).round().astype(np.uint8), mode="L").save(
         TEX_DIR / "roof_tiles_anthracite_rough.jpg", quality=95
     )
+
+    # Also build natural ceramic red / terracotta roof tile diffuse map (czerwona dachówka ceramiczna)
+    red_val = np.clip((0.88 + rel_detail * 1.15 + t_lum_map * 0.75 + fine_grain * 0.025) * course_ao, 0.42, 1.18)
+    roof_red_rgb = np.zeros((SIZE, SIZE, 3), dtype=np.float32)
+    roof_red_rgb[:, :, 0] = np.clip(red_val * (0.72 + 0.35 * t_warm_map), 0.25, 0.88)
+    roof_red_rgb[:, :, 1] = np.clip(red_val * (0.21 + 0.12 * t_warm_map), 0.07, 0.34)
+    roof_red_rgb[:, :, 2] = np.clip(red_val * (0.14 - 0.08 * t_warm_map), 0.04, 0.23)
+    Image.fromarray((roof_red_rgb * 255.0).round().astype(np.uint8), mode="RGB").save(
+        TEX_DIR / "roof_tiles_red_diffuse.jpg", quality=95
+    )
     print(
-        f"[OK] Built 2K Anthracite Roof Tiles PBR | diff={roof_rgb.mean(axis=(0,1)).round(3)} "
+        f"[OK] Built 2K Anthracite & Red Roof Tiles PBR | red_diff={roof_red_rgb.mean(axis=(0,1)).round(3)} "
         f"| nor_std={roof_nor.std(axis=(0,1)).round(3)} | rough={roof_rough.mean():.3f}"
     )
 

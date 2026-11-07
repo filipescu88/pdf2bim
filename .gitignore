@@ -6,3 +6,6 @@ __pycache__/
 dist/
 build/
 .DS_Store
+*.pem
+projects/*/output/*.fbx
+projects/*/render/

@@ -2,22 +2,199 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>PDF2BIM WebXR Viewer & Laser Marker QA (v2.0)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PDF2BIM Web 3D & WebXR Viewer — Forward Pipeline v2.0</title>
   <style>
-    body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; background: #121417; color: #f1f3f5; }
+    :root {
+      --bg-panel: rgba(15, 23, 42, 0.88);
+      --border: rgba(255, 255, 255, 0.14);
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f172a;
+      color: var(--text);
+      user-select: none;
+      touch-action: none;
+    }
     #hud {
-      position: fixed; top: 12px; left: 12px; z-index: 10;
-      background: rgba(18, 20, 23, 0.88); padding: 12px 16px; border-radius: 8px;
-      border: 1px solid #343a40; max-width: 380px;
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 10;
+      width: 370px;
+      max-width: calc(100vw - 24px);
+      max-height: calc(100vh - 24px);
+      overflow-y: auto;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
     }
-    #hud select, #hud button, #hud input {
-      background: #212529; color: #f8f9fa; border: 1px solid #495057;
-      padding: 6px 10px; border-radius: 4px; margin-top: 6px;
+    #infoPanel {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 10;
+      width: 340px;
+      max-width: calc(100vw - 24px);
+      max-height: calc(100vh - 24px);
+      overflow-y: auto;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      font-size: 12px;
     }
-    .marker-badge { font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
-    .status-open { background: #c92a2a; }
-    .status-needs_verification { background: #e67700; }
-    .status-verified { background: #2b8a3e; }
+    @media (max-width: 820px) {
+      #infoPanel { display: none; }
+      #hud { width: 310px; max-height: 58vh; }
+    }
+    h1 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .subtitle { font-size: 11.5px; color: var(--muted); margin-bottom: 10px; line-height: 1.35; }
+    .section { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 9px; margin-top: 9px; }
+    .section-title {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    select, button, input[type="text"] {
+      background: rgba(30, 41, 59, 0.9);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 6px 9px;
+      border-radius: 7px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    select { width: 100%; margin-top: 4px; font-weight: 600; }
+    button:hover { background: rgba(56, 189, 248, 0.22); border-color: var(--accent); }
+    button.active { background: rgba(56, 189, 248, 0.35); border-color: var(--accent); color: #fff; font-weight: 600; }
+    button.green-btn { background: rgba(34, 197, 94, 0.22); border-color: var(--green); color: #dcfce7; font-weight: 600; }
+    button.green-btn:hover { background: rgba(34, 197, 94, 0.38); }
+    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 4px; }
+    .btn-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 4px; }
+    .room-btn { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .marker-badge { font-size: 10.5px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: 600; }
+    .status-open { background: #c92a2a; color: #fff; }
+    .status-needs_verification { background: #e67700; color: #fff; }
+    .status-verified { background: #2b8a3e; color: #fff; }
+    .kv-table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 11.5px; }
+    .kv-table td { padding: 3px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    .kv-table td:last-child { text-align: right; font-weight: 600; color: var(--accent); }
+    #crosshair {
+      position: fixed;
+      top: 50%; left: 50%;
+      width: 12px; height: 12px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0.7;
+    }
+    #crosshair::before, #crosshair::after {
+      content: ""; position: absolute; background: #38bdf8;
+    }
+    #crosshair::before { top: 5px; left: 0; width: 12px; height: 2px; }
+    #crosshair::after { top: 0; left: 5px; width: 2px; height: 12px; }
+    #toggleHudBtn {
+      position: fixed;
+      bottom: 14px;
+      left: 14px;
+      z-index: 20;
+      border-radius: 20px;
+      padding: 7px 14px;
+      background: var(--bg-panel);
+    }
+    /* Modal for 2D PDF Overlay & UE5 Gallery */
+    #modalOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(2, 6, 23, 0.88);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #modalBox {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      max-width: 1100px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 18px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .gallery-card {
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .gallery-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: zoom-in;
+    }
+    .gallery-card .cap {
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text);
+    }
+    /* Touch Joysticks for Mobile / Tablet */
+    .joy-zone {
+      position: fixed;
+      bottom: 58px;
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      z-index: 15;
+      display: none;
+      touch-action: none;
+    }
+    @media (pointer: coarse) {
+      .joy-zone { display: block; }
+    }
+    #joyLeft { left: 18px; }
+    #joyRight { right: 18px; }
+    .joy-knob {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 40px; height: 40px;
+      margin-left: -20px; margin-top: -20px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.7);
+      border: 2px solid #fff;
+      pointer-events: none;
+    }
   </style>
   <script type="importmap">
     {
@@ -29,16 +206,104 @@
   </script>
 </head>
 <body>
+  <div id="crosshair"></div>
+
   <div id="hud">
-    <div><strong>PDF2BIM WebXR + Mazak QA</strong></div>
-    <label for="projectSelect">Projekt:</label>
+    <h1>PDF2BIM 3D / WebXR Viewer (v2.0)</h1>
+    <div class="subtitle">Uniwersalny kompilator BIM z <code>scene_graph.json</code> • PBR 2K • Otwierane drzwi • Schody • Mazak QA</div>
+
+    <label for="projectSelect" class="section-title">Wybierz Projekt (Dom Testowy):</label>
     <select id="projectSelect">
-      <option value="dom_w_gnieznikach">dom_w_gnieznikach</option>
-      <option value="amor_woe1092">amor_woe1092</option>
+      <option value="dom_w_gnieznikach">Dom 1: Dom w gnieźnikach (E) — Archon (Wektor PDF + DXF)</option>
+      <option value="amor_woe1092">Dom 2: Amor WOE1092 — Extradom (Raster PDF + Dach L)</option>
     </select>
-    <button id="flyBtn" type="button">Tryb: Spacer [F]</button>
-    <div id="statusText" style="margin-top:8px;font-size:13px;">Ładowanie modelu GLB...</div>
-    <div id="markersList" style="margin-top:8px;max-height:180px;overflow-y:auto;font-size:12px;"></div>
+
+    <div id="statusText" style="margin-top:8px;font-size:12px;color:#38bdf8;font-weight:600;">Ładowanie modelu GLB...</div>
+
+    <div class="section">
+      <div class="section-title">Tryb Poruszania & Interakcja</div>
+      <div class="btn-grid">
+        <button id="flyBtn" type="button">🚶 Tryb: Spacer [F]</button>
+        <button id="doorsBtn" type="button" class="green-btn">🚪 Drzwi: Otwórz [O]</button>
+      </div>
+      <div class="btn-grid-3" style="margin-top:5px;">
+        <button id="viewFullBtn" type="button" class="active">🏠 Pełny 3D</button>
+        <button id="viewCutRoofBtn" type="button">📐 Bez dachu</button>
+        <button id="viewCutAtticBtn" type="button">🧱 Tylko Parter</button>
+      </div>
+      <div class="btn-grid" style="margin-top:5px;">
+        <button id="overlayModalBtn" type="button">🗺️ Nakładka 2D PDF</button>
+        <button id="rendersModalBtn" type="button">📸 Rendery UE5 / QA</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Kamery Zewnętrzne</div>
+      <div class="btn-grid">
+        <button id="camFrontBtn" type="button">☀️ Elewacja Frontowa</button>
+        <button id="camGardenBtn" type="button">🌳 Widok z Ogrodu</button>
+        <button id="camBirdBtn" type="button">🦅 Lot Ptaka (Z góry)</button>
+        <button id="camStairsBtn" type="button">🪜 Przy Schodach</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Teleport do Pomieszczeń — Parter</div>
+      <div id="roomsParterGrid" class="btn-grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Teleport do Pomieszczeń — Poddasze</div>
+      <div id="roomsPoddaszeGrid" class="btn-grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Mazak Laserowy QA (Prawy Klik lub [M])</div>
+      <div style="display:flex;gap:5px;">
+        <input id="markerNoteInput" type="text" placeholder="Notatka QA dla wskazanego elementu..." style="flex:1;" />
+        <button id="shootMarkerBtn" type="button">🎯 Oznacz [M]</button>
+      </div>
+      <div id="markersList" style="margin-top:8px;max-height:140px;overflow-y:auto;font-size:11.5px;"></div>
+    </div>
+  </div>
+
+  <div id="infoPanel">
+    <div class="section-title" style="margin-top:0;">Metryka Projektu (`scene_graph.json`)</div>
+    <table class="kv-table" id="projectStatsTable"></table>
+
+    <div class="section">
+      <div class="section-title">Inspektor Elementu BIM (Pod Kursorem)</div>
+      <div id="hoveredElementBox" style="color:var(--muted);font-size:11.5px;">
+        Najedź kursorem lub kliknij na ścianę, drzwi, okno, strop lub połać dachu, aby odczytać metadane BIM z <code>GLB extras</code>.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Sterowanie (Przeglądarka / VR)</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.5;">
+        • <b>W, A, S, D / Strzałki</b> — chodzenie / lot (Shift = szybciej)<br/>
+        • <b>Mysz (Przeciągnij LPM)</b> — rozglądanie 360°<br/>
+        • <b>Klik LPM na drzwi</b> lub <b>[O]</b> — otwieranie/zamykanie drzwi<br/>
+        • <b>[F]</b> — przełącz Spacer (z kolizjami i schodami) / Lot (Q/E góra/dół)<br/>
+        • <b>PPM / [M]</b> — postaw punkt Mazaka Laserowego QA<br/>
+        • <b>ENTER VR</b> (na dole) — pełny tryb gogli Meta Quest 3 WebXR
+      </div>
+    </div>
+  </div>
+
+  <button id="toggleHudBtn" type="button">👁️ Ukryj/Pokaż Panel [H]</button>
+
+  <div id="joyLeft" class="joy-zone"><div class="joy-knob" id="joyLeftKnob"></div></div>
+  <div id="joyRight" class="joy-zone"><div class="joy-knob" id="joyRightKnob"></div></div>
+
+  <div id="modalOverlay">
+    <div id="modalBox">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h1 id="modalTitle" style="font-size:16px;">Podgląd</h1>
+        <button id="closeModalBtn" type="button">✕ Zamknij [ESC]</button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
   </div>
 
   <script type="module">
@@ -46,49 +311,376 @@
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { VRButton } from 'three/addons/webxr/VRButton.js';
 
+    // Resolve repository root dynamically so it works on GitHub Pages (/pdf2bim/...) and local server (/web_vr/...)
+    const REPO_BASE = window.location.pathname.includes('/web_vr/')
+      ? window.location.pathname.split('/web_vr/')[0]
+      : window.location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '');
+
     const params = new URLSearchParams(window.location.search);
     let currentProject = params.get('project') || 'dom_w_gnieznikach';
     const selectEl = document.getElementById('projectSelect');
     selectEl.value = currentProject;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xdce8f2);
-    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 250);
+    scene.background = new THREE.Color(0xc8ddf0);
+    scene.fog = new THREE.FogExp2(0xc8ddf0, 0.008);
+
+    const camera = new THREE.PerspectiveCamera(68, window.innerWidth / window.innerHeight, 0.05, 300);
+    camera.rotation.order = 'YXZ';
     const playerRig = new THREE.Group();
     playerRig.add(camera);
     scene.add(playerRig);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
     renderer.xr.enabled = true;
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(VRButton.createButton(renderer));
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x556070, 1.1));
-    const dirLight = new THREE.DirectionalLight(0xfff6e5, 1.4);
-    dirLight.position.set(14, 24, 16);
-    scene.add(dirLight);
+    // Architectural Daylight + Soft Fill
+    const hemiLight = new THREE.HemisphereLight(0xf4f8ff, 0x6b7c65, 1.15);
+    scene.add(hemiLight);
+
+    const sunLight = new THREE.DirectionalLight(0xfff5e4, 2.1);
+    sunLight.position.set(18, 28, 16);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.set(2048, 2048);
+    sunLight.shadow.camera.near = 1;
+    sunLight.shadow.camera.far = 80;
+    const dCam = 24;
+    sunLight.shadow.camera.left = -dCam;
+    sunLight.shadow.camera.right = dCam;
+    sunLight.shadow.camera.top = dCam;
+    sunLight.shadow.camera.bottom = -dCam;
+    sunLight.shadow.bias = -0.0005;
+    scene.add(sunLight);
+
+    const fillLight = new THREE.DirectionalLight(0xdbeafe, 0.55);
+    fillLight.position.set(-16, 14, -18);
+    scene.add(fillLight);
+
+    // PBR Texture Loader & Cache
+    const texLoader = new THREE.TextureLoader();
+    const texCache = new Map();
+    function loadTiledTexture(filename, repeatPerMeter = 0.5, isColor = true) {
+      const key = `${filename}:${repeatPerMeter}:${isColor}`;
+      if (texCache.has(key)) return texCache.get(key);
+      const tex = texLoader.load(`${REPO_BASE}/web_vr/textures/${filename}`);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(repeatPerMeter, repeatPerMeter);
+      tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+      if (isColor) tex.colorSpace = THREE.SRGBColorSpace;
+      texCache.set(key, tex);
+      return tex;
+    }
+
+    function buildPBRMaterialsCatalog() {
+      return {
+        stucco_ext: new THREE.MeshStandardMaterial({
+          name: 'M_Wall_Plaster_White_Ext',
+          color: new THREE.Color(0xf5f3ee),
+          map: loadTiledTexture('facade_stucco_plaster_diffuse.jpg', 0.45, true),
+          normalMap: loadTiledTexture('facade_stucco_plaster_nor_gl.jpg', 0.45, false),
+          normalScale: new THREE.Vector2(0.55, 0.55),
+          roughnessMap: loadTiledTexture('facade_stucco_plaster_rough.jpg', 0.45, false),
+          roughness: 0.88,
+          metalness: 0.0,
+        }),
+        gypsum_int: new THREE.MeshStandardMaterial({
+          name: 'M_Wall_Gypsum_Int',
+          color: new THREE.Color(0xfaf8f5),
+          map: loadTiledTexture('painted_plaster_wall_diffuse.jpg', 0.5, true),
+          normalMap: loadTiledTexture('painted_plaster_wall_nor_gl.jpg', 0.5, false),
+          normalScale: new THREE.Vector2(0.15, 0.15),
+          roughness: 0.84,
+          metalness: 0.0,
+        }),
+        timber_cladding: new THREE.MeshStandardMaterial({
+          name: 'M_Facade_Cladding_Oak',
+          color: new THREE.Color(0xffffff),
+          map: loadTiledTexture('facade_timber_cladding_diffuse.jpg', 0.55, true),
+          normalMap: loadTiledTexture('facade_timber_cladding_nor_gl.jpg', 0.55, false),
+          normalScale: new THREE.Vector2(0.7, 0.7),
+          roughnessMap: loadTiledTexture('facade_timber_cladding_rough.jpg', 0.55, false),
+          roughness: 0.76,
+          metalness: 0.0,
+        }),
+        roof_anthracite: new THREE.MeshStandardMaterial({
+          name: 'M_Roof_Tile_Anthracite',
+          color: new THREE.Color(0x3a3e44),
+          map: loadTiledTexture('roof_tiles_anthracite_diffuse.jpg', 0.65, true),
+          normalMap: loadTiledTexture('roof_tiles_anthracite_nor_gl.jpg', 0.65, false),
+          normalScale: new THREE.Vector2(0.85, 0.85),
+          roughnessMap: loadTiledTexture('roof_tiles_anthracite_rough.jpg', 0.65, false),
+          roughness: 0.62,
+          metalness: 0.08,
+        }),
+        roof_flashing: new THREE.MeshStandardMaterial({
+          name: 'M_Roof_Flashing_Anthracite',
+          color: new THREE.Color(0x22262b),
+          roughness: 0.36,
+          metalness: 0.65,
+        }),
+        window_frame: new THREE.MeshStandardMaterial({
+          name: 'M_Window_Frame_Anthracite',
+          color: new THREE.Color(0x26292e),
+          roughness: 0.38,
+          metalness: 0.35,
+        }),
+        door_oak: new THREE.MeshStandardMaterial({
+          name: 'M_Door_Veneer_Oak',
+          color: new THREE.Color(0xd8b589),
+          map: loadTiledTexture('oak_countertop_diffuse.jpg', 0.6, true),
+          normalMap: loadTiledTexture('oak_veneer_nor_gl.jpg', 0.6, false),
+          normalScale: new THREE.Vector2(0.35, 0.35),
+          roughnessMap: loadTiledTexture('oak_veneer_rough.jpg', 0.6, false),
+          roughness: 0.52,
+          metalness: 0.0,
+        }),
+        parquet_oak: new THREE.MeshStandardMaterial({
+          name: 'M_Floor_Parquet_Oak',
+          color: new THREE.Color(0xe2c79e),
+          map: loadTiledTexture('laminate_floor_02_diffuse.jpg', 0.55, true),
+          normalMap: loadTiledTexture('laminate_floor_02_nor_gl.jpg', 0.55, false),
+          normalScale: new THREE.Vector2(0.4, 0.4),
+          roughnessMap: loadTiledTexture('laminate_floor_02_rough.jpg', 0.55, false),
+          roughness: 0.48,
+          metalness: 0.0,
+        }),
+        tile_gres: new THREE.MeshStandardMaterial({
+          name: 'M_Floor_Tile_Gres',
+          color: new THREE.Color(0xd5d8dc),
+          map: loadTiledTexture('concrete_tiles_diffuse.jpg', 0.55, true),
+          normalMap: loadTiledTexture('concrete_tiles_nor_gl.jpg', 0.55, false),
+          normalScale: new THREE.Vector2(0.35, 0.35),
+          roughnessMap: loadTiledTexture('concrete_tiles_rough.jpg', 0.55, false),
+          roughness: 0.42,
+          metalness: 0.05,
+        }),
+        terrace_paver: new THREE.MeshStandardMaterial({
+          name: 'M_Terrace_Paver_Grey',
+          color: new THREE.Color(0xb8bec6),
+          map: loadTiledTexture('concrete_pavers_02_diffuse.jpg', 0.55, true),
+          normalMap: loadTiledTexture('concrete_pavers_02_nor_gl.jpg', 0.55, false),
+          normalScale: new THREE.Vector2(0.6, 0.6),
+          roughnessMap: loadTiledTexture('concrete_pavers_02_rough.jpg', 0.55, false),
+          roughness: 0.78,
+          metalness: 0.0,
+        }),
+        plinth_grey: new THREE.MeshStandardMaterial({
+          name: 'M_Plinth_Mosaic_Grey',
+          color: new THREE.Color(0x5a6068),
+          map: loadTiledTexture('facade_stucco_plaster_diffuse.jpg', 0.8, true),
+          normalMap: loadTiledTexture('facade_stucco_plaster_nor_gl.jpg', 0.8, false),
+          roughness: 0.85,
+          metalness: 0.0,
+        }),
+        glass_clear: new THREE.MeshPhysicalMaterial({
+          name: 'M_Glass_Clear',
+          color: new THREE.Color(0xdbeafe),
+          transparent: true,
+          opacity: 0.32,
+          roughness: 0.05,
+          metalness: 0.1,
+          reflectivity: 0.9,
+          depthWrite: false,
+        }),
+        chrome_handle: new THREE.MeshStandardMaterial({
+          name: 'M_Chrome_Handle',
+          color: new THREE.Color(0xe2e8f0),
+          roughness: 0.2,
+          metalness: 0.9,
+        }),
+        lawn_turf: new THREE.MeshStandardMaterial({
+          name: 'M_Garden_Lawn_Turf',
+          color: new THREE.Color(0x88a878),
+          map: loadTiledTexture('lawn_turf_2k_diffuse.jpg', 0.32, true),
+          normalMap: loadTiledTexture('lawn_turf_2k_nor_gl.jpg', 0.32, false),
+          normalScale: new THREE.Vector2(0.65, 0.65),
+          roughnessMap: loadTiledTexture('lawn_turf_2k_rough.jpg', 0.32, false),
+          roughness: 0.92,
+          metalness: 0.0,
+        }),
+        gravel_strip: new THREE.MeshStandardMaterial({
+          name: 'M_Perimeter_Gravel',
+          color: new THREE.Color(0xc4c9ce),
+          map: loadTiledTexture('gravel_pebbles_diffuse.jpg', 1.2, true),
+          normalMap: loadTiledTexture('gravel_pebbles_nor_gl.jpg', 1.2, false),
+          roughness: 0.88,
+          metalness: 0.0,
+        }),
+      };
+    }
+    const pbrCatalog = buildPBRMaterialsCatalog();
+
+    // Generate crisp architectural flat normals + metric Box UVs on any indexed BufferGeometry
+    function applyMetricBoxUVsAndFlatNormals(mesh) {
+      if (!mesh.geometry) return;
+      let geom = mesh.geometry;
+      if (geom.index) {
+        geom = geom.toNonIndexed();
+      }
+      geom.computeVertexNormals();
+      const pos = geom.attributes.position;
+      const norm = geom.attributes.normal;
+      const uvs = new Float32Array(pos.count * 2);
+      for (let i = 0; i < pos.count; i++) {
+        const vx = pos.getX(i), vy = pos.getY(i), vz = pos.getZ(i);
+        const nx = Math.abs(norm.getX(i)), ny = Math.abs(norm.getY(i)), nz = Math.abs(norm.getZ(i));
+        let u = 0, v = 0;
+        if (ny >= nx && ny >= nz) {
+          // Horizontal surface (floor, ceiling, terrace, roof gentle slope)
+          u = vx;
+          v = -vz;
+        } else if (nx >= nz) {
+          // East/West vertical wall
+          u = -vz;
+          v = vy;
+        } else {
+          // North/South vertical wall
+          u = vx;
+          v = vy;
+        }
+        uvs[i * 2] = u;
+        uvs[i * 2 + 1] = v;
+      }
+      geom.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+      mesh.geometry = geom;
+    }
+
+    function pickPBRMaterialForNode(node, extras) {
+      const cat = extras.category || '';
+      const matId = extras.material_id || '';
+      const role = extras.layer_role || '';
+      const wallType = extras.wall_type || '';
+
+      if (cat === 'window_glass') return pbrCatalog.glass_clear;
+      if (cat === 'window_frame' || matId === 'M_Window_Frame_Anthracite') return pbrCatalog.window_frame;
+      if (cat === 'door_handle' || cat === 'stair_railing') return pbrCatalog.chrome_handle;
+      if (cat === 'door_leaf' || cat === 'door_frame' || cat === 'stair_step' || cat === 'stair_landing' || matId === 'M_Door_Veneer_Oak') {
+        return pbrCatalog.door_oak;
+      }
+      if (cat === 'roof_flashing') return pbrCatalog.roof_flashing;
+      if (cat === 'roof_plane' || matId === 'M_Roof_Tile_Anthracite') return pbrCatalog.roof_anthracite;
+      if (cat === 'roof_soffit' || cat === 'roof_boarding' || matId === 'M_Facade_Cladding_Oak') {
+        return pbrCatalog.timber_cladding;
+      }
+      if (cat === 'plinth') return pbrCatalog.plinth_grey;
+      if (cat === 'terrace' || matId === 'M_Terrace_Paver_Grey') return pbrCatalog.terrace_paver;
+      if (cat === 'room_floor') {
+        return matId === 'M_Floor_Tile_Gres' ? pbrCatalog.tile_gres : pbrCatalog.parquet_oak;
+      }
+      if (cat === 'ceiling_liner' || cat === 'slab') return pbrCatalog.gypsum_int;
+      if (cat === 'wall_segment' || cat === 'chimney') {
+        if (matId === 'M_Facade_Cladding_Oak') return pbrCatalog.timber_cladding;
+        if (role === 'finish_ext' && wallType === 'exterior') return pbrCatalog.stucco_ext;
+        return pbrCatalog.gypsum_int;
+      }
+      return null;
+    }
 
     // Dynamic state populated strictly from GLB node.userData (extras) & scene_graph.json
+    let currentSceneGroup = null;
+    let currentEnvironmentGroup = null;
+    let currentMarkersGroup = new THREE.Group();
+    scene.add(currentMarkersGroup);
+
+    let currentSceneGraph = null;
     let collidableBoxes = [];
     let stairSteps = [];
     let interactiveDoors = [];
+    let pickableMeshes = [];
     let levelFloors = [];
     let flyMode = false;
+    let allDoorsOpen = false;
+    let viewCutMode = 'full'; // 'full' | 'no_roof' | 'parter_only'
     const EYE_HEIGHT = 1.65;
+
+    function buildDynamicEnvironment(sgData) {
+      if (currentEnvironmentGroup) {
+        scene.remove(currentEnvironmentGroup);
+      }
+      currentEnvironmentGroup = new THREE.Group();
+      const [bx0, by0, bx1, by1] = sgData.coordinate_system.structural_bbox_xy;
+      const cx = 0.5 * (bx0 + bx1);
+      const cy = 0.5 * (by0 + by1);
+      const spanX = bx1 - bx0;
+      const spanY = by1 - by0;
+
+      // 1. Lush Garden Lawn surrounding the building (at Z = -0.26m so it sits cleanly below plinth/terrace)
+      const lawnGeo = new THREE.PlaneGeometry(spanX + 48, spanY + 48);
+      lawnGeo.rotateX(-Math.PI / 2);
+      const lawnMesh = new THREE.Mesh(lawnGeo, pbrCatalog.lawn_turf);
+      lawnMesh.position.set(cx, -0.25, -cy);
+      lawnMesh.receiveShadow = true;
+      applyMetricBoxUVsAndFlatNormals(lawnMesh);
+      currentEnvironmentGroup.add(lawnMesh);
+
+      // 2. Perimeter Gravel Strip (opaska żwirowa 55 cm wokół budynku)
+      const gravelMargin = 0.75;
+      const gravelGeo = new THREE.BoxGeometry(spanX + gravelMargin * 2, 0.04, spanY + gravelMargin * 2);
+      const gravelMesh = new THREE.Mesh(gravelGeo, pbrCatalog.gravel_strip);
+      gravelMesh.position.set(cx, -0.23, -cy);
+      gravelMesh.receiveShadow = true;
+      applyMetricBoxUVsAndFlatNormals(gravelMesh);
+      currentEnvironmentGroup.add(gravelMesh);
+
+      // 3. Entrance Paved Walkway (front approach)
+      const walkGeo = new THREE.BoxGeometry(1.8, 0.05, 6.0);
+      const walkMesh = new THREE.Mesh(walkGeo, pbrCatalog.terrace_paver);
+      walkMesh.position.set(cx, -0.22, -(by0 - 3.0));
+      walkMesh.receiveShadow = true;
+      applyMetricBoxUVsAndFlatNormals(walkMesh);
+      currentEnvironmentGroup.add(walkMesh);
+
+      scene.add(currentEnvironmentGroup);
+    }
 
     function buildDynamicSceneMetadata(gltfRoot, sceneGraph) {
       collidableBoxes = [];
       stairSteps = [];
       interactiveDoors = [];
+      pickableMeshes = [];
       levelFloors = (sceneGraph.levels || []).map(l => ({ id: l.id, z_floor: l.z_floor }));
+
+      // build lookup of door opening angles from sceneGraph.openings
+      const doorMetaById = {};
+      for (const op of sceneGraph.openings || []) {
+        doorMetaById[op.id] = op;
+      }
 
       const toPivotWrap = [];
       gltfRoot.traverse(node => {
+        const extras = (node.userData && Object.keys(node.userData).length > 0)
+          ? node.userData
+          : (node.parent && node.parent.userData ? node.parent.userData : {});
+
+        if (node.isMesh) {
+          node.userData = { ...extras, ...node.userData };
+          // Hide internal insulation/structural wall layers if exterior/interior finish layers exist, or keep all visible except neighbor_building
+          if (node.userData.category === 'neighbor_building' || node.userData.category === 'mep_socket') {
+            node.visible = false;
+          } else {
+            applyMetricBoxUVsAndFlatNormals(node);
+            const pbrMat = pickPBRMaterialForNode(node, node.userData);
+            if (pbrMat) node.material = pbrMat;
+            node.castShadow = node.userData.category !== 'window_glass';
+            node.receiveShadow = true;
+            pickableMeshes.push(node);
+          }
+        }
+
         if (!node.isMesh && !node.userData) return;
-        const extras = node.userData || {};
         if (extras.category === 'door_leaf' && Array.isArray(extras.hinge_xy)) {
-          toPivotWrap.push({ node, extras });
+          if (node.isMesh || (node.children && node.children.length > 0)) {
+            toPivotWrap.push({ node, extras });
+          }
         } else if (extras.category === 'stair_step' || extras.category === 'stair_landing') {
           const box = new THREE.Box3().setFromObject(node);
           stairSteps.push({ box, z_top: Number(extras.z_top || 0), element_id: extras.element_id });
@@ -97,15 +689,26 @@
         }
       });
 
-      // Wrap door leaves in a pivot group located at exact hinge_xy (in Blender/BIM XY -> Three.js X, -Y)
+      // Deduplicate door pivot wrapping per element_id
+      const wrappedDoorIds = new Set();
       for (const { node, extras } of toPivotWrap) {
+        const doorId = extras.element_id || node.name;
+        if (wrappedDoorIds.has(doorId)) continue;
+        wrappedDoorIds.add(doorId);
+
         const [hx, hy] = extras.hinge_xy;
+        const opSpec = doorMetaById[doorId] || {};
+        const swingDeg = Number(opSpec.swing_angle_deg || 90);
+        const swingDir = opSpec.swing_dir === 'right' ? -1 : 1;
+
         const pivotGroup = new THREE.Group();
         pivotGroup.name = `Pivot_${node.name}`;
         pivotGroup.position.set(hx, 0, -hy);
         pivotGroup.userData = {
           ...extras,
           isOpen: false,
+          targetAngle: 0,
+          openAngleRad: THREE.MathUtils.degToRad(swingDeg * swingDir),
           closedBox: new THREE.Box3().setFromObject(node)
         };
         node.parent.add(pivotGroup);
@@ -133,7 +736,14 @@
       }
       for (const doorPivot of interactiveDoors) {
         if (!doorPivot.userData.isOpen && doorPivot.userData.closedBox.intersectsSphere(playerSphere)) {
-          return nextPos;
+          const closest = new THREE.Vector3();
+          doorPivot.userData.closedBox.clampPoint(nextPos, closest);
+          const push = nextPos.clone().sub(closest);
+          push.y = 0;
+          const dist = push.length();
+          if (dist > 1e-4 && dist < radius) {
+            nextPos.addScaledVector(push.normalize(), radius - dist);
+          }
         }
       }
       return nextPos;
@@ -143,36 +753,200 @@
       if (flyMode) return;
       for (const st of stairSteps) {
         if (
-          playerPos.x >= st.box.min.x - 0.08 && playerPos.x <= st.box.max.x + 0.08 &&
-          playerPos.z >= st.box.min.z - 0.08 && playerPos.z <= st.box.max.z + 0.08
+          playerPos.x >= st.box.min.x - 0.12 && playerPos.x <= st.box.max.x + 0.12 &&
+          playerPos.z >= st.box.min.z - 0.12 && playerPos.z <= st.box.max.z + 0.12
         ) {
-          playerPos.y = st.z_top + EYE_HEIGHT;
+          const stepEyeY = st.z_top + EYE_HEIGHT;
+          if (Math.abs(playerPos.y - stepEyeY) <= 1.25) {
+            playerPos.y += (stepEyeY - playerPos.y) * 0.35;
+            return;
+          }
+        }
+      }
+      // Snap to nearest level floor
+      if (levelFloors.length > 0) {
+        const footZ = playerPos.y - EYE_HEIGHT;
+        let bestFloor = levelFloors[0].z_floor;
+        let bestDist = Math.abs(footZ - bestFloor);
+        for (const lf of levelFloors) {
+          const d = Math.abs(footZ - lf.z_floor);
+          if (d < bestDist) {
+            bestDist = d;
+            bestFloor = lf.z_floor;
+          }
+        }
+        playerPos.y += ((bestFloor + EYE_HEIGHT) - playerPos.y) * 0.25;
+      }
+    }
+
+    function toggleDoorPivot(doorPivot) {
+      doorPivot.userData.isOpen = !doorPivot.userData.isOpen;
+      doorPivot.userData.targetAngle = doorPivot.userData.isOpen ? doorPivot.userData.openAngleRad : 0;
+    }
+
+    function toggleAllDoors() {
+      allDoorsOpen = !allDoorsOpen;
+      for (const dp of interactiveDoors) {
+        dp.userData.isOpen = allDoorsOpen;
+        dp.userData.targetAngle = allDoorsOpen ? dp.userData.openAngleRad : 0;
+      }
+      document.getElementById('doorsBtn').textContent = allDoorsOpen
+        ? '🚪 Drzwi: Zamknij [O]'
+        : '🚪 Drzwi: Otwórz [O]';
+    }
+
+    function applyViewCutMode(mode) {
+      viewCutMode = mode;
+      document.getElementById('viewFullBtn').classList.toggle('active', mode === 'full');
+      document.getElementById('viewCutRoofBtn').classList.toggle('active', mode === 'no_roof');
+      document.getElementById('viewCutAtticBtn').classList.toggle('active', mode === 'parter_only');
+      if (!currentSceneGroup) return;
+      currentSceneGroup.traverse(node => {
+        if (!node.isMesh) return;
+        const cat = node.userData.category || '';
+        const lvl = node.userData.level_id || '';
+        if (cat === 'neighbor_building' || cat === 'mep_socket') {
+          node.visible = false;
           return;
+        }
+        const isRoof = cat.startsWith('roof_') || cat === 'chimney' || cat === 'ceiling_liner';
+        if (mode === 'full') {
+          node.visible = true;
+        } else if (mode === 'no_roof') {
+          node.visible = !isRoof;
+        } else if (mode === 'parter_only') {
+          node.visible = !isRoof && lvl !== 'poddasze' && cat !== 'slab';
+        }
+      });
+    }
+
+    // Compute polygon centroid in BIM XY
+    function computePolygonCentroidXY(poly) {
+      if (!Array.isArray(poly) || poly.length === 0) return [0, 0];
+      let sx = 0, sy = 0;
+      for (const pt of poly) {
+        sx += Number(pt[0]);
+        sy += Number(pt[1]);
+      }
+      return [sx / poly.length, sy / poly.length];
+    }
+
+    function teleportToBIM(x_bim, y_bim, z_floor, yawDeg = 0, pitchDeg = 0, enableFly = false) {
+      flyMode = enableFly;
+      document.getElementById('flyBtn').textContent = `🚶 Tryb: ${flyMode ? 'Lot [F]' : 'Spacer [F]'}`;
+      playerRig.position.set(x_bim, z_floor + (enableFly ? 0 : EYE_HEIGHT), -y_bim);
+      camera.rotation.y = THREE.MathUtils.degToRad(yawDeg);
+      camera.rotation.x = THREE.MathUtils.degToRad(pitchDeg);
+    }
+
+    function populateProjectUI(sgData) {
+      const [bx0, by0, bx1, by1] = sgData.coordinate_system.structural_bbox_xy;
+      const cx = 0.5 * (bx0 + bx1);
+      const cy = 0.5 * (by0 + by1);
+      const spanX = (bx1 - bx0).toFixed(2);
+      const spanY = (by1 - by0).toFixed(2);
+
+      const levelZMap = {};
+      for (const lvl of sgData.levels || []) {
+        levelZMap[lvl.id] = Number(lvl.z_floor || 0);
+      }
+
+      // Project stats table
+      const totalFloorArea = (sgData.rooms || []).reduce((acc, r) => acc + Number(r.target_floor_area_m2 || 0), 0);
+      const totalUsableArea = (sgData.rooms || []).reduce((acc, r) => acc + Number(r.target_usable_area_m2 || 0), 0);
+      const statsHtml = `
+        <tr><td>Projekt</td><td>${sgData.project_name}</td></tr>
+        <tr><td>Wymiar muru (AABB)</td><td>${spanX} × ${spanY} m</td></tr>
+        <tr><td>Liczba kondygnacji</td><td>${(sgData.levels || []).length} (Parter + Poddasze)</td></tr>
+        <tr><td>Liczba pomieszczeń</td><td>${(sgData.rooms || []).length}</td></tr>
+        <tr><td>Pow. podłogi / użytkowa</td><td>${totalFloorArea.toFixed(2)} / ${totalUsableArea.toFixed(2)} m²</td></tr>
+        <tr><td>Ściany / Otwory</td><td>${(sgData.walls || []).length} ścian / ${(sgData.openings || []).length} otworów</td></tr>
+        <tr><td>Kąt nachylenia dachu</td><td>${sgData.roof ? sgData.roof.main_pitch_deg + '°' : '-'}</td></tr>
+      `;
+      document.getElementById('projectStatsTable').innerHTML = statsHtml;
+
+      // Exterior / preset buttons
+      document.getElementById('camFrontBtn').onclick = () => {
+        applyViewCutMode('full');
+        teleportToBIM(cx, by0 - 7.5, 0.0, 0, 6, false);
+      };
+      document.getElementById('camGardenBtn').onclick = () => {
+        applyViewCutMode('full');
+        teleportToBIM(cx - 2.0, by1 + 8.0, 0.0, 170, 5, false);
+      };
+      document.getElementById('camBirdBtn').onclick = () => {
+        applyViewCutMode('no_roof');
+        teleportToBIM(cx, by0 - 5.5, 11.5, 0, -48, true);
+      };
+      document.getElementById('camStairsBtn').onclick = () => {
+        applyViewCutMode('full');
+        const st = (sgData.stairs || [])[0];
+        if (st && st.flights && st.flights[0]) {
+          const [sx, sy] = st.flights[0].start_xy;
+          teleportToBIM(sx, sy - 0.8, 0.0, 0, 0, false);
+        } else {
+          teleportToBIM(cx, cy, 0.0, 0, 0, false);
+        }
+      };
+
+      // Room teleport buttons
+      const parterGrid = document.getElementById('roomsParterGrid');
+      const poddaszeGrid = document.getElementById('roomsPoddaszeGrid');
+      parterGrid.innerHTML = '';
+      poddaszeGrid.innerHTML = '';
+
+      for (const room of sgData.rooms || []) {
+        const [rx, ry] = computePolygonCentroidXY(room.polygon_xy);
+        const zFloor = levelZMap[room.level_id] ?? 0.0;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'room-btn';
+        btn.title = `${room.name} (${room.target_usable_area_m2} m²)`;
+        btn.textContent = `${room.name} (${Number(room.target_usable_area_m2).toFixed(1)}m²)`;
+        btn.onclick = () => {
+          teleportToBIM(rx, ry, zFloor, 0, 0, false);
+        };
+        if (room.level_id === 'parter') {
+          parterGrid.appendChild(btn);
+        } else {
+          poddaszeGrid.appendChild(btn);
         }
       }
     }
 
-    async function refreshMarkersUI(slug) {
-      const res = await fetch(`/api/project/${slug}/markers`);
-      if (!res.ok) return;
-      const store = await res.json();
+    // Markers QA (supports both Local API Server AND static GitHub Pages fallback with localStorage)
+    let currentMarkers = [];
+    function renderMarkers3DAndList(slug) {
+      currentMarkersGroup.clear();
       const listEl = document.getElementById('markersList');
       listEl.innerHTML = '';
-      for (const m of store.markers || []) {
+
+      for (const m of currentMarkers) {
         const row = document.createElement('div');
-        row.style.marginTop = '4px';
-        row.innerHTML = `<code>${m.marker_id}</code> [${m.element_id}] ${m.note} <span class="marker-badge status-${m.status}">${m.status}</span>`;
+        row.style.marginTop = '5px';
+        row.style.padding = '4px 6px';
+        row.style.background = 'rgba(255,255,255,0.05)';
+        row.style.borderRadius = '6px';
+        row.innerHTML = `<code>${m.marker_id}</code> <b>[${m.element_id}]</b> ${m.note} <span class="marker-badge status-${m.status}">${m.status}</span>`;
+
+        // 3D glowing sphere marker in scene
+        if (Array.isArray(m.hit_xyz) && m.hit_xyz.length === 3 && m.status !== 'verified') {
+          const [mx, my, mz] = m.hit_xyz;
+          const sphereGeo = new THREE.SphereGeometry(0.11, 16, 16);
+          const color = m.status === 'open' ? 0xef4444 : 0xf59e0b;
+          const sphereMat = new THREE.MeshBasicMaterial({ color });
+          const sphereMesh = new THREE.Mesh(sphereGeo, sphereMat);
+          sphereMesh.position.set(mx, mz, -my);
+          currentMarkersGroup.add(sphereMesh);
+        }
+
         if (m.status !== 'verified') {
           const btn = document.createElement('button');
-          btn.textContent = '✓ Zweryfikowane';
+          btn.textContent = '✓ Zweryfikuj';
           btn.style.marginLeft = '6px';
+          btn.style.padding = '2px 6px';
           btn.onclick = async () => {
-            await fetch(`/api/project/${slug}/markers/verify`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ marker_id: m.marker_id })
-            });
-            refreshMarkersUI(slug);
+            await verifyMarker(slug, m.marker_id);
           };
           row.appendChild(btn);
         }
@@ -180,33 +954,424 @@
       }
     }
 
+    async function refreshMarkersUI(slug) {
+      const lsKey = `pdf2bim_markers_${slug}`;
+      try {
+        const res = await fetch(`${REPO_BASE}/api/project/${slug}/markers`);
+        if (res.ok) {
+          const store = await res.json();
+          currentMarkers = store.markers || [];
+          renderMarkers3DAndList(slug);
+          return;
+        }
+      } catch (_) {}
+
+      // Fallback for static GitHub Pages
+      try {
+        const cached = localStorage.getItem(lsKey);
+        if (cached) {
+          currentMarkers = JSON.parse(cached);
+          renderMarkers3DAndList(slug);
+          return;
+        }
+        const staticRes = await fetch(`${REPO_BASE}/projects/${slug}/review/markers.json`);
+        if (staticRes.ok) {
+          const store = await staticRes.json();
+          currentMarkers = store.markers || [];
+          renderMarkers3DAndList(slug);
+        }
+      } catch (_) {}
+    }
+
+    async function verifyMarker(slug, markerId) {
+      const lsKey = `pdf2bim_markers_${slug}`;
+      try {
+        const res = await fetch(`${REPO_BASE}/api/project/${slug}/markers/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ marker_id: markerId })
+        });
+        if (res.ok) {
+          await refreshMarkersUI(slug);
+          return;
+        }
+      } catch (_) {}
+      // Static fallback
+      for (const m of currentMarkers) {
+        if (m.marker_id === markerId) m.status = 'verified';
+      }
+      localStorage.setItem(lsKey, JSON.stringify(currentMarkers));
+      renderMarkers3DAndList(slug);
+    }
+
+    async function createLaserMarkerAtCrosshair() {
+      if (pickableMeshes.length === 0) return;
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+      const hits = raycaster.intersectObjects(pickableMeshes, false);
+      if (hits.length === 0) return;
+      const hit = hits[0];
+      const ext = hit.object.userData || {};
+      const pt = hit.point;
+      const hitBimXYZ = [
+        Number(pt.x.toFixed(3)),
+        Number((-pt.z).toFixed(3)),
+        Number(pt.y.toFixed(3)),
+      ];
+      const camBimXYZ = [
+        Number(playerRig.position.x.toFixed(3)),
+        Number((-playerRig.position.z).toFixed(3)),
+        Number(playerRig.position.y.toFixed(3)),
+      ];
+      const noteInput = document.getElementById('markerNoteInput');
+      const note = (noteInput.value || '').trim() || `Kontrola elementu ${ext.element_id || hit.object.name}`;
+      const payload = {
+        element_id: ext.element_id || hit.object.name || 'unknown',
+        node_name: hit.object.name || 'unknown',
+        category: ext.category || 'unknown',
+        level_id: ext.level_id || 'parter',
+        hit_xyz: hitBimXYZ,
+        camera_xyz: camBimXYZ,
+        note,
+      };
+      noteInput.value = '';
+
+      try {
+        const res = await fetch(`${REPO_BASE}/api/project/${currentProject}/markers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          await refreshMarkersUI(currentProject);
+          return;
+        }
+      } catch (_) {}
+
+      // Static GitHub Pages fallback
+      const nextNum = currentMarkers.length + 1;
+      const newIssue = {
+        marker_id: `M-${String(nextNum).padStart(3, '0')}`,
+        ...payload,
+        status: 'open',
+      };
+      currentMarkers.push(newIssue);
+      localStorage.setItem(`pdf2bim_markers_${currentProject}`, JSON.stringify(currentMarkers));
+      renderMarkers3DAndList(currentProject);
+    }
+
     async function loadProject(slug) {
       const statusEl = document.getElementById('statusText');
       statusEl.textContent = `Wczytywanie ${slug}...`;
-      const sgRes = await fetch(`/projects/${slug}/scene_graph.json`);
+      if (currentSceneGroup) {
+        scene.remove(currentSceneGroup);
+        currentSceneGroup = null;
+      }
+
+      const sgRes = await fetch(`${REPO_BASE}/projects/${slug}/scene_graph.json`);
       const sgData = await sgRes.json();
+      currentSceneGraph = sgData;
+
+      buildDynamicEnvironment(sgData);
+      populateProjectUI(sgData);
 
       const loader = new GLTFLoader();
-      loader.load(`/projects/${slug}/output/${slug}.glb`, gltf => {
-        scene.add(gltf.scene);
-        buildDynamicSceneMetadata(gltf.scene, sgData);
+      loader.load(`${REPO_BASE}/projects/${slug}/output/${slug}.glb`, gltf => {
+        currentSceneGroup = gltf.scene;
+        scene.add(currentSceneGroup);
+        buildDynamicSceneMetadata(currentSceneGroup, sgData);
+
         const [bx0, by0, bx1, by1] = sgData.coordinate_system.structural_bbox_xy;
-        playerRig.position.set(0.5 * (bx0 + bx1), EYE_HEIGHT, -0.5 * (by0 + by1));
-        statusEl.textContent = `Załadowano: ${sgData.project_name} (${interactiveDoors.length} drzwi, ${stairSteps.length} stopni)`;
+        // Start in front of the house looking slightly up at the facade
+        teleportToBIM(0.5 * (bx0 + bx1), by0 - 7.0, 0.0, 0, 5, false);
+
+        statusEl.textContent = `✓ Załadowano: ${sgData.project_name} (${interactiveDoors.length} drzwi, ${stairSteps.length} stopni)`;
         refreshMarkersUI(slug);
       });
     }
 
+    // Modals for 2D PDF Overlay & UE5 Renders
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+    document.getElementById('closeModalBtn').onclick = () => { modalOverlay.style.display = 'none'; };
+
+    document.getElementById('overlayModalBtn').onclick = () => {
+      modalTitle.textContent = `Nakładka Weryfikacyjna 2D PDF vs. scene_graph.json (${currentProject})`;
+      modalContent.innerHTML = `
+        <div class="gallery-grid">
+          <div class="gallery-card">
+            <img src="${REPO_BASE}/projects/${currentProject}/review/overlay_parter.png" alt="Nakładka Parter" onclick="window.open(this.src, '_blank')" />
+            <div class="cap"><b>Rzut Parteru</b> — nałożenie osi ścian, otworów i wielokątów pokoi na oryginalny rzut PDF (odchylenie &le; 1.2 cm)</div>
+          </div>
+          <div class="gallery-card">
+            <img src="${REPO_BASE}/projects/${currentProject}/review/overlay_poddasze.png" alt="Nakładka Poddasze" onclick="window.open(this.src, '_blank')" />
+            <div class="cap"><b>Rzut Poddasza</b> — weryfikacja ścian kolankowych, działowych, schodów i okien połaciowych</div>
+          </div>
+        </div>
+      `;
+      modalOverlay.style.display = 'flex';
+    };
+
+    document.getElementById('rendersModalBtn').onclick = () => {
+      modalTitle.textContent = `Galeria Renderów Unreal Engine 5.7 Lumen & Kontroli QA`;
+      const slug = 'dom_w_gnieznikach';
+      const shots = [
+        { file: 'cycles_final_v7.jpg', label: 'Fotorealistyczny Render Cycles — Dom 1 z roślinnością 3D, dywanem trawy 3D i tynkiem mineralnym' },
+        { file: 'ue5_shot1_front.png', label: 'Elewacja frontowa (UE 5.7 Lumen) — Tynk mineralny, okładzina dębowa, dachówka antracytowa' },
+        { file: 'ue5_shot2_garden.png', label: 'Widok z ogrodu (Północno-Zachodni) — Taras, obróbki blacharskie, rynny' },
+        { file: 'ue5_int3_parter_salon.png', label: 'Wnętrze Parteru — Salon i jadalnia (Gładź gipsowa + parkiet dębowy)' },
+        { file: 'ue5_int4_parter_schody.png', label: 'Wnętrze Parteru — Hol i schody zabiegowe dębowe' },
+        { file: 'ue5_int1_poddasze_hol.png', label: 'Poddasze — Korytarz i drzwi wewnętrzne w ościeżnicach' },
+        { file: 'ue5_int2_poddasze_rooms.png', label: 'Poddasze — Pokoje pod skosami dachu i okna dachowe' },
+      ];
+      modalContent.innerHTML = `<div class="gallery-grid">` + shots.map(s => `
+        <div class="gallery-card">
+          <img src="${REPO_BASE}/projects/${slug}/output/${s.file}" alt="${s.label}" onclick="window.open(this.src, '_blank')" />
+          <div class="cap">${s.label}</div>
+        </div>
+      `).join('') + `</div>`;
+      modalOverlay.style.display = 'flex';
+    };
+
+    // UI Event Listeners
     selectEl.addEventListener('change', e => {
-      window.location.search = `?project=${e.target.value}`;
+      currentProject = e.target.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('project', currentProject);
+      window.history.replaceState({}, '', url);
+      loadProject(currentProject);
     });
     document.getElementById('flyBtn').addEventListener('click', () => {
       flyMode = !flyMode;
-      document.getElementById('flyBtn').textContent = `Tryb: ${flyMode ? 'Lot [F]' : 'Spacer [F]'}`;
+      document.getElementById('flyBtn').textContent = `🚶 Tryb: ${flyMode ? 'Lot [F]' : 'Spacer [F]'}`;
+    });
+    document.getElementById('doorsBtn').addEventListener('click', toggleAllDoors);
+    document.getElementById('viewFullBtn').addEventListener('click', () => applyViewCutMode('full'));
+    document.getElementById('viewCutRoofBtn').addEventListener('click', () => applyViewCutMode('no_roof'));
+    document.getElementById('viewCutAtticBtn').addEventListener('click', () => applyViewCutMode('parter_only'));
+    document.getElementById('shootMarkerBtn').addEventListener('click', createLaserMarkerAtCrosshair);
+
+    const hudEl = document.getElementById('hud');
+    const infoEl = document.getElementById('infoPanel');
+    document.getElementById('toggleHudBtn').addEventListener('click', () => {
+      const hidden = hudEl.style.display === 'none';
+      hudEl.style.display = hidden ? '' : 'none';
+      infoEl.style.display = hidden ? '' : 'none';
     });
 
+    // Keyboard & Mouse Controls
+    const keys = {};
+    window.addEventListener('keydown', e => {
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+      keys[e.code] = true;
+      if (e.code === 'KeyF') {
+        flyMode = !flyMode;
+        document.getElementById('flyBtn').textContent = `🚶 Tryb: ${flyMode ? 'Lot [F]' : 'Spacer [F]'}`;
+      } else if (e.code === 'KeyO') {
+        toggleAllDoors();
+      } else if (e.code === 'KeyM') {
+        createLaserMarkerAtCrosshair();
+      } else if (e.code === 'KeyH') {
+        document.getElementById('toggleHudBtn').click();
+      } else if (e.code === 'Escape') {
+        modalOverlay.style.display = 'none';
+      }
+    });
+    window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+    let isDraggingLook = false;
+    let dragDistance = 0;
+    let prevMouse = { x: 0, y: 0 };
+    const raycaster = new THREE.Raycaster();
+    const mouseNDC = new THREE.Vector2();
+
+    renderer.domElement.addEventListener('mousedown', e => {
+      if (e.button === 0) {
+        isDraggingLook = true;
+        dragDistance = 0;
+        prevMouse.x = e.clientX;
+        prevMouse.y = e.clientY;
+      }
+    });
+    window.addEventListener('mousemove', e => {
+      if (isDraggingLook) {
+        const dx = e.clientX - prevMouse.x;
+        const dy = e.clientY - prevMouse.y;
+        dragDistance += Math.hypot(dx, dy);
+        prevMouse.x = e.clientX;
+        prevMouse.y = e.clientY;
+        camera.rotation.y -= dx * 0.0032;
+        camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - dy * 0.0032, -Math.PI * 0.47, Math.PI * 0.47);
+      }
+      // Update hovered BIM element inspector
+      mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      if (pickableMeshes.length > 0) {
+        raycaster.setFromCamera(mouseNDC, camera);
+        const hits = raycaster.intersectObjects(pickableMeshes, false);
+        if (hits.length > 0) {
+          const h = hits[0];
+          const ext = h.object.userData || {};
+          const p = h.point;
+          document.getElementById('hoveredElementBox').innerHTML = `
+            <div><b>ID Elementu:</b> <code>${ext.element_id || h.object.name}</code></div>
+            <div><b>Kategoria:</b> <code>${ext.category || '-'}</code> | <b>Poziom:</b> <code>${ext.level_id || '-'}</code></div>
+            <div><b>Materiał:</b> <code>${ext.ue_material_name || ext.material_id || '-'}</code></div>
+            <div><b>Współrzędne BIM:</b> X=${p.x.toFixed(2)}m, Y=${(-p.z).toFixed(2)}m, Z=${p.y.toFixed(2)}m</div>
+          `;
+        }
+      }
+    });
+    window.addEventListener('mouseup', e => {
+      if (e.button === 0) {
+        const wasClick = isDraggingLook && dragDistance < 6;
+        isDraggingLook = false;
+        if (wasClick && pickableMeshes.length > 0) {
+          mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+          raycaster.setFromCamera(mouseNDC, camera);
+          const hits = raycaster.intersectObjects(pickableMeshes, false);
+          if (hits.length > 0) {
+            // Check if clicked mesh belongs to an interactive door pivot
+            let curr = hits[0].object;
+            while (curr) {
+              if (interactiveDoors.includes(curr)) {
+                toggleDoorPivot(curr);
+                break;
+              }
+              curr = curr.parent;
+            }
+          }
+        }
+      }
+    });
+    renderer.domElement.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      createLaserMarkerAtCrosshair();
+    });
+
+    // Touch Joysticks for Mobile / Tablet
+    const joyState = { leftX: 0, leftY: 0, rightX: 0, rightY: 0 };
+    function bindJoystick(zoneId, knobId, onMove) {
+      const zone = document.getElementById(zoneId);
+      const knob = document.getElementById(knobId);
+      let activeId = null;
+      const radius = 36;
+      zone.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const t = e.changedTouches[0];
+        activeId = t.identifier;
+      }, { passive: false });
+      zone.addEventListener('touchmove', e => {
+        e.preventDefault();
+        for (const t of e.changedTouches) {
+          if (t.identifier === activeId) {
+            const rect = zone.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            let dx = t.clientX - cx;
+            let dy = t.clientY - cy;
+            const dist = Math.hypot(dx, dy);
+            if (dist > radius) {
+              dx = (dx / dist) * radius;
+              dy = (dy / dist) * radius;
+            }
+            knob.style.transform = `translate(${dx}px, ${dy}px)`;
+            onMove(dx / radius, dy / radius);
+          }
+        }
+      }, { passive: false });
+      const reset = e => {
+        for (const t of e.changedTouches) {
+          if (t.identifier === activeId) {
+            activeId = null;
+            knob.style.transform = 'translate(0px, 0px)';
+            onMove(0, 0);
+          }
+        }
+      };
+      zone.addEventListener('touchend', reset);
+      zone.addEventListener('touchcancel', reset);
+    }
+    bindJoystick('joyLeft', 'joyLeftKnob', (x, y) => { joyState.leftX = x; joyState.leftY = y; });
+    bindJoystick('joyRight', 'joyRightKnob', (x, y) => { joyState.rightX = x; joyState.rightY = y; });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Main Animation & Movement Loop
+    const clock = new THREE.Clock();
     loadProject(currentProject);
-    renderer.setAnimationLoop(() => renderer.render(scene, camera));
+
+    renderer.setAnimationLoop(() => {
+      const dt = Math.min(clock.getDelta(), 0.1);
+
+      // Smooth door leaf rotation around hinge pivot
+      for (const dp of interactiveDoors) {
+        const diff = dp.userData.targetAngle - dp.rotation.y;
+        if (Math.abs(diff) > 0.001) {
+          dp.rotation.y += diff * Math.min(1, dt * 8.0);
+        }
+      }
+
+      // Touch look
+      if (Math.abs(joyState.rightX) > 0.02 || Math.abs(joyState.rightY) > 0.02) {
+        camera.rotation.y -= joyState.rightX * dt * 1.8;
+        camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x - joyState.rightY * dt * 1.4, -Math.PI * 0.47, Math.PI * 0.47);
+      }
+
+      // Movement vector
+      let moveFwd = 0, moveRight = 0, moveUp = 0;
+      if (keys['KeyW'] || keys['ArrowUp']) moveFwd += 1;
+      if (keys['KeyS'] || keys['ArrowDown']) moveFwd -= 1;
+      if (keys['KeyD'] || keys['ArrowRight']) moveRight += 1;
+      if (keys['KeyA'] || keys['ArrowLeft']) moveRight -= 1;
+      if (keys['KeyE'] || keys['Space']) moveUp += 1;
+      if (keys['KeyQ']) moveUp -= 1;
+
+      moveFwd -= joyState.leftY;
+      moveRight += joyState.leftX;
+
+      // WebXR Controller Thumbsticks
+      if (renderer.xr.isPresenting) {
+        const session = renderer.xr.getSession();
+        if (session) {
+          for (const src of session.inputSources) {
+            if (!src.gamepad) continue;
+            const axes = src.gamepad.axes;
+            if (src.handedness === 'left' && axes.length >= 4) {
+              moveRight += axes[2];
+              moveFwd -= axes[3];
+            } else if (src.handedness === 'right' && axes.length >= 4) {
+              playerRig.rotation.y -= axes[2] * dt * 1.6;
+            }
+          }
+        }
+      }
+
+      if (Math.abs(moveFwd) > 0.01 || Math.abs(moveRight) > 0.01 || (flyMode && Math.abs(moveUp) > 0.01)) {
+        const speed = (keys['ShiftLeft'] || keys['ShiftRight'] ? 6.5 : 3.1) * dt;
+        const yaw = renderer.xr.isPresenting ? playerRig.rotation.y : camera.rotation.y;
+        const fwdVec = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
+        const rightVec = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+
+        const nextPos = playerRig.position.clone();
+        nextPos.addScaledVector(fwdVec, moveFwd * speed);
+        nextPos.addScaledVector(rightVec, moveRight * speed);
+        if (flyMode) {
+          nextPos.y += moveUp * speed;
+        }
+        resolvePlayerCollisions(nextPos);
+        playerRig.position.copy(nextPos);
+        updateDynamicFloorHeight(playerRig.position);
+      }
+
+      renderer.render(scene, camera);
+    });
   </script>
 </body>
 </html>

@@ -82,7 +82,12 @@ def export_scene_to_glb(
         else:
             mesh.visual.face_colors = np.array([210, 210, 210, 255], dtype=np.uint8)
 
-        pivot = node.extras.get("world_pivot_xyz", [0.0, 0.0, 0.0])
+        node_extras = dict(node.extras)
+        node_extras.setdefault("material_id", node.material_id)
+        node_extras.setdefault("ue_material_name", node.ue_material_name)
+        node_extras.setdefault("level_id", node.level_id)
+
+        pivot = node_extras.get("world_pivot_xyz", [0.0, 0.0, 0.0])
         px, py, pz = float(pivot[0]), float(pivot[1]), float(pivot[2])
         xform = trimesh.transformations.translation_matrix([px, pz, -py])
         tm_scene.add_geometry(
@@ -90,9 +95,9 @@ def export_scene_to_glb(
             node_name=node.node_id,
             geom_name=node.ue_mesh_name,
             transform=xform,
-            metadata=node.extras,
+            metadata=node_extras,
         )
-        extras_by_node[node.node_id] = node.extras
+        extras_by_node[node.node_id] = node_extras
 
     raw_glb = tm_scene.export(file_type="glb")
     if isinstance(raw_glb, str):

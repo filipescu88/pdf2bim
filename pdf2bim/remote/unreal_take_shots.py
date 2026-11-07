@@ -86,7 +86,7 @@ if os.path.isdir(tex_disk_dir):
         if not fn.lower().endswith(".jpg"):
             continue
         stem = os.path.splitext(fn)[0]
-        if any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite", "lawn_turf_2k", "lawn_blades_atlas", "grass_medium_01_diff")) or not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
+        if any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite", "roof_tiles_red", "lawn_turf_2k", "lawn_blades_atlas", "grass_medium_01_diff")) or not unreal.EditorAssetLibrary.does_asset_exist(f"{tex_pkg}/{stem}"):
             t = unreal.AssetImportTask()
             t.set_editor_property("filename", f"{tex_disk_dir}/{fn}")
             t.set_editor_property("destination_path", tex_pkg)
@@ -103,7 +103,7 @@ def load_tex(stem, is_normal=False, is_linear=False):
     p = f"{tex_pkg}/{stem}"
     if unreal.EditorAssetLibrary.does_asset_exist(p):
         t = unreal.EditorAssetLibrary.load_asset(p)
-        if t and any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite")):
+        if t and any(k in stem for k in ("facade_timber_cladding", "facade_stucco_plaster", "roof_tiles_anthracite", "roof_tiles_red")):
             try:
                 t.set_editor_property("never_stream", True)
             except Exception:
@@ -219,7 +219,7 @@ mel.recompile_material(m_glass)
 # (diff_stem, norm_stem, rough_stem, tint, is_plaster, rough_mult, metal_v, spec_v, uv_t)
 pbr_defs = {
     "M_Wall_Plaster_White": ("facade_stucco_plaster_diffuse", "facade_stucco_plaster_nor_gl", "facade_stucco_plaster_rough", (1.07, 1.07, 1.06), True, 0.98, 0.0, 0.24, 3.2),
-    "M_Roof_Tile_Anthracite": ("roof_tiles_anthracite_diffuse", "roof_tiles_anthracite_nor_gl", "roof_tiles_anthracite_rough", (0.40, 0.46, 0.56), False, 1.0, 0.0, 0.26, 0.42),
+    "M_Roof_Tile_Anthracite": ("roof_tiles_red_diffuse", "roof_tiles_anthracite_nor_gl", "roof_tiles_anthracite_rough", (1.02, 0.96, 0.94), False, 1.0, 0.0, 0.28, 0.42),
     "M_Facade_Cladding_Oak": ("facade_timber_cladding_diffuse", "facade_timber_cladding_nor_gl", "facade_timber_cladding_rough", (0.98, 0.98, 0.98), False, 1.0, 0.0, 0.22, 1.0),
     "M_Door_Veneer_Oak": ("oak_countertop_diffuse", "oak_veneer_nor_gl", "oak_veneer_rough", (0.76, 0.56, 0.38), False, 0.38, 0.0, 0.62, 0.65),
     "M_Floor_Parquet_Oak": ("laminate_floor_02_diffuse", "laminate_floor_02_nor_gl", "laminate_floor_02_rough", (0.86, 0.76, 0.65), False, 0.48, 0.0, 0.42, 1.6),
@@ -765,6 +765,45 @@ grass_coords = [
 for g_idx, (gx, gy, gyaw) in enumerate(grass_coords):
     spawn_fol("SM_Grass_Patch_3D", f"PDF2BIM_Fol_GrassPatch_{g_idx+1:02d}", (gx, gy, 66.5), gyaw, (1.15, 1.15, 1.15))
 
+# E) Configure Collisions & PlayerStart so Play-In-Editor (PIE) starts cleanly above ground on the front walkway
+no_col_prefixes = ("PDF2BIM_Env_SkyDome", "PDF2BIM_Env_Lawn_Turf_Carpet", "PDF2BIM_Fol_GrassPatch", "PDF2BIM_Dom1_Drzwi_")
+player_start_actor = None
+for a in actor_sub.get_all_level_actors():
+    lbl = a.get_actor_label()
+    cls = a.get_class().get_name()
+    if "PlayerStart" in cls or "PlayerStart" in lbl:
+        player_start_actor = a
+        a.set_actor_location(unreal.Vector(135.0, 560.0, 175.0), False, False)
+        a.set_actor_rotation(unreal.Rotator(roll=0.0, pitch=0.0, yaw=-75.0), False)
+    elif "Landscape" in cls or "HLOD" in cls or lbl in ("Floor", "PDF2BIM_Dom1_SM_Garden_Lawn", "SM_SkySphere"):
+        a.set_actor_enable_collision(False)
+    elif any(lbl.startswith(p) for p in no_col_prefixes):
+        a.set_actor_enable_collision(False)
+        smc = getattr(a, "static_mesh_component", None)
+        if smc:
+            smc.set_collision_enabled(unreal.CollisionEnabled.NO_COLLISION)
+            smc.set_collision_profile_name("NoCollision")
+    elif lbl.startswith("PDF2BIM_Dom1_") or lbl.startswith("PDF2BIM_Env_"):
+        a.set_actor_enable_collision(True)
+        smc = getattr(a, "static_mesh_component", None)
+        if smc:
+            smc.set_collision_enabled(unreal.CollisionEnabled.QUERY_AND_PHYSICS)
+            smc.set_collision_profile_name("BlockAll")
+            sm = smc.static_mesh
+            if sm:
+                bs = sm.get_editor_property("body_setup")
+                if bs:
+                    bs.set_editor_property("collision_trace_flag", unreal.CollisionTraceFlag.CTF_USE_COMPLEX_AS_SIMPLE)
+                smc.set_static_mesh(None)
+                smc.set_static_mesh(sm)
+
+if player_start_actor is None:
+    player_start_actor = actor_sub.spawn_actor_from_class(
+        unreal.PlayerStart,
+        unreal.Vector(135.0, 560.0, 175.0),
+        unreal.Rotator(roll=0.0, pitch=0.0, yaw=-75.0),
+    )
+
 ppv = actor_sub.spawn_actor_from_class(unreal.PostProcessVolume, unreal.Vector(500.0, -420.0, 250.0), unreal.Rotator(0.0, 0.0, 0.0))
 if ppv:
     ppv.set_actor_label("PDF2BIM_PostProcess_ArchViz")
@@ -923,6 +962,10 @@ if do_capture:
     )
 
 try:
+    # Leave viewport camera outside in front of the house (above ground) so PIE from camera or PlayerStart never starts under the map
+    front_cam_loc = unreal.Vector(1680.0, 1020.0, 260.0)
+    front_cam_rot = unreal.MathLibrary.find_look_at_rotation(front_cam_loc, unreal.Vector(490.0, -320.0, 340.0))
+    editor_sub.set_level_viewport_camera_info(front_cam_loc, front_cam_rot)
     unreal.EditorAssetLibrary.save_directory("/Game/PDF2BIM", only_if_is_dirty=False, recursive=True)
     unreal.EditorLoadingAndSavingUtils.save_map(world, "/Game/PDF2BIM/Dom1_Gniezniki_Map")
 except Exception:
